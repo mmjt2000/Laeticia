@@ -1140,7 +1140,7 @@ async function guardarNuevaFoto() {
 }
 async function cargarFotosDesdeSupabase() {
     const { data, error } = await supabaseClient.storage
-        .from('maryse-fotos')
+        .from('photos-laeticia')  // ✅ CHANGÉ !
         .list('', { limit: 100 });
     
     if (error) {
@@ -1151,7 +1151,7 @@ async function cargarFotosDesdeSupabase() {
     const nuevasFotos = [];
     for (const file of data) {
         const { data: publicUrlData } = supabaseClient.storage
-            .from('maryse-fotos')
+            .from('photos-laeticia')  // ✅ CHANGÉ !
             .getPublicUrl(file.name);
         
         nuevasFotos.push({
