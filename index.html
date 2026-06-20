@@ -3113,9 +3113,13 @@ let notifSettings=JSON.parse(localStorage.getItem("laeticia_notif_settings")||'{
 const BACKUP_KEYS=["laeticia_completed","laeticia_xp","laeticia_level","laeticia_streak","laeticia_diary","laeticia_sent_invites","laeticia_received_invites","laeticia_friends","laeticia_theme","laeticia_dark_mode","laeticia_avatar","laeticia_last_mood","laeticia_mama_playlist","laeticia_notif_settings","laeticia_dad_completadas","laeticia_grammar","laeticia_exam_completed"];
 const TOTAL_LESSONS=16;
 
+// ============================================================
+// CONFIGURATION SUPABASE - LAETICIA
+// ============================================================
 const supabaseUrl = 'https://cwetrblkzgsmmmfgxpiv.supabase.co';
 const supabaseKey = 'sb_publishable_02w0PBn-9SokQ84mpLCknw_2RUsVSaT';
-let supabaseClient = null;
+const BUCKET_NAME = 'photos-laeticia';  
+let supabaseClient = null;    
 
 if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
     supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
