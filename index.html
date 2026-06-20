@@ -1067,15 +1067,22 @@ if (sessionStorage.getItem('maryse_logged') === 'true') {
 
 let fotosGuardadas = [];
 function cargarFotosStorage() {
-    let data = localStorage.getItem("laeticia_fotos_galeria");  // 👈 SEUL CHANGEMENT
-    if (data) fotosGuardadas = JSON.parse(data);
-    else fotosGuardadas = [];
+    let data = localStorage.getItem("laeticia_fotos_galeria");
+    if (data) {
+        fotosGuardadas = JSON.parse(data);
+    } else {
+        fotosGuardadas = [];
+    }
+    // Filtrer pour ne garder QUE les photos du bon bucket
+    fotosGuardadas = fotosGuardadas.filter(f => f.data.includes('photos-laeticia'));
     mostrarGaleria();
 }
-
 function guardarFotosStorage() { 
-    localStorage.setItem("laeticia_fotos_galeria", JSON.stringify(fotosGuardadas));  // 👈 SEUL CHANGEMENT
+    // Ne garder que les photos du bon bucket
+    const fotosFiltradas = fotosGuardadas.filter(f => f.data.includes('photos-laeticia'));
+    localStorage.setItem("laeticia_fotos_galeria", JSON.stringify(fotosFiltradas)); 
 }
+
 async function guardarNuevaFoto() {
     if (!supabaseClient) {
         alert("⏳ Supabase no está listo. Espera unos segundos y vuelve a intentar.");
