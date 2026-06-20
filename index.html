@@ -1082,10 +1082,9 @@ function guardarFotosStorage() {
     const fotosFiltradas = fotosGuardadas.filter(f => f.data.includes('photos-laeticia'));
     localStorage.setItem("laeticia_fotos_galeria", JSON.stringify(fotosFiltradas)); 
 }
-
 async function guardarNuevaFoto() {
     if (!supabaseClient) {
-        alert("⏳ Supabase no está listo. Espera unos segundos y vuelve a intentar.");
+        alert("⏳ Supabase no está listo. Espera unos segundos.");
         return;
     }
     
@@ -1104,31 +1103,16 @@ async function guardarNuevaFoto() {
     btn.disabled = true;
     
     try {
-        const { data, error } = await supabaseClient.storage
-            .from('maryse-fotos')
+        // ✅ UTILISE BUCKET_NAME ICI
+        const { error } = await supabaseClient.storage
+            .from(BUCKET_NAME)  // 👈 CHANGÉ !
             .upload(nombreUnico, archivo);
         
         if (error) throw error;
         
-        const { data: publicUrlData } = supabaseClient.storage
-            .from('maryse-fotos')
-            .getPublicUrl(nombreUnico);
-        
-        const urlPublica = publicUrlData.publicUrl;
-        
-        fotosGuardadas.unshift({ 
-            id: Date.now(), 
-            data: urlPublica, 
-            fecha: new Date().toLocaleDateString(),
-            supabasePath: nombreUnico
-        });
-        guardarFotosStorage();
-        mostrarGaleria();
-        
+        await cargarFotosDesdeSupabase();
         input.value = "";
         alert("✅ Foto guardada en la nube");
-        
-        await cargarFotosDesdeSupabase();
         
     } catch (error) {
         console.error("Error:", error);
@@ -1137,7 +1121,7 @@ async function guardarNuevaFoto() {
         btn.innerText = textoOriginal;
         btn.disabled = false;
     }
-}
+}   
 async function cargarFotosDesdeSupabase() {
     const { data, error } = await supabaseClient.storage
         .from('photos-laeticia')  // ✅ CHANGÉ !
