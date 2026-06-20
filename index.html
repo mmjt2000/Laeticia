@@ -4069,7 +4069,7 @@ function goToView(viewName) {
     // 3. Para las demás vistas, esperar 3 segundos
     setTimeout(() => {
         showView(viewName);
-    }, 3000); // 3 segundos de espera
+    }, 1000); // 1 segundo de espera
 }
 function openAdminPanel(){ const code=prompt("🔐 Panel de administración · Introduce el código secreto:"); if(code==="laeticia2026"){ alert("👩‍👧 Bienvenida, padres de familia."); showView('profile'); }else if(code!==null){ alert("❌ Código incorrecto"); } }
 function signOutAndClose() {
