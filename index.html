@@ -1066,14 +1066,16 @@ if (sessionStorage.getItem('maryse_logged') === 'true') {
 }
 
 let fotosGuardadas = [];
-
 function cargarFotosStorage() {
-    let data = localStorage.getItem("laeticia_fotos_galeria");
+    let data = localStorage.getItem("laeticia_fotos_galeria");  // 👈 UNIQUE
     if (data) fotosGuardadas = JSON.parse(data);
     else fotosGuardadas = [];
     mostrarGaleria();
 }
-function guardarFotosStorage() { localStorage.setItem("laeticia_fotos_galeria", JSON.stringify(fotosGuardadas)); }
+
+function guardarFotosStorage() { 
+    localStorage.setItem("laeticia_fotos_galeria", JSON.stringify(fotosGuardadas));  // 👈 UNIQUE
+}
 async function guardarNuevaFoto() {
     if (!supabaseClient) {
         alert("⏳ Supabase no está listo. Espera unos segundos y vuelve a intentar.");
