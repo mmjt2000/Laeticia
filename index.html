@@ -1161,6 +1161,33 @@ async function cargarFotosDesdeSupabase() {
         console.error("Error:", error);
     }
 }
+async function borrarFoto(id) {
+    if (!confirm("¿Estás segura de que quieres eliminar esta foto?")) return;
+    
+    const foto = fotosGuardadas.find(f => f.id === id);
+    if (!foto) {
+        alert("❌ Foto no encontrada");
+        return;
+    }
+    
+    if (foto.supabasePath && supabaseClient) {
+        try {
+            const { error } = await supabaseClient.storage
+                .from(BUCKET_NAME)  // 👈 UTILISE LE BON BUCKET
+                .remove([foto.supabasePath]);
+            if (error) throw error;
+        } catch (error) {
+            console.error("Error al eliminar:", error);
+            alert("❌ Error al eliminar de la nube");
+            return;
+        }
+    }
+    
+    fotosGuardadas = fotosGuardadas.filter(f => f.id !== id);
+    guardarFotosStorage();
+    mostrarGaleria();
+    alert("✅ Foto eliminada correctamente");
+}
 function mostrarGaleria() {
     let contenedor = document.getElementById("galeriaFotos");
     if (!contenedor) return;
