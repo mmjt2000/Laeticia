@@ -1224,7 +1224,7 @@ async function borrarFoto(id) {
     if (foto.supabasePath && supabaseClient) {
         try {
             const { error } = await supabaseClient.storage
-                .from('maryse-fotos')
+                .from('photos-laeticia')
                 .remove([foto.supabasePath]);
             if (error) {
                 console.error("Error al eliminar de Supabase:", error);
@@ -1254,7 +1254,7 @@ async function borrarFoto(id) {
     const foto = fotosGuardadas.find(f => f.id === id);
     if (foto && foto.supabasePath) {
         const { error } = await supabase.storage
-            .from('maryse-fotos')
+            .from('photos-laeticia')
             .remove([foto.supabasePath]);
         if (error) console.error("Error al eliminar de Supabase:", error);
     }
@@ -1281,7 +1281,7 @@ async function cargarFotosDesdeSupabase() {
     if (!supabaseClient) return;
     
     const { data, error } = await supabaseClient.storage
-        .from('maryse-fotos')
+        .from('photos-laeticia')
         .list('', { limit: 100 });
     
     if (error) {
@@ -1292,7 +1292,7 @@ async function cargarFotosDesdeSupabase() {
     const nuevasFotos = [];
     for (const file of data) {
         const { data: publicUrlData } = supabaseClient.storage
-            .from('maryse-fotos')
+            .from('photos-laeticia')
             .getPublicUrl(file.name);
         
         nuevasFotos.push({
