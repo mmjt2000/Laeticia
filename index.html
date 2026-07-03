@@ -412,6 +412,10 @@
             <option value="5">🍽️ S6: Comida</option>
             <option value="6">⚽ S7: Deportes</option>
             <option value="7">🌍 S8: Naturaleza</option>
+            <option value="8">👭 S9: Amistad</option>
+            <option value="9">💼 S10: Futuro</option>
+            <option value="10">🧠 S11: Salud Mental</option>
+            <option value="11">🌎 S12: Cultura</option>
         </select>
     </div>
 <div id="dynamicBlock" class="dynamic-block" style="background: var(--card); border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);">
@@ -1736,6 +1740,10 @@ const weeklyThemes = [
     { name: "Comida y Gastronomía", emoji: "🍽️", color: "#fef3c7", desc: "Sabores del mundo en inglés y francés" },
     { name: "Deportes y Salud", emoji: "⚽", color: "#d1fae5", desc: "Mantente activa mientras aprendes idiomas" },
     { name: "Naturaleza y Planeta", emoji: "🌍", color: "#e0e7ff", desc: "Cuida el planeta mientras aprendes" }
+    { name: "Amistad y Relaciones Sociales", emoji: "👭", color: "#fce7f3", desc: "Aprende a hablar de amistad y conexiones auténticas" },
+    { name: "Futuro y Carrera Profesional", emoji: "💼", color: "#e0e7ff", desc: "Prepárate para tu futuro con vocabulario profesional" },
+    { name: "Salud Mental y Bienestar", emoji: "🧠", color: "#d1fae5", desc: "Cuida tu mente mientras aprendes dos idiomas" },
+    { name: "Cultura y Ciudadanía Global", emoji: "🌎", color: "#fef3c7", desc: "Explora culturas y conviértete en ciudadana del mundo" }
 ];
 
 const weeklyVocab = {
@@ -3630,7 +3638,6 @@ function showView(vn){
     let agendaNueva = document.getElementById('viewAgendaNueva');
     if (agendaNueva) agendaNueva.classList.remove('active');
 }
-
 function getCurrentWeekInfo() {
     // Si l'utilisateur a forcé une semaine
     if (testWeekOverride !== null) {
@@ -3642,6 +3649,12 @@ function getCurrentWeekInfo() {
             testWeekOverride = null;
         }
     }
+    
+    // Semaine actuelle = la plus haute débloquée
+    const currentLevel = getCurrentAcademyLevel();
+    const w = Math.min(currentLevel, weeklyThemes.length - 1);
+    return { weekNumber: w + 1, cycleIndex: w, theme: weeklyThemes[w] };
+}}
     
     // Semaine actuelle = la plus haute débloquée
     const currentLevel = getCurrentAcademyLevel();
