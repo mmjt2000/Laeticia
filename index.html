@@ -412,10 +412,6 @@
             <option value="5">🍽️ S6: Comida</option>
             <option value="6">⚽ S7: Deportes</option>
             <option value="7">🌍 S8: Naturaleza</option>
-            <option value="8">👭 S9: Amistad</option>
-            <option value="9">💼 S10: Futuro</option>
-            <option value="10">🧠 S11: Salud Mental</option>
-            <option value="11">🌎 S12: Cultura</option>
         </select>
     </div>
 <div id="dynamicBlock" class="dynamic-block" style="background: var(--card); border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);">
@@ -900,32 +896,10 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-// ========== SUPABASE ==========
-const supabaseUrl = 'https://cwetrblkzgsmmmfgxpiv.supabase.co';
-const supabaseKey = 'sb_publishable_02w0PBn-9SokQ84mpLCknw_2RUsVSaT';
-const BUCKET_NAME = 'photos-laeticia';
-let supabaseClient = null;
-
-try {
-    if (window.supabase && window.supabase.createClient) {
-        supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-        console.log("✅ Supabase conectado - Bucket:", BUCKET_NAME);
-    } else {
-        console.log("⏳ Esperando SDK de Supabase...");
-        setTimeout(() => {
-            if (window.supabase && window.supabase.createClient) {
-                supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-                console.log("✅ Supabase conectado (después de esperar) - Bucket:", BUCKET_NAME);
-            }
-        }, 1000);
-    }
-} catch(e) {
-    console.error("❌ Error al conectar Supabase:", e);
-}
-
-// ========== LOGIN Y USUARIOS ==========
+<script>
+// ========== LOGIN COMPLETO ==========
 const FIXED_USERS = {
-    "jeant.montreuil@gmail.com": { pass: "coulou2026", role: "admin", name: "Admin" },
+    "jeant.montreuil@gmail.com": { pass: "coulou2026", role: "admin", name: "Admin I" },
     "beaugelinda2023@gmail.com": { pass: "linda2026", role: "admin", name: "Admin II" },
     "laeticia@academy.com": { pass: "laeticia2026", role: "laeticia", name: "Laeticia" },
     "alumna@laeticia.com": { pass: "academy", role: "guest", name: "Invitado de prueba" }
@@ -950,6 +924,69 @@ function isValidUser(email, pass) {
     return !!guest;
 }
 
+function getUserRole(email) {
+    if (FIXED_USERS[email]) return FIXED_USERS[email].role;
+    return "guest";
+}
+
+function showAdminPanel() {
+    const panel = document.getElementById('adminPanel');
+    const currentUser = sessionStorage.getItem('maryse_user');
+    if (panel && currentUser && (currentUser === 'jeant.montreuil@gmail.com')) {
+        panel.style.display = 'block';
+        renderStats();
+        renderGuestList();
+    } else if (panel) {
+        panel.style.display = 'none';
+    }
+}
+
+function renderStats() {
+    const container = document.getElementById('statsContainer');
+    if (!container) return;
+    let html = '<h3>📊 Estadísticas de uso</h3><table style="width:100%; border-collapse:collapse;"><tr><th>Usuario</th><th>Veces entró</th><th>Último acceso</th></tr>';
+    for (const [email, data] of Object.entries(stats)) {
+        let name = email;
+        if (FIXED_USERS[email]) name = FIXED_USERS[email].name;
+        html += `<tr><td>${name}</td><td>${data.count}</td><td>${data.lastAccess || '-'}</td></tr>`;
+    }
+    html += '</table>';
+    container.innerHTML = html;
+}
+
+function renderGuestList() {
+    const container = document.getElementById('guestList');
+    const countSpan = document.getElementById('guestCount');
+    if (!container) return;
+    if (guests.length === 0) {
+        container.innerHTML = '<p>No hay invitados registrados.</p>';
+        if (countSpan) countSpan.innerText = '0';
+        return;
+    }
+    if (countSpan) countSpan.innerText = guests.length;
+    let html = '<ul style="list-style:none; padding:0;">';
+    guests.forEach((g, idx) => {
+        const guestStats = stats[g.email] || { count: 0, lastAccess: '-' };
+        html += `<li style="padding:10px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong>${g.email}</strong><br><small>Entradas: ${guestStats.count} | Último: ${guestStats.lastAccess || '-'}</small></div>
+                    <button onclick="removeGuest(${idx})" style="background:#dc2626; color:white; border:none; border-radius:30px; padding:5px 15px; cursor:pointer;">Eliminar</button>
+                 </li>`;
+    });
+    html += '</ul>';
+    container.innerHTML = html;
+}
+
+function removeGuest(index) {
+    if (confirm('¿Eliminar este invitado?')) {
+        const removed = guests.splice(index, 1)[0];
+        if (removed && stats[removed.email]) delete stats[removed.email];
+        saveGuests();
+        saveStats();
+        renderGuestList();
+        renderStats();
+    }
+}
+
 function registerGuest(email, pass) {
     email = email.trim().toLowerCase();
     if (guests.length >= 25) return { success: false, msg: "Máximo 25 invitados. Contacta al admin." };
@@ -963,8 +1000,8 @@ function registerGuest(email, pass) {
 
 function entrarApp(email) {
     updateStats(email);
-    sessionStorage.setItem('laeticia_user', email);
-    sessionStorage.setItem('laeticia_logged', 'true');
+    sessionStorage.setItem('maryse_user', email);
+    sessionStorage.setItem('maryse_logged', 'true');
     document.getElementById('loginOverlay').style.display = 'none';
     showView('home');
 }
@@ -1018,52 +1055,64 @@ document.getElementById('doRegisterBtn').onclick = function() {
 
 window.onclick = function(e) { if (e.target === modal) modal.style.display = 'none'; };
 
-if (sessionStorage.getItem('laeticia_logged') === 'true') {
-    const userEmail = sessionStorage.getItem('laeticia_user');
+if (sessionStorage.getItem('maryse_logged') === 'true') {
+    const userEmail = sessionStorage.getItem('maryse_user');
     if (userEmail && isValidUser(userEmail, FIXED_USERS[userEmail]?.pass || guests.find(g=>g.email===userEmail)?.pass)) {
         document.getElementById('loginOverlay').style.display = 'none';
+        showAdminPanel();
     } else {
-        sessionStorage.removeItem('laeticia_logged');
-        sessionStorage.removeItem('laeticia_user');
+        sessionStorage.removeItem('maryse_logged');
+        sessionStorage.removeItem('maryse_user');
     }
 }
 
-// ========== GALERÍA DE FOTOS ==========
 let fotosGuardadas = [];
-
 function cargarFotosStorage() {
+    // Usa una clave única para Laeticia
     let data = localStorage.getItem('laeticia_fotos_galeria');
-    fotosGuardadas = data ? JSON.parse(data) : [];
+    if (data) {
+        fotosGuardadas = JSON.parse(data);
+    } else {
+        fotosGuardadas = [];
+    }
     mostrarGaleria();
 }
-
 function guardarFotosStorage() {
+    // Usa la misma clave única para guardar
     localStorage.setItem('laeticia_fotos_galeria', JSON.stringify(fotosGuardadas));
 }
-
 async function guardarNuevaFoto() {
     if (!supabaseClient) {
         alert("⏳ Supabase no está listo. Espera unos segundos.");
         return;
     }
+    
     const input = document.getElementById("cargarFoto");
     const archivo = input.files[0];
     if (!archivo) {
         alert("📷 Selecciona una foto");
         return;
     }
+    
     const nombreUnico = Date.now() + '_' + archivo.name;
     const btn = document.querySelector('#viewFotos .btn-primary');
     if (!btn) return;
     const textoOriginal = btn.innerText;
     btn.innerText = "⏳ Subiendo...";
     btn.disabled = true;
+    
     try {
-        const { error } = await supabaseClient.storage.from(BUCKET_NAME).upload(nombreUnico, archivo);
+        // ✅ UTILISE BUCKET_NAME ICI
+        const { error } = await supabaseClient.storage
+            .from(BUCKET_NAME)  // 👈 CHANGÉ !
+            .upload(nombreUnico, archivo);
+        
         if (error) throw error;
+        
         await cargarFotosDesdeSupabase();
         input.value = "";
         alert("✅ Foto guardada en la nube");
+        
     } catch (error) {
         console.error("Error:", error);
         alert("❌ Error al subir: " + error.message);
@@ -1071,16 +1120,31 @@ async function guardarNuevaFoto() {
         btn.innerText = textoOriginal;
         btn.disabled = false;
     }
-}
-
+}   
 async function cargarFotosDesdeSupabase() {
-    if (!supabaseClient) return;
+    if (!supabaseClient) {
+        console.log("⏳ Supabase no está listo");
+        return;
+    }
+
     try {
-        const { data, error } = await supabaseClient.storage.from(BUCKET_NAME).list('', { limit: 100 });
-        if (error) throw error;
+        // 1. Usa la variable BUCKET_NAME en lugar del nombre fijo
+        const { data, error } = await supabaseClient.storage
+            .from(BUCKET_NAME)
+            .list('', { limit: 100 });
+
+        if (error) {
+            console.error("Error al listar fotos:", error);
+            return;
+        }
+
+        // 2. Vacía el array local y lo llena con las fotos del bucket correcto
         fotosGuardadas = [];
         for (const file of data) {
-            const { data: publicUrlData } = supabaseClient.storage.from(BUCKET_NAME).getPublicUrl(file.name);
+            const { data: publicUrlData } = supabaseClient.storage
+                .from(BUCKET_NAME)
+                .getPublicUrl(file.name);
+
             fotosGuardadas.push({
                 id: Date.now() + Math.random(),
                 data: publicUrlData.publicUrl,
@@ -1088,730 +1152,166 @@ async function cargarFotosDesdeSupabase() {
                 supabasePath: file.name
             });
         }
+
+        // 3. Guarda en localStorage y actualiza la vista
         guardarFotosStorage();
         mostrarGaleria();
+        console.log(`✅ Fotos cargadas desde ${BUCKET_NAME}: ${fotosGuardadas.length}`);
+
     } catch (error) {
         console.error("Error:", error);
     }
 }
-
+async function borrarFoto(id) {
+    if (!confirm("¿Estás segura de que quieres eliminar esta foto?")) return;
+    
+    const foto = fotosGuardadas.find(f => f.id === id);
+    if (!foto) {
+        alert("❌ Foto no encontrada");
+        return;
+    }
+    
+    if (foto.supabasePath && supabaseClient) {
+        try {
+            const { error } = await supabaseClient.storage
+                .from(BUCKET_NAME)  // 👈 UTILISE LE BON BUCKET
+                .remove([foto.supabasePath]);
+            if (error) throw error;
+        } catch (error) {
+            console.error("Error al eliminar:", error);
+            alert("❌ Error al eliminar de la nube");
+            return;
+        }
+    }
+    
+    fotosGuardadas = fotosGuardadas.filter(f => f.id !== id);
+    guardarFotosStorage();
+    mostrarGaleria();
+    alert("✅ Foto eliminada correctamente");
+}
 function mostrarGaleria() {
     let contenedor = document.getElementById("galeriaFotos");
     if (!contenedor) return;
-    if (fotosGuardadas.length === 0) {
-        contenedor.innerHTML = '<p style="text-align:center;width:100%;">🖼️ No hay fotos aún</p>';
-        return;
+    
+    if (fotosGuardadas.length === 0) { 
+        contenedor.innerHTML = '<p style="text-align:center;width:100%;">🖼️ No hay fotos aún</p>'; 
+        return; 
     }
+    
     contenedor.innerHTML = fotosGuardadas.map(f => `
         <div style="width:150px; border-radius:16px; overflow:hidden; border:1px solid var(--border); background:var(--card); position:relative;">
             <img src="${f.data}" style="width:100%; height:120px; object-fit:cover;">
             <div style="padding:8px; font-size:0.7rem; display:flex; justify-content:space-between; align-items:center;">
                 <span>📅 ${f.fecha}</span>
-                <button onclick="borrarFoto(${f.id})" style="background:#dc2626; color:white; border:none; border-radius:20px; padding:4px 12px; cursor:pointer; font-size:0.7rem;">🗑️ Eliminar</button>
+                <button onclick="borrarFoto(${f.id})" style="background:#dc2626; color:white; border:none; border-radius:20px; padding:4px 12px; cursor:pointer; font-size:0.7rem;">
+                    🗑️ Eliminar
+                </button>
             </div>
         </div>
     `).join("");
 }
-
 async function borrarFoto(id) {
+    // 1. Pide confirmación
     if (!confirm("¿Estás segura de que quieres eliminar esta foto?")) return;
+    
+    // 2. Busca la foto en el array
     const foto = fotosGuardadas.find(f => f.id === id);
-    if (!foto) { alert("❌ Foto no encontrada"); return; }
+    if (!foto) {
+        alert("❌ Foto no encontrada");
+        return;
+    }
+    
+    // 3. Si está en Supabase (nube), la elimina de allí
     if (foto.supabasePath && supabaseClient) {
         try {
-            const { error } = await supabaseClient.storage.from(BUCKET_NAME).remove([foto.supabasePath]);
-            if (error) throw error;
+            const { error } = await supabaseClient.storage
+                .from('photos-laeticia')
+                .remove([foto.supabasePath]);
+            if (error) {
+                console.error("Error al eliminar de Supabase:", error);
+                alert("❌ Error al eliminar de la nube: " + error.message);
+                return;
+            }
         } catch (error) {
             console.error("Error:", error);
             alert("❌ Error al eliminar de la nube: " + error.message);
             return;
         }
     }
+    
+    // 4. La elimina del array local
+    fotosGuardadas = fotosGuardadas.filter(f => f.id !== id);
+    
+    // 5. Guarda el array actualizado en localStorage
+    guardarFotosStorage();
+    
+    // 6. Vuelve a mostrar la galería (sin la foto eliminada)
+    mostrarGaleria();
+    
+    // 7. Muestra mensaje de éxito
+    alert("✅ Foto eliminada correctamente");
+}
+async function borrarFoto(id) {
+    const foto = fotosGuardadas.find(f => f.id === id);
+    if (foto && foto.supabasePath) {
+        const { error } = await supabase.storage
+            .from('photos-laeticia')
+            .remove([foto.supabasePath]);
+        if (error) console.error("Error al eliminar de Supabase:", error);
+    }
+    
     fotosGuardadas = fotosGuardadas.filter(f => f.id !== id);
     guardarFotosStorage();
     mostrarGaleria();
-    alert("✅ Foto eliminada correctamente");
 }
-
+async function cargarFotosStorage() {
+    let data = localStorage.getItem("laeticia_fotos_galeria");
+    if (data) {
+        fotosGuardadas = JSON.parse(data);
+    } else {
+        fotosGuardadas = [];
+    }
+    
+    if (supabaseClient) {
+        await cargarFotosDesdeSupabase();
+    } else {
+        mostrarGaleria();
+    }
+}
+async function cargarFotosDesdeSupabase() {
+    if (!supabaseClient) return;
+    
+    const { data, error } = await supabaseClient.storage
+        .from('photos-laeticia')
+        .list('', { limit: 100 });
+    
+    if (error) {
+        console.error("Error al listar fotos:", error);
+        return;
+    }
+    
+    const nuevasFotos = [];
+    for (const file of data) {
+        const { data: publicUrlData } = supabaseClient.storage
+            .from('photos-laeticia')
+            .getPublicUrl(file.name);
+        
+        nuevasFotos.push({
+            id: Date.now() + Math.random(),
+            data: publicUrlData.publicUrl,
+            fecha: new Date(file.created_at).toLocaleDateString(),
+            supabasePath: file.name
+        });
+    }
+    
+    const fotosLocales = fotosGuardadas.filter(f => !f.supabasePath);
+    fotosGuardadas = [...nuevasFotos, ...fotosLocales];
+    guardarFotosStorage();
+    mostrarGaleria();
+}
 window.guardarNuevaFoto = guardarNuevaFoto;
 window.borrarFoto = borrarFoto;
 
-// ========== ACRÓSTICO LAETICIA ==========
-function mostrarMensajeAnimo(estado) {
-    const acrosticos = {
-        happy: `😊 <strong>FELIZ</strong><br><br><strong>L</strong>a alegría florece cuando me permito sentir.<br><strong>A</strong>prendo a sonreír sin esperar nada a cambio.<br><strong>E</strong>l presente me regala momentos que atesoro.<br><strong>T</strong>odo es más bonito cuando miro con el corazón.<br><strong>I</strong>magino un mundo lleno de luz y esperanza.<br><strong>C</strong>ada risa es un pequeño acto de valentía.<br><strong>I</strong>ntensamente vivo cada instante feliz.<br><strong>A</strong>l final, ser feliz es decidir ver lo bueno.`,
-        calm: `😌 <strong>CALMA</strong><br><br><strong>L</strong>a tranquilidad me envuelve sin prisa.<br><strong>A</strong>cepto el silencio como un abrazo.<br><strong>E</strong>l ruido se apaga cuando respiro profundo.<br><strong>T</strong>odo está bien aunque no tenga todas las respuestas.<br><strong>I</strong>ntento soltar lo que no puedo controlar.<br><strong>C</strong>ierro los ojos y confío en el momento.<br><strong>I</strong>nhalo calma, exhalo tensión.<br><strong>A</strong>quí y ahora, todo está en orden.`,
-        sad: `😢 <strong>TRISTE</strong><br><br><strong>L</strong>as lágrimas también hablan, también sanan.<br><strong>A</strong>unque hoy duela, sé que escampará.<br><strong>E</strong>ste dolor también me está haciendo más fuerte.<br><strong>T</strong>engo derecho a sentir, a no estar bien.<br><strong>I</strong>ntento no juzgarme por estar triste.<br><strong>C</strong>on el tiempo, esto pasará.<br><strong>I</strong>magino un mañana más claro.<br><strong>A</strong>prendo que la tristeza también es parte de mí.`,
-        stressed: `😰 <strong>ESTRESADA</strong><br><br><strong>L</strong>ibero la presión, respiro hondo.<br><strong>A</strong>cepto que no puedo con todo sola.<br><strong>E</strong>l equilibrio empieza cuando me escucho.<br><strong>T</strong>omo un descanso sin sentir culpa.<br><strong>I</strong>ntento soltar lo que no puedo cambiar.<br><strong>C</strong>ada cosa a su tiempo, nada es tan urgente.<br><strong>I</strong>nhalo paz, exhalo preocupación.<br><strong>A</strong>hora me permito parar y recuperarme.`,
-        motivated: `🤩 <strong>MOTIVADA</strong><br><br><strong>L</strong>a meta es clara, el camino empieza hoy.<br><strong>A</strong>vanzo paso a paso, sin compararme con nadie.<br><strong>E</strong>l esfuerzo de hoy es el éxito de mañana.<br><strong>T</strong>odo lo que sueño lo puedo alcanzar.<br><strong>I</strong>magino mi mejor versión y voy por ella.<br><strong>C</strong>on cada pequeño logro, crezco un poco más.<br><strong>I</strong>nspiro confianza, exhalo miedo.<br><strong>A</strong>hora es mi momento, voy a darlo todo.`,
-        tired: `😴 <strong>CANSADA</strong><br><br><strong>L</strong>a fatiga me pide que me detenga.<br><strong>A</strong>unque el mundo no espere, mi cuerpo sí.<br><strong>E</strong>l descanso no es un lujo, es una necesidad.<br><strong>T</strong>ambién soy humana y necesito recuperarme.<br><strong>I</strong>ntento escuchar lo que mi cuerpo me pide.<br><strong>C</strong>uando duermo, mi mente también se ordena.<br><strong>I</strong>magino un sueño reparador y profundo.<br><strong>A</strong>l despertar, todo será más fácil.`
-    };
-    const acrosticoDiv = document.getElementById('acrosticoLaeticia');
-    if (acrosticoDiv) {
-        acrosticoDiv.innerHTML = acrosticos[estado] || "Elige cómo te sientes hoy.";
-        acrosticoDiv.style.display = 'block';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const moodCards = document.querySelectorAll('#moodGridDiary .mood-card');
-    moodCards.forEach(card => {
-        card.addEventListener('click', function() {
-            const mood = this.getAttribute('data-mood');
-            mostrarMensajeAnimo(mood);
-        });
-    });
-});
-
-// ========== RELOJ CLÁSICO ==========
-function actualizarRelojClasico() {
-    const ahora = new Date();
-    const hora = ahora.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const fecha = ahora.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    const dia = ahora.toLocaleDateString('es-MX', { weekday: 'long' });
-    const horaElem = document.getElementById('horaClasica');
-    const fechaElem = document.getElementById('fechaClasica');
-    const diaElem = document.getElementById('diaClasico');
-    if (horaElem) horaElem.textContent = hora;
-    if (fechaElem) fechaElem.textContent = fecha;
-    if (diaElem) diaElem.textContent = dia.charAt(0).toUpperCase() + dia.slice(1);
-}
-setInterval(actualizarRelojClasico, 1000);
-actualizarRelojClasico();
-
-// ========== HOME DINÁMICO ==========
-function actualizarBloqueDinamico() {
-    const ahora = new Date();
-    const hora = ahora.getHours();
-    let titulo = "", contenido = [];
-    if (hora >= 5 && hora < 9) {
-        titulo = "🌅 Inicio del día · Agua + cuerpo + enfoque";
-        contenido = ["💧 Bebe un vaso de agua", "🤸‍♀️ Muévete 3–5 minutos", "🧠 Define una intención simple del día"];
-    } else if (hora >= 9 && hora < 12) {
-        titulo = "🏫 Durante la mañana · Cuerpo activo, mente clara";
-        contenido = ["🚶‍♀️ Levántate y muévete cada cierto tiempo", "💧 Toma agua regularmente", "🧘‍♀️ Respira si sientes estrés o presión"];
-    } else if (hora >= 12 && hora < 15) {
-        titulo = "🍽️ Mediodía · Nutrición básica";
-        contenido = ["🥗 Come algo con proteína + fruta/verdura", "🍞 Incluye energía (carbohidrato simple)", "🚫 Evita exceso de azúcar o comida pesada"];
-    } else if (hora >= 15 && hora < 19) {
-        titulo = "🌤️ Tarde · Movimiento obligatorio del día";
-        contenido = ["🏃‍♀️ 20–40 min de actividad física", "📱 Reduce tiempo pasivo en pantalla"];
-    } else {
-        titulo = "🌙 Noche · Calma y recuperación";
-        contenido = ["📵 Baja pantallas 30–60 min antes de dormir", "📖 Haz algo tranquilo (leer, música, respirar)", "😴 Prepárate para dormir 8–10 horas"];
-    }
-    const titleElem = document.getElementById('blockTitle');
-    const contentElem = document.getElementById('blockContent');
-    if (titleElem) titleElem.innerHTML = titulo;
-    if (contentElem) contentElem.innerHTML = contenido.map(texto => `<span>${texto}</span>`).join('');
-}
-actualizarBloqueDinamico();
-setInterval(actualizarBloqueDinamico, 3600000);
-
-// ========== FUNCIONES DE AGENDA ==========
-const horarioPredeterminadoN = {
-    "Lunes": ["OFIMATICA", "OFIMATICA", "HISTORIA", "ESPAÑOL", "BREAK", "OFIMATICA", "ESPAÑOL", "MATEMATICAS", "ARTES"],
-    "Martes": ["EDUCACION FISICA", "EDUCACION FISICA", "FORMACION CIVICA Y ETICA", "FORMACION CIVICA Y ETICA", "BREAK", "FISICA", "FISICA", "ESPAÑOL", "MATEMATICAS"],
-    "Miercoles": ["TUTORIA", "ESPAÑOL", "ESPAÑOL", "HISTORIA", "BREAK", "OFIMATICA", "INGLES", "ARTES", "ARTES"],
-    "Jueves": ["OFIMATICA", "OFIMATICA", "OFIMATICA", "MATEMATICAS", "BREAK", "HISTORIA", "FISICA", "FISICA", "HISTORIA"],
-    "Viernes": ["OFIMATICA", "INGLES", "INGLES", "MATEMATICAS", "BREAK", "MATEMATICAS", "FISICA", "FISICA", "IGUALDAD DE GENERO"]
-};
-const horasClaseN = ["7:00-7:50", "7:50-8:40", "8:40-9:30", "9:30-10:20", "10:20-10:40", "10:40-11:30", "11:30-12:20", "12:20-13:10", "13:10-14:00"];
-
-function guardarHorarioN(h) { localStorage.setItem("laeticia_horario_nuevo", JSON.stringify(h)); }
-function cargarHorarioN() { let g = localStorage.getItem("laeticia_horario_nuevo"); return g ? JSON.parse(g) : JSON.parse(JSON.stringify(horarioPredeterminadoN)); }
-function renderizarHorarioN() {
-    let h = cargarHorarioN();
-    let dias = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
-    let html = '<thead><tr><th>Hora</th>';
-    for (let d of dias) html += `<th>${d}</th>`;
-    html += '</tr></thead><tbody>';
-    for (let i = 0; i < horasClaseN.length; i++) {
-        html += `<tr><td style="background:#8b5cf6; color:white; font-weight:bold; text-align:center;">${horasClaseN[i]}<\/td>`;
-        for (let j = 0; j < dias.length; j++) {
-            let materia = h[dias[j]][i] || "";
-            if (materia.toUpperCase() === "BREAK") {
-                html += `<td class="break-cell" style="background:#fef3c7 !important; font-weight:bold; text-align:center;"><span class="break-emoji">🍎☕🧃</span> ¡RECREO!<br><span style="font-size:0.65rem;">Descansa</span><\/td>`;
-            } else {
-                html += `<td contenteditable="true" onblur="actualizarCeldaN('${dias[j]}', ${i}, this.innerText)" style="text-align:center;">${materia}<\/td>`;
-            }
-        }
-        html += '</tr>';
-    }
-    html += '</tbody>';
-    let t = document.getElementById("tablaHorarioN");
-    if (t) t.innerHTML = html;
-}
-function actualizarCeldaN(d, i, v) { let h = cargarHorarioN(); h[d][i] = v; guardarHorarioN(h); }
-function restaurarHorarioN() { if (confirm("¿Restaurar horario original?")) { guardarHorarioN(JSON.parse(JSON.stringify(horarioPredeterminadoN))); renderizarHorarioN(); alert("✅ Horario restaurado"); } }
-function exportarHorarioN() { let a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(cargarHorarioN(), null, 2)], { type: "application/json" })); a.download = "horario.json"; a.click(); }
-function cargarTareasN() { let t = localStorage.getItem("laeticia_tareas_nuevo"); return t ? JSON.parse(t) : []; }
-function guardarTareasN(t) { localStorage.setItem("laeticia_tareas_nuevo", JSON.stringify(t)); actualizarStatsN(); renderizarTareasN(); }
-function agregarTareaN() { let txt = document.getElementById("inputTareaN").value.trim(); if (!txt) { alert("Escribe una tarea"); return; } let t = cargarTareasN(); t.push({ id: Date.now(), texto: txt, completada: false }); guardarTareasN(t); document.getElementById("inputTareaN").value = ""; }
-function renderizarTareasN() { let c = document.getElementById("listaTareasN"); if (!c) return; let t = cargarTareasN(), mostrar = document.getElementById("checkMostrarCompletadasN").checked, f = mostrar ? t : t.filter(x => !x.completada); if (f.length === 0) { c.innerHTML = "<p style='text-align:center;padding:20px;'>✨ Sin tareas ✨</p>"; return; } c.innerHTML = f.map(x => `<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;"><span style="${x.completada ? 'text-decoration:line-through;opacity:0.6;' : ''}">${x.texto}</span><div>${!x.completada ? `<button onclick="completarTareaN(${x.id})" style="background:#10b981;border:none;padding:5px 12px;border-radius:20px;">✅</button>` : ''}<button onclick="eliminarTareaN(${x.id})" style="background:#ef4444;border:none;padding:5px 12px;border-radius:20px;">🗑️</button></div></div>`).join(""); }
-function completarTareaN(id) { let t = cargarTareasN(), ta = t.find(x => x.id === id); if (ta) { ta.completada = true; guardarTareasN(t); } }
-function eliminarTareaN(id) { guardarTareasN(cargarTareasN().filter(x => x.id !== id)); }
-function eliminarCompletadasN() { if (confirm("¿Eliminar completadas?")) guardarTareasN(cargarTareasN().filter(x => !x.completada)); }
-function cargarExamenesN() { let e = localStorage.getItem("laeticia_examenes_nuevo"); return e ? JSON.parse(e) : []; }
-function guardarExamenesN(e) { localStorage.setItem("laeticia_examenes_nuevo", JSON.stringify(e)); renderizarExamenesN(); }
-function agregarExamenN() { let nom = document.getElementById("inputExamenN").value.trim(), fec = document.getElementById("inputFechaExamenN").value; if (!nom || !fec) { alert("Completa nombre y fecha"); return; } let e = cargarExamenesN(); e.push({ id: Date.now(), nombre: nom, fecha: fec }); guardarExamenesN(e); document.getElementById("inputExamenN").value = ""; document.getElementById("inputFechaExamenN").value = ""; }
-function renderizarExamenesN() { let c = document.getElementById("listaExamenesN"); if (!c) return; let e = cargarExamenesN(); if (e.length === 0) { c.innerHTML = "<p style='text-align:center;padding:20px;'>📝 Sin exámenes</p>"; return; } c.innerHTML = e.map(x => `<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;"><div><strong>📝 ${x.nombre}</strong><br><small>📅 ${x.fecha}</small></div><button onclick="eliminarExamenN(${x.id})" style="background:#ef4444;border:none;padding:5px 12px;border-radius:20px;">🗑️</button></div>`).join(""); }
-function eliminarExamenN(id) { guardarExamenesN(cargarExamenesN().filter(x => x.id !== id)); }
-function actualizarStatsN() { let p = cargarTareasN().filter(x => !x.completada).length; let pe = document.getElementById("statPendientesN"); if (pe) pe.innerText = p; }
-function mostrarTabN(tab) {
-    let h = document.getElementById("horarioSectionN"), ta = document.getElementById("tareasSectionN"), e = document.getElementById("examenesSectionN"), bh = document.getElementById("btnHorarioN"), bt = document.getElementById("btnTareasN"), be = document.getElementById("btnExamenesN");
-    if (h) h.style.display = tab === "horario" ? "block" : "none";
-    if (ta) ta.style.display = tab === "tareas" ? "block" : "none";
-    if (e) e.style.display = tab === "examenes" ? "block" : "none";
-    if (bh) { bh.style.background = tab === "horario" ? "#8b5cf6" : "white"; bh.style.color = tab === "horario" ? "white" : "#1e1b4b"; }
-    if (bt) { bt.style.background = tab === "tareas" ? "#8b5cf6" : "white"; bt.style.color = tab === "tareas" ? "white" : "#1e1b4b"; }
-    if (be) { be.style.background = tab === "examenes" ? "#8b5cf6" : "white"; be.style.color = tab === "examenes" ? "white" : "#1e1b4b"; }
-    if (tab === "tareas") renderizarTareasN();
-    if (tab === "examenes") renderizarExamenesN();
-}
-function iniciarAgendaN() { renderizarHorarioN(); actualizarStatsN(); renderizarTareasN(); renderizarExamenesN(); let chk = document.getElementById("checkMostrarCompletadasN"); if (chk) chk.onchange = function () { renderizarTareasN(); }; }
-
-// ========== SERVICE WORKER ==========
-if ('serviceWorker' in navigator) {
-    const swCode = `self.addEventListener('install',function(e){self.skipWaiting();});self.addEventListener('activate',function(e){e.waitUntil(clients.claim());});self.addEventListener('message',function(e){if(e.data.type==='schedule-notification'){const{title,message,hour,minute}=e.data;const now=new Date();const target=new Date();target.setHours(hour,minute,0,0);if(target<=now)target.setDate(target.getDate()+1);const delay=target-now;setTimeout(()=>{self.registration.showNotification(title,{body:message,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📚</text></svg>',tag:'daily-reminder',requireInteraction:true,vibrate:[200,100,200]});},delay);}});self.addEventListener('notificationclick',function(e){e.notification.close();e.waitUntil(clients.openWindow('/'));});`;
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl).catch(() => {});
-}
-
-// ========== SYSTEME DE PROGRESSION ACADEMY ==========
-function getCurrentAcademyLevel() {
-    let level = localStorage.getItem('academy_level');
-    if (!level) {
-        level = 0;
-        localStorage.setItem('academy_level', '0');
-    }
-    return parseInt(level);
-}
-
-function setAcademyLevel(level) {
-    localStorage.setItem('academy_level', String(level));
-}
-
-function isWeekUnlocked(weekIndex) {
-    const currentLevel = getCurrentAcademyLevel();
-    return weekIndex <= currentLevel;
-}
-
-function renderAcademyProgress() {
-    const currentLevel = getCurrentAcademyLevel();
-    const totalWeeks = 12;
-    const progress = document.getElementById('academyProgress');
-    if (!progress) return;
-    let html = `
-        <div style="background: var(--card); border-radius: 28px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <strong>📚 Progreso Academy</strong>
-                    <div style="font-size: 0.8rem; color: var(--subtext);">Semana ${Math.min(currentLevel + 1, totalWeeks)} / ${totalWeeks}</div>
-                </div>
-                <div style="font-size: 1.5rem;">${'⭐'.repeat(Math.min(currentLevel + 1, totalWeeks))}${'☆'.repeat(Math.max(0, totalWeeks - currentLevel - 1))}</div>
-            </div>
-            <div class="progress-bar-container" style="margin: 8px 0;">
-                <div class="progress-bar-fill" style="width: ${Math.min(((currentLevel + 1) / totalWeeks) * 100, 100)}%; background: var(--primary);"></div>
-            </div>
-            <div style="display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; font-size: 0.6rem; margin-top: 8px;">
-                ${Array.from({length: totalWeeks}, (_, i) => `
-                    <span style="padding: 2px 6px; border-radius: 10px; background: ${i <= currentLevel ? 'var(--primary)' : 'var(--border)'}; color: ${i <= currentLevel ? 'white' : 'var(--subtext)'};">${i + 1} ${i <= currentLevel ? '✅' : '🔒'}</span>
-                `).join('')}
-            </div>
-        </div>
-    `;
-    progress.innerHTML = html;
-}
-
-// ========== DATOS DE CONTENIDO ==========
-let testWeekOverride = null;
-
-const weeklyThemes = [
-    { name: "Emociones y Sentimientos", emoji: "💭", color: "#fef3c7", desc: "Aprende a expresar lo que sientes en inglés y francés" },
-    { name: "Escuela y Aprendizaje", emoji: "📚", color: "#e0e7ff", desc: "Vocabulario escolar y frases para la clase" },
-    { name: "Viajes y Aventuras", emoji: "✈️", color: "#d1fae5", desc: "Explora el mundo con nuevos idiomas" },
-    { name: "Tecnología y Futuro", emoji: "🚀", color: "#fce7f3", desc: "El lenguaje de la era digital" },
-    { name: "Música y Arte", emoji: "🎵", color: "#fce7f3", desc: "Expresa tu creatividad en dos idiomas" },
-    { name: "Comida y Gastronomía", emoji: "🍽️", color: "#fef3c7", desc: "Sabores del mundo en inglés y francés" },
-    { name: "Deportes y Salud", emoji: "⚽", color: "#d1fae5", desc: "Mantente activa mientras aprendes idiomas" },
-    { name: "Naturaleza y Planeta", emoji: "🌍", color: "#e0e7ff", desc: "Cuida el planeta mientras aprendes" },
-    { name: "Amistad y Relaciones Sociales", emoji: "👭", color: "#fce7f3", desc: "Aprende a hablar de amistad y conexiones auténticas" },
-    { name: "Futuro y Carrera Profesional", emoji: "💼", color: "#e0e7ff", desc: "Prepárate para tu futuro con vocabulario profesional" },
-    { name: "Salud Mental y Bienestar", emoji: "🧠", color: "#d1fae5", desc: "Cuida tu mente mientras aprendes dos idiomas" },
-    { name: "Cultura y Ciudadanía Global", emoji: "🌎", color: "#fef3c7", desc: "Explora culturas y conviértete en ciudadana del mundo" }
-];
-
-const baseVocabData = {en:{"Básico":[{en:"happy",es:"feliz"},{en:"sad",es:"triste"}]},fr:{"Básico":[{fr:"heureux",es:"feliz"},{fr:"triste",es:"triste"}]}};
-const baseSlangData = {en:[{phrase:"What's up?",meaning:"¿Qué tal?",level:"beginner"}],fr:[{phrase:"Ça va ?",meaning:"¿Qué tal?",level:"beginner"}]};
-const baseEnglishLessons = [{id:"en_base",title:"How to give your opinion",level:"B1",duration:10,phrases:["I think that…"],trans:["Yo pienso que…"],taskEs:"Da tu opinión"}];
-const baseFrenchLessons = [{id:"fr_base",title:"Exprimer son avis",level:"B1",duration:10,phrases:["Je pense que…"],trans:["Yo pienso que…"],taskEs:"Da tu opinión"}];
-const baseArticles = [{id:1,category:"🔬 Ciencia",title:"Mujeres que cambiaron la ciencia",icon:"🔬",excerpt:"Marie Curie.",content:"<p>Primera persona en ganar dos Premios Nobel.</p>"}];
-const baseMomActivities = [{id:"m1",title:"🎨 Tarjeta de emociones",type:"manualidad",description:"Escribe emociones.",steps:"1. Dobla.\n2. Escriban.",talkQuestions:"¿Qué emoción?"}];
-
-// ========== VOCABULARIO COMPLETO ==========
-const weeklyVocab = {
-    0: { en: [{en:"happy",es:"feliz"},{en:"sad",es:"triste"},{en:"angry",es:"enfadado/a"},{en:"excited",es:"emocionado/a"},{en:"calm",es:"tranquilo/a"},{en:"proud",es:"orgulloso/a"},{en:"nervous",es:"nervioso/a"},{en:"brave",es:"valiente"}], fr: [{fr:"heureux",es:"feliz"},{fr:"triste",es:"triste"},{fr:"fâché",es:"enfadado/a"},{fr:"excité",es:"emocionado/a"},{fr:"calme",es:"tranquilo/a"},{fr:"fier",es:"orgulloso/a"},{fr:"nerveux",es:"nervioso/a"},{fr:"courageux",es:"valiente"}] },
-    1: { en: [{en:"teacher",es:"profesor/a"},{en:"homework",es:"deberes"},{en:"exam",es:"examen"},{en:"notebook",es:"cuaderno"},{en:"pencil",es:"lápiz"},{en:"library",es:"biblioteca"}], fr: [{fr:"professeur",es:"profesor/a"},{fr:"devoir",es:"deberes"},{fr:"examen",es:"examen"},{fr:"cahier",es:"cuaderno"},{fr:"crayon",es:"lápiz"},{fr:"bibliothèque",es:"biblioteca"}] },
-    2: { en: [{en:"passport",es:"pasaporte"},{en:"flight",es:"vuelo"},{en:"hotel",es:"hotel"},{en:"map",es:"mapa"},{en:"adventure",es:"aventura"},{en:"destination",es:"destino"}], fr: [{fr:"passeport",es:"pasaporte"},{fr:"vol",es:"vuelo"},{fr:"hôtel",es:"hotel"},{fr:"carte",es:"mapa"},{fr:"aventure",es:"aventura"},{fr:"destination",es:"destino"}] },
-    3: { en: [{en:"password",es:"contraseña"},{en:"download",es:"descargar"},{en:"screen",es:"pantalla"},{en:"network",es:"red"},{en:"data",es:"datos"},{en:"code",es:"código"}], fr: [{fr:"mot de passe",es:"contraseña"},{fr:"télécharger",es:"descargar"},{fr:"écran",es:"pantalla"},{fr:"réseau",es:"red"},{fr:"données",es:"datos"},{fr:"code",es:"código"}] },
-    4: { en: [{en:"song",es:"canción"},{en:"melody",es:"melodía"},{en:"painting",es:"pintura"},{en:"gallery",es:"galería"},{en:"creativity",es:"creatividad"}], fr: [{fr:"chanson",es:"canción"},{fr:"mélodie",es:"melodía"},{fr:"peinture",es:"pintura"},{fr:"galerie",es:"galería"},{fr:"créativité",es:"creatividad"}] },
-    5: { en: [{en:"recipe",es:"receta"},{en:"delicious",es:"delicioso/a"},{en:"spicy",es:"picante"},{en:"breakfast",es:"desayuno"},{en:"dinner",es:"cena"},{en:"dessert",es:"postre"}], fr: [{fr:"recette",es:"receta"},{fr:"délicieux",es:"delicioso/a"},{fr:"épicé",es:"picante"},{fr:"petit-déjeuner",es:"desayuno"},{fr:"dîner",es:"cena"},{fr:"dessert",es:"postre"}] },
-    6: { en: [{en:"exercise",es:"ejercicio"},{en:"strength",es:"fuerza"},{en:"healthy",es:"saludable"},{en:"team",es:"equipo"},{en:"victory",es:"victoria"},{en:"training",es:"entrenamiento"}], fr: [{fr:"exercice",es:"ejercicio"},{fr:"force",es:"fuerza"},{fr:"sain",es:"saludable"},{fr:"équipe",es:"equipo"},{fr:"victoire",es:"victoria"},{fr:"entraînement",es:"entrenamiento"}] },
-    7: { en: [{en:"forest",es:"bosque"},{en:"ocean",es:"océano"},{en:"mountain",es:"montaña"},{en:"recycle",es:"reciclar"},{en:"planet",es:"planeta"},{en:"wildlife",es:"vida salvaje"}], fr: [{fr:"forêt",es:"bosque"},{fr:"océan",es:"océano"},{fr:"montagne",es:"montaña"},{fr:"recycler",es:"reciclar"},{fr:"planète",es:"planeta"},{fr:"faune",es:"vida salvaje"}] },
-    8: { en: [{en:"friend",es:"amigo/a"},{en:"trust",es:"confianza"},{en:"loyal",es:"leal"},{en:"support",es:"apoyo/apoyar"},{en:"honesty",es:"honestidad"},{en:"betrayal",es:"traición"},{en:"conflict",es:"conflicto"},{en:"reconciliation",es:"reconciliación"}], fr: [{fr:"ami(e)",es:"amigo/a"},{fr:"confiance",es:"confianza"},{fr:"fidèle",es:"leal"},{fr:"soutien",es:"apoyo"},{fr:"honnêteté",es:"honestidad"},{fr:"trahison",es:"traición"},{fr:"conflit",es:"conflicto"},{fr:"réconciliation",es:"reconciliación"}] },
-    9: { en: [{en:"career",es:"carrera profesional"},{en:"dream job",es:"trabajo soñado"},{en:"skills",es:"habilidades"},{en:"experience",es:"experiencia"},{en:"goal",es:"meta/objetivo"},{en:"interview",es:"entrevista"},{en:"salary",es:"salario"},{en:"promotion",es:"ascenso"}], fr: [{fr:"carrière",es:"carrera profesional"},{fr:"métier de rêve",es:"trabajo soñado"},{fr:"compétences",es:"habilidades"},{fr:"expérience",es:"experiencia"},{fr:"objectif",es:"meta/objetivo"},{fr:"entretien",es:"entrevista"},{fr:"salaire",es:"salario"},{fr:"promotion",es:"ascenso"}] },
-    10: { en: [{en:"anxiety",es:"ansiedad"},{en:"stress",es:"estrés"},{en:"self-care",es:"autocuidado"},{en:"therapy",es:"terapia"},{en:"mental health",es:"salud mental"},{en:"wellness",es:"bienestar"},{en:"rest",es:"descanso"},{en:"balance",es:"equilibrio"}], fr: [{fr:"anxiété",es:"ansiedad"},{fr:"stress",es:"estrés"},{fr:"soins personnels",es:"autocuidado"},{fr:"thérapie",es:"terapia"},{fr:"santé mentale",es:"salud mental"},{fr:"bien-être",es:"bienestar"},{fr:"repos",es:"descanso"},{fr:"équilibre",es:"equilibrio"}] },
-    11: { en: [{en:"culture",es:"cultura"},{en:"tradition",es:"tradición"},{en:"diversity",es:"diversidad"},{en:"citizen",es:"ciudadano/a"},{en:"rights",es:"derechos"},{en:"responsibility",es:"responsabilidad"},{en:"community",es:"comunidad"},{en:"global",es:"global"}], fr: [{fr:"culture",es:"cultura"},{fr:"tradition",es:"tradición"},{fr:"diversité",es:"diversidad"},{fr:"citoyen(ne)",es:"ciudadano/a"},{fr:"droits",es:"derechos"},{fr:"responsabilité",es:"responsabilidad"},{fr:"communauté",es:"comunidad"},{fr:"mondial",es:"global"}] }
-};
-
-// ========== SLANG COMPLETO ==========
-const weeklySlang = {
-    0: { en: [{phrase:"I'm so over it",meaning:"Ya estoy harta de esto",context:"Frustración",level:"intermediate"},{phrase:"That hit me in the feels",meaning:"Me llegó al corazón",context:"Emoción",level:"intermediate"},{phrase:"No biggie",meaning:"No es para tanto",context:"Restar importancia",level:"beginner"},{phrase:"I'm shook",meaning:"Estoy en shock",context:"Sorpresa",level:"intermediate"},{phrase:"That's a mood",meaning:"Me identifico totalmente",context:"Conexión emocional",level:"intermediate"},{phrase:"I can't even",meaning:"No tengo palabras",context:"Sorpresa o frustración",level:"intermediate"},{phrase:"It's not that deep",meaning:"No es para tanto",context:"Minimizar",level:"intermediate"},{phrase:"For real",meaning:"¿En serio?",context:"Confirmar",level:"beginner"}], fr: [{phrase:"Je suis au bout de ma vie",meaning:"Estoy harto/a",context:"Frustración",level:"intermediate"},{phrase:"Avoir le seum",meaning:"Estar enfadado/a",context:"Rabia",level:"intermediate"},{phrase:"C'est la vie",meaning:"Así es la vida",context:"Aceptación",level:"beginner"},{phrase:"Être en PLS",meaning:"Estar agotado/a",context:"Fatiga",level:"intermediate"},{phrase:"Avoir le cafard",meaning:"Estar triste",context:"Melancolía",level:"beginner"}] },
-    1: { en: [{phrase:"Cramming",meaning:"Estudiar a última hora",context:"Exámenes",level:"beginner"},{phrase:"Ace a test",meaning:"Sacar 10",context:"Éxito académico",level:"beginner"},{phrase:"Pull an all-nighter",meaning:"No dormir estudiando",context:"Estudio intenso",level:"intermediate"},{phrase:"I blanked out",meaning:"Me quedé en blanco",context:"Olvidar",level:"intermediate"},{phrase:"That's a freebie",meaning:"Esa pregunta es regalada",context:"Algo fácil",level:"intermediate"},{phrase:"I'm behind on homework",meaning:"Voy atrasada con la tarea",context:"Acumulación",level:"beginner"},{phrase:"The teacher called me out",meaning:"La maestra me señaló",context:"En clase",level:"intermediate"},{phrase:"It's a no-brainer",meaning:"Es obvio",context:"Decisión fácil",level:"intermediate"}], fr: [{phrase:"Bachoter",meaning:"Estudiar a última hora",context:"Exámenes",level:"beginner"},{phrase:"Cartonner",meaning:"Tener éxito",context:"Éxito",level:"beginner"},{phrase:"Sécher un cours",meaning:"Saltarse clase",context:"Novillos",level:"beginner"},{phrase:"C'est du gâteau",meaning:"Es pan comido",context:"Fácil",level:"beginner"},{phrase:"Le chouchou du prof",meaning:"Favorito del profe",context:"Compañero ejemplar",level:"beginner"}] },
-    2: { en: [{phrase:"Wanderlust",meaning:"Pasión por viajar",context:"Viajes",level:"beginner"},{phrase:"Catch flights, not feelings",meaning:"Viaja, no te enamores",context:"Filosofía viajera",level:"intermediate"},{phrase:"Living my best life",meaning:"Viviendo al máximo",context:"Felicidad",level:"beginner"},{phrase:"Main character energy",meaning:"Energía de protagonista",context:"Actitud segura",level:"intermediate"},{phrase:"Let's hit the road",meaning:"Vámonos ya",context:"Iniciar viaje",level:"beginner"},{phrase:"I'm totally jet-lagged",meaning:"Estoy muy desvelada",context:"Efecto del viaje",level:"intermediate"},{phrase:"Take me back",meaning:"Llévame otra vez",context:"Extrañar un lugar",level:"beginner"},{phrase:"That's a bucket list destination",meaning:"Es un destino soñado",context:"Lugar por conocer",level:"intermediate"}], fr: [{phrase:"Avoir la bougeotte",meaning:"No poder quedarse quieto",context:"Movimiento",level:"beginner"},{phrase:"Voyager dans sa tête",meaning:"Soñar despierto",context:"Imaginación",level:"beginner"},{phrase:"Prendre la poudre d'escampette",meaning:"Escaparse",context:"Huir",level:"intermediate"},{phrase:"C'est le bout du monde",meaning:"Está lejísimos",context:"Distancia",level:"beginner"},{phrase:"Avoir le mal du pays",meaning:"Extrañar casa",context:"Nostalgia",level:"beginner"}] },
-    3: { en: [{phrase:"My battery is about to die",meaning:"Mi batería está a punto de acabarse",context:"Tecnología",level:"beginner"},{phrase:"DM me",meaning:"Escríbeme por mensaje directo",context:"Redes sociales",level:"beginner"},{phrase:"This app is a total game changer",meaning:"Esta app cambia las reglas",context:"Innovación",level:"intermediate"},{phrase:"I'm trying to limit my screen time",meaning:"Intento reducir tiempo en pantalla",context:"Salud digital",level:"intermediate"},{phrase:"You're blowing up my phone",meaning:"No dejas de escribirme",context:"Muchas notificaciones",level:"intermediate"},{phrase:"I got ghosted",meaning:"Me dejaron de hablar",context:"Desaparecer sin aviso",level:"intermediate"},{phrase:"That's so last season",meaning:"Eso ya pasó de moda",context:"Obsoleto",level:"intermediate"},{phrase:"Don't @ me",meaning:"No me etiquetes",context:"Evitar polémica",level:"advanced"}], fr: [{phrase:"C'est chelou",meaning:"Es raro",context:"Sospecha",level:"intermediate"},{phrase:"C'est relou",meaning:"Es pesado",context:"Molestia",level:"intermediate"},{phrase:"C'est la hess",meaning:"Es la miseria",context:"Dificultad",level:"intermediate"},{phrase:"Trop stylé",meaning:"¡Muy guay!",context:"Elogio",level:"beginner"},{phrase:"Être matrixé(e)",meaning:"Estar obsesionado",context:"Obsesión",level:"intermediate"}] },
-    4: { en: [{phrase:"That song slaps",meaning:"Esa canción está increíble",context:"Música",level:"intermediate"},{phrase:"It's a bop",meaning:"Es muy pegadiza",context:"Canción",level:"beginner"},{phrase:"Drop the beat",meaning:"Que suene la música",context:"Fiesta",level:"beginner"},{phrase:"This is fire",meaning:"Está súper bueno",context:"Algo excelente",level:"beginner"},{phrase:"Earworm",meaning:"Canción pegadiza",context:"Melodía mental",level:"intermediate"},{phrase:"She ate that performance",meaning:"Arrasó con su presentación",context:"Elogio",level:"intermediate"},{phrase:"That's my jam",meaning:"Esa es mi canción favorita",context:"Tema que te representa",level:"beginner"},{phrase:"I've had this on repeat",meaning:"La he tenido en repetición",context:"Obsesión musical",level:"intermediate"}], fr: [{phrase:"Ça déchire",meaning:"Es genial",context:"Impresionante",level:"intermediate"},{phrase:"Avoir la musique dans la peau",meaning:"Llevar la música dentro",context:"Pasión",level:"beginner"},{phrase:"C'est de la bombe",meaning:"Es excelente",context:"Calidad",level:"beginner"},{phrase:"Un tube",meaning:"Un hit musical",context:"Éxito",level:"beginner"},{phrase:"Avoir le rythme dans la peau",meaning:"Tener ritmo natural",context:"Baile",level:"beginner"}] },
-    5: { en: [{phrase:"I'm starving",meaning:"Me muero de hambre",context:"Hambre",level:"beginner"},{phrase:"It's finger-lickin' good",meaning:"Para chuparse los dedos",context:"Comida deliciosa",level:"intermediate"},{phrase:"Let's grab a bite",meaning:"Vamos a comer algo rápido",context:"Plan informal",level:"beginner"},{phrase:"Food coma",meaning:"Sueño después de comer",context:"Modorra",level:"beginner"},{phrase:"This is my guilty pleasure",meaning:"Es mi placer culpable",context:"Algo que te gusta",level:"intermediate"},{phrase:"I'm craving something sweet",meaning:"Se me antoja algo dulce",context:"Antojo",level:"beginner"},{phrase:"That's overpriced",meaning:"Está muy caro",context:"Queja por precio",level:"intermediate"},{phrase:"Can I get a doggy bag?",meaning:"¿Me lo puedo llevar?",context:"Comida que sobra",level:"beginner"}], fr: [{phrase:"Avoir la dalle",meaning:"Tener mucha hambre",context:"Hambre",level:"intermediate"},{phrase:"C'est un régal",meaning:"Es una delicia",context:"Excelente",level:"beginner"},{phrase:"Manger sur le pouce",meaning:"Comer rápido",context:"Informal",level:"intermediate"},{phrase:"Avoir les crocs",meaning:"Tener hambre",context:"Hambre",level:"beginner"},{phrase:"Se régaler",meaning:"Disfrutar comiendo",context:"Placer",level:"beginner"}] },
-    6: { en: [{phrase:"No pain, no gain",meaning:"Sin esfuerzo no hay resultado",context:"Motivación",level:"beginner"},{phrase:"Let's hit the gym",meaning:"Vamos al gimnasio",context:"Ejercicio",level:"beginner"},{phrase:"You got this",meaning:"Tú puedes",context:"Ánimo",level:"beginner"},{phrase:"I'm sore but worth it",meaning:"Adolorida pero valió la pena",context:"Después de entrenar",level:"intermediate"},{phrase:"Crushing it",meaning:"Arrasando",context:"Rendimiento excelente",level:"intermediate"},{phrase:"I need to stretch",meaning:"Necesito estirarme",context:"Antes o después del ejercicio",level:"beginner"},{phrase:"I'm in beast mode",meaning:"Estoy a tope",context:"Energía máxima",level:"intermediate"},{phrase:"That was a good sweat",meaning:"Eso fue un buen entrenamiento",context:"Esfuerzo físico",level:"beginner"}], fr: [{phrase:"Avoir la pêche",meaning:"Tener energía",context:"Vitalidad",level:"beginner"},{phrase:"Se donner à fond",meaning:"Darlo todo",context:"Esfuerzo",level:"intermediate"},{phrase:"C'est dans la poche",meaning:"Está ganado",context:"Victoria",level:"beginner"},{phrase:"Avoir du souffle",meaning:"Tener resistencia",context:"Físico",level:"beginner"},{phrase:"Être au taquet",meaning:"Estar al máximo",context:"Motivación",level:"intermediate"}] },
-    7: { en: [{phrase:"Go green",meaning:"Sé ecológico",context:"Ecología",level:"beginner"},{phrase:"Reduce your carbon footprint",meaning:"Reduce tu huella de carbono",context:"Ambiente",level:"intermediate"},{phrase:"Save the planet",meaning:"Salva el planeta",context:"Activismo",level:"beginner"},{phrase:"Leave no trace",meaning:"No dejes rastro",context:"Respeto por la naturaleza",level:"intermediate"},{phrase:"It's a breath of fresh air",meaning:"Es un respiro de aire fresco",context:"Algo que te renueva",level:"intermediate"},{phrase:"I'm an outdoor person",meaning:"Soy de estar al aire libre",context:"Personalidad",level:"beginner"},{phrase:"Let's go zero waste",meaning:"Intentemos no generar basura",context:"Sostenible",level:"intermediate"},{phrase:"Mother Nature is angry",meaning:"La naturaleza está enfadada",context:"Cambio climático",level:"intermediate"}], fr: [{phrase:"Être écolo",meaning:"Ser ecológico",context:"Ecología",level:"beginner"},{phrase:"Sauver la planète",meaning:"Salvar el planeta",context:"Activismo",level:"beginner"},{phrase:"C'est pas la mer à boire",meaning:"No es tan difícil",context:"Minimizar",level:"intermediate"},{phrase:"Avoir la main verte",meaning:"Buena mano plantas",context:"Jardinería",level:"beginner"},{phrase:"Un geste pour la planète",meaning:"Un gesto por el planeta",context:"Acción",level:"beginner"}] },
-    8: { en: [{phrase:"BFF",meaning:"Mejor amiga para siempre",context:"Amistad",level:"beginner"},{phrase:"We're tight",meaning:"Somos muy unidas",context:"Amistad cercana",level:"intermediate"},{phrase:"I got your back",meaning:"Te apoyo",context:"Apoyo",level:"intermediate"},{phrase:"She's my ride or die",meaning:"Es mi amiga incondicional",context:"Lealtad",level:"intermediate"},{phrase:"We had a falling out",meaning:"Tuvimos un conflicto",context:"Pelea",level:"intermediate"},{phrase:"Let's bury the hatchet",meaning:"Hagamos las paces",context:"Reconciliación",level:"advanced"},{phrase:"Frenemy",meaning:"Amigo-enemigo",context:"Relación tóxica",level:"intermediate"},{phrase:"You're a real one",meaning:"Eres una persona auténtica",context:"Elogio",level:"intermediate"}], fr: [{phrase:"Ma meilleure pote",meaning:"Mi mejor amiga",context:"Amistad",level:"beginner"},{phrase:"On est inséparables",meaning:"Somos inseparables",context:"Amistad cercana",level:"intermediate"},{phrase:"Je te soutiens",meaning:"Te apoyo",context:"Apoyo",level:"beginner"},{phrase:"C'est ma sœur de cœur",meaning:"Es mi hermana del corazón",context:"Lealtad",level:"intermediate"},{phrase:"On s'est disputées",meaning:"Tuvimos una pelea",context:"Conflicto",level:"intermediate"},{phrase:"Faire la paix",meaning:"Hacer las paces",context:"Reconciliación",level:"beginner"},{phrase:"Être en froid",meaning:"Estar distanciadas",context:"Relación tensa",level:"intermediate"},{phrase:"Une amie sincère",meaning:"Una amiga sincera",context:"Elogio",level:"beginner"}] },
-    9: { en: [{phrase:"Dream job",meaning:"Trabajo soñado",context:"Carrera",level:"beginner"},{phrase:"Level up",meaning:"Subir de nivel",context:"Crecimiento",level:"intermediate"},{phrase:"Hustle",meaning:"Trabajar duro/emprender",context:"Esfuerzo",level:"intermediate"},{phrase:"I'm in my bag",meaning:"Estoy enfocada en mis metas",context:"Concentración",level:"advanced"},{phrase:"Networking",meaning:"Hacer contactos",context:"Conexiones",level:"intermediate"},{phrase:"Career path",meaning:"Trayectoria profesional",context:"Futuro",level:"intermediate"},{phrase:"Work-life balance",meaning:"Equilibrio trabajo-vida",context:"Bienestar",level:"advanced"},{phrase:"You're going places",meaning:"Vas a llegar lejos",context:"Motivación",level:"intermediate"}], fr: [{phrase:"Métier de rêve",meaning:"Trabajo soñado",context:"Carrera",level:"beginner"},{phrase:"Monter en grade",meaning:"Ascender",context:"Crecimiento",level:"intermediate"},{phrase:"Travailler dur",meaning:"Trabajar duro",context:"Esfuerzo",level:"beginner"},{phrase:"J'ai la vision",meaning:"Tengo la visión clara",context:"Metas",level:"intermediate"},{phrase:"Réseautage",meaning:"Hacer contactos",context:"Conexiones",level:"intermediate"},{phrase:"Parcours professionnel",meaning:"Trayectoria",context:"Futuro",level:"intermediate"},{phrase:"Équilibre pro-perso",meaning:"Equilibrio trabajo-vida",context:"Bienestar",level:"advanced"},{phrase:"Tu iras loin",meaning:"Vas a llegar lejos",context:"Motivación",level:"beginner"}] },
-    10: { en: [{phrase:"Self-care day",meaning:"Día de autocuidado",context:"Bienestar",level:"beginner"},{phrase:"I'm overwhelmed",meaning:"Estoy abrumada",context:"Estrés",level:"intermediate"},{phrase:"Take a breather",meaning:"Tomar un respiro",context:"Descanso",level:"intermediate"},{phrase:"Mental health matters",meaning:"La salud mental importa",context:"Conciencia",level:"beginner"},{phrase:"It's okay to not be okay",meaning:"Está bien no estar bien",context:"Aceptación",level:"intermediate"},{phrase:"Burnout",meaning:"Agotamiento extremo",context:"Estrés",level:"intermediate"},{phrase:"Check in with yourself",meaning:"Conectar con tu interior",context:"Autocuidado",level:"advanced"},{phrase:"You are enough",meaning:"Eres suficiente",context:"Autoestima",level:"beginner"}], fr: [{phrase:"Journée cocooning",meaning:"Día de autocuidado",context:"Bienestar",level:"beginner"},{phrase:"Je suis débordée",meaning:"Estoy abrumada",context:"Estrés",level:"intermediate"},{phrase:"Prendre du recul",meaning:"Tomar distancia",context:"Descanso",level:"intermediate"},{phrase:"La santé mentale compte",meaning:"La salud mental importa",context:"Conciencia",level:"beginner"},{phrase:"Ça va aller",meaning:"Todo va a estar bien",context:"Apoyo",level:"beginner"},{phrase:"Épuisement",meaning:"Agotamiento",context:"Estrés",level:"intermediate"},{phrase:"S'écouter",meaning:"Escucharse",context:"Autocuidado",level:"advanced"},{phrase:"Tu es suffisante",meaning:"Eres suficiente",context:"Autoestima",level:"beginner"}] },
-    11: { en: [{phrase:"Cultural exchange",meaning:"Intercambio cultural",context:"Cultura",level:"beginner"},{phrase:"World citizen",meaning:"Ciudadana del mundo",context:"Identidad",level:"intermediate"},{phrase:"Break down barriers",meaning:"Romper barreras",context:"Inclusión",level:"intermediate"},{phrase:"Diversity is our strength",meaning:"La diversidad es nuestra fuerza",context:"Valores",level:"intermediate"},{phrase:"Give back to the community",meaning:"Devolver a la comunidad",context:"Responsabilidad",level:"advanced"},{phrase:"Open-minded",meaning:"Mente abierta",context:"Actitud",level:"beginner"},{phrase:"Make a difference",meaning:"Hacer la diferencia",context:"Impacto",level:"intermediate"},{phrase:"Global perspective",meaning:"Perspectiva global",context:"Visión",level:"advanced"}], fr: [{phrase:"Échange culturel",meaning:"Intercambio cultural",context:"Cultura",level:"beginner"},{phrase:"Citoyenne du monde",meaning:"Ciudadana del mundo",context:"Identidad",level:"intermediate"},{phrase:"Briser les barrières",meaning:"Romper barreras",context:"Inclusión",level:"intermediate"},{phrase:"La diversité est notre force",meaning:"La diversidad es nuestra fuerza",context:"Valores",level:"intermediate"},{phrase:"S'engager",meaning:"Comprometerse",context:"Responsabilidad",level:"intermediate"},{phrase:"Ouverte d'esprit",meaning:"Mente abierta",context:"Actitud",level:"beginner"},{phrase:"Faire une différence",meaning:"Hacer la diferencia",context:"Impacto",level:"intermediate"},{phrase:"Perspective mondiale",meaning:"Perspectiva global",context:"Visión",level:"advanced"}] }
-};
-
-// ========== LECCIONES COMPLETAS ==========
-const weeklyLessons = {
-    0: { en: [{id:"en0",title:"Expressing your feelings like a pro",level:"A2",duration:15,phrases:["I feel a bit overwhelmed today","That made me really happy!","I'm going through a rough patch","Honestly, I'm feeling mixed emotions","It is what it is, I'll get over it"],trans:["Me siento un poco abrumada hoy","¡Eso me hizo muy feliz!","Estoy pasando por un momento difícil","Honestamente, tengo emociones encontradas","Es lo que hay, lo superaré"],taskEs:"Describe cómo te sientes hoy usando 3 frases"}], fr: [{id:"fr0",title:"Exprimer tes sentiments comme une pro",level:"A2",duration:15,phrases:["Je me sens un peu dépassée aujourd'hui","Ça m'a rendue vraiment heureuse!","Je traverse une période difficile","Honnêtement, j'ai des émotions mitigées","C'est comme ça, je vais m'en remettre"],trans:["Me siento un poco abrumada hoy","¡Eso me hizo muy feliz!","Estoy pasando por un momento difícil","Honestamente, tengo emociones encontradas","Es lo que hay, lo superaré"],taskEs:"Décris comment tu te sens aujourd'hui avec 3 phrases"}] },
-    1: { en: [{id:"en1",title:"Surviving school like a boss",level:"A2",duration:15,phrases:["I have a ton of homework due tomorrow","Can I get an extension on this assignment?","I totally spaced out during class","This subject is actually growing on me","Let's team up for the group project"],trans:["Tengo un montón de tarea para mañana","¿Puedo tener una extensión en esta tarea?","Me distraje completamente en clase","Esta materia me está gustando cada vez más","Hagamos equipo para el proyecto grupal"],taskEs:"Describe tu día escolar con 3 frases"}], fr: [{id:"fr1",title:"Survivre à l'école comme un chef",level:"A2",duration:15,phrases:["J'ai une tonne de devoirs pour demain","Je peux avoir un délai pour ce devoir?","J'étais complètement ailleurs en cours","Cette matière commence à me plaire","On fait équipe pour le projet de groupe?"],trans:["Tengo un montón de tarea para mañana","¿Puedo tener una extensión en esta tarea?","Me distraje completamente en clase","Esta materia me está gustando cada vez más","Hagamos equipo para el proyecto grupal"],taskEs:"Décris ta journée scolaire avec 3 phrases"}] },
-    2: { en: [{id:"en2",title:"Travel like an influencer",level:"A2",duration:15,phrases:["I'm so excited for my trip next week!","What's the best way to get around here?","This view is absolutely breathtaking","I need to pick up some souvenirs","Do you know any cool spots off the beaten path?"],trans:["¡Estoy tan emocionada por mi viaje!","¿Cuál es la mejor forma de moverse?","Esta vista es absolutamente impresionante","Necesito comprar algunos recuerdos","¿Conoces lugares geniales fuera de lo turístico?"],taskEs:"Describe un viaje que te gustaría hacer"}], fr: [{id:"fr2",title:"Voyager comme un influenceur",level:"A2",duration:15,phrases:["Je suis trop excitée pour mon voyage!","Quel est le meilleur moyen de se déplacer?","Cette vue est à couper le souffle","Je dois acheter quelques souvenirs","Tu connais des endroits hors des sentiers battus?"],trans:["¡Estoy tan emocionada por mi viaje!","¿Cuál es la mejor forma de moverse?","Esta vista es absolutamente impresionante","Necesito comprar algunos recuerdos","¿Conoces lugares geniales fuera de lo turístico?"],taskEs:"Décris un voyage que tu aimerais faire"}] },
-    3: { en: [{id:"en3",title:"Tech talk for teens",level:"A2",duration:15,phrases:["My phone battery is about to die","Can you send me the link via DM?","This app is a total game changer","I'm trying to limit my screen time","Have you checked out that new AI tool?"],trans:["Mi batería está a punto de morir","¿Me envías el enlace por DM?","Esta app cambia totalmente las reglas","Estoy tratando de limitar mi tiempo en pantalla","¿Ya probaste esa nueva herramienta de IA?"],taskEs:"Describe cómo usas la tecnología en tu día"}], fr: [{id:"fr3",title:"Parler tech pour ados",level:"A2",duration:15,phrases:["Ma batterie va bientôt mourir","Tu peux m'envoyer le lien en DM?","Cette appli change complètement la donne","J'essaie de limiter mon temps d'écran","T'as déjà testé ce nouvel outil IA?"],trans:["Mi batería está a punto de morir","¿Me envías el enlace por DM?","Esta app cambia totalmente las reglas","Estoy tratando de limitar mi tiempo en pantalla","¿Ya probaste esa nueva herramienta de IA?"],taskEs:"Décris comment tu utilises la technologie"}] },
-    4: { en: [{id:"en4",title:"Music vibes & conversations",level:"A2",duration:15,phrases:["This song hits different at night","I've had this track on repeat all week","The lyrics speak to my soul","She absolutely killed that performance","What's your go-to playlist for studying?"],trans:["Esta canción se siente diferente de noche","He tenido esta canción en repetición toda la semana","La letra le habla a mi alma","Ella arrasó con esa presentación","¿Cuál es tu playlist para estudiar?"],taskEs:"Describe tu canción favorita y por qué te gusta"}], fr: [{id:"fr4",title:"Vibes musicales et conversations",level:"A2",duration:15,phrases:["Cette chanson fait un effet différent la nuit","J'ai ce morceau en boucle depuis une semaine","Les paroles parlent à mon âme","Elle a complètement déchiré sa performance","C'est quoi ta playlist pour étudier?"],trans:["Esta canción se siente diferente de noche","He tenido esta canción en repetición toda la semana","La letra le habla a mi alma","Ella arrasó con esa presentación","¿Cuál es tu playlist para estudiar?"],taskEs:"Décris ta chanson préférée"}] },
-    5: { en: [{id:"en5",title:"Foodie conversations",level:"A2",duration:15,phrases:["I'm totally craving tacos right now","This dish is to die for!","I could eat this every single day","I'm not a picky eater at all","Let's grab a bite somewhere new"],trans:["Se me antojan unos tacos ahora mismo","¡Este platillo está para morirse!","Podría comer esto todos los días","No soy nada quisquillosa con la comida","Vamos a comer algo a un lugar nuevo"],taskEs:"Describe tu comida favorita"}], fr: [{id:"fr5",title:"Conversations de foodie",level:"A2",duration:15,phrases:["J'ai trop envie de tacos là tout de suite","Ce plat est à tomber par terre!","Je pourrais manger ça tous les jours","Je ne suis pas du tout difficile","On va manger un bout dans un nouvel endroit?"],trans:["Se me antojan unos tacos ahora mismo","¡Este platillo está para morirse!","Podría comer esto todos los días","No soy nada quisquillosa con la comida","Vamos a comer algo a un lugar nuevo"],taskEs:"Décris ton plat préféré"}] },
-    6: { en: [{id:"en6",title:"Sports talk & motivation",level:"A2",duration:15,phrases:["I'm really into yoga lately","Let's go for a run, it'll clear your mind","No pain, no gain, right?","She's absolutely crushing it on the field!","I need to stretch before this workout"],trans:["Últimamente me está gustando mucho el yoga","Vamos a correr, te despejará la mente","Sin dolor no hay ganancia, ¿no?","¡La está rompiendo en la cancha!","Necesito estirar antes de este entrenamiento"],taskEs:"Describe tu deporte favorito"}], fr: [{id:"fr6",title:"Sport & motivation",level:"A2",duration:15,phrases:["Je suis à fond dans le yoga en ce moment","On va courir? Ça va te vider la tête","Pas de douleur, pas de gain, non?","Elle déchire tout sur le terrain!","Je dois m'étirer avant cette séance"],trans:["Últimamente me está gustando mucho el yoga","Vamos a correr, te despejará la mente","Sin dolor no hay ganancia, ¿no?","¡La está rompiendo en la cancha!","Necesito estirar antes de este entrenamiento"],taskEs:"Décris ton sport préféré"}] },
-    7: { en: [{id:"en7",title:"Eco-friendly & nature convos",level:"A2",duration:15,phrases:["I'm trying to reduce my plastic waste","Nature is honestly the best therapy","Let's go hiking this weekend!","We should all do our part for the planet","This beach cleanup is so rewarding"],trans:["Estoy tratando de reducir mis residuos plásticos","La naturaleza es la mejor terapia","¡Vamos de excursión este fin de semana!","Todos deberíamos hacer nuestra parte","Esta limpieza de playa es tan gratificante"],taskEs:"Describe 3 cosas que haces para ayudar al planeta"}], fr: [{id:"fr7",title:"Écolo & nature",level:"A2",duration:15,phrases:["J'essaie de réduire mes déchets plastiques","La nature est franchement la meilleure thérapie","On part en rando ce week-end!","On devrait tous faire notre part","Ce nettoyage de plage est tellement gratifiant"],trans:["Estoy tratando de reducir mis residuos plásticos","La naturaleza es la mejor terapia","¡Vamos de excursión este fin de semana!","Todos deberíamos hacer nuestra parte","Esta limpieza de playa es tan gratificante"],taskEs:"Décris 3 choses que tu fais pour la planète"}] },
-    8: { en: [{id:"en8",title:"Talking about friendship & relationships",level:"A2-B1",duration:20,phrases:["She's been my best friend since primary school","I really value her honesty and loyalty","We had a disagreement, but we talked it out","A true friend supports you through tough times","Sometimes friendships need space to grow","I'm grateful for the people who truly care about me"],trans:["Ella ha sido mi mejor amiga desde la primaria","Valoro mucho su honestidad y lealtad","Tuvimos un desacuerdo, pero lo hablamos","Una verdadera amiga te apoya en los momentos difíciles","A veces las amistades necesitan espacio para crecer","Estoy agradecida por las personas que realmente se preocupan por mí"],taskEs:"Describe a tu mejor amiga o amigo usando 4 de las frases aprendidas"}], fr: [{id:"fr8",title:"Parler d'amitié et de relations",level:"A2-B1",duration:20,phrases:["C'est ma meilleure amie depuis l'école primaire","Je valorise beaucoup son honnêteté et sa loyauté","On a eu un désaccord, mais on en a parlé","Une vraie amie te soutient dans les moments difficiles","Parfois, les amitiés ont besoin d'espace pour grandir","Je suis reconnaissante pour les personnes qui se soucient vraiment de moi"],trans:["Ella ha sido mi mejor amiga desde la primaria","Valoro mucho su honestidad y lealtad","Tuvimos un desacuerdo, pero lo hablamos","Una verdadera amiga te apoya en los momentos difíciles","A veces las amistades necesitan espacio para crecer","Estoy agradecida por las personas que realmente se preocupan por mí"],taskEs:"Décris ta meilleure amie en utilisant 4 des phrases apprises"}] },
-    9: { en: [{id:"en9",title:"Planning your future & career",level:"A2-B1",duration:20,phrases:["I'm thinking about studying psychology at university","What skills do I need for my dream job?","I want to make a positive impact in the world","It's important to gain experience and learn every day","I'm working hard to achieve my goals","Balance between work and personal life is essential"],trans:["Estoy pensando en estudiar psicología en la universidad","¿Qué habilidades necesito para mi trabajo soñado?","Quiero tener un impacto positivo en el mundo","Es importante ganar experiencia y aprender cada día","Estoy trabajando duro para alcanzar mis metas","El equilibrio entre trabajo y vida personal es esencial"],taskEs:"Describe tu plan de futuro usando 4 de las frases aprendidas"}], fr: [{id:"fr9",title:"Planifier ton avenir et ta carrière",level:"A2-B1",duration:20,phrases:["Je pense à étudier la psychologie à l'université","Quelles compétences sont nécessaires pour mon métier de rêve?","Je veux avoir un impact positif sur le monde","Il est important d'acquérir de l'expérience et d'apprendre chaque jour","Je travaille dur pour atteindre mes objectifs","L'équilibre entre le travail et la vie personnelle est essentiel"],trans:["Estoy pensando en estudiar psicología en la universidad","¿Qué habilidades necesito para mi trabajo soñado?","Quiero tener un impacto positivo en el mundo","Es importante ganar experiencia y aprender cada día","Estoy trabajando duro para alcanzar mis metas","El equilibrio entre trabajo y vida personal es esencial"],taskEs:"Décris ton plan d'avenir en utilisant 4 des phrases apprises"}] },
-    10: { en: [{id:"en10",title:"Mental health & self-care",level:"A2-B1",duration:20,phrases:["It's okay to take a break when you're feeling overwhelmed","Practicing mindfulness helps me stay grounded","I'm learning to prioritize my mental health","Sometimes I need to say no to protect my well-being","Talking to someone about my feelings makes a difference","Self-care is not selfish, it's necessary"],trans:["Está bien tomar un descanso cuando te sientes abrumada","Practicar la atención plena me ayuda a mantenerme centrada","Estoy aprendiendo a priorizar mi salud mental","A veces necesito decir no para proteger mi bienestar","Hablar con alguien sobre mis sentimientos marca la diferencia","El autocuidado no es egoísta, es necesario"],taskEs:"Describe cómo cuidas tu salud mental usando 4 de las frases aprendidas"}], fr: [{id:"fr10",title:"Santé mentale et soins personnels",level:"A2-B1",duration:20,phrases:["C'est normal de prendre une pause quand on se sent dépassée","Pratiquer la pleine conscience m'aide à rester centrée","J'apprends à prioriser ma santé mentale","Parfois, je dois dire non pour protéger mon bien-être","Parler à quelqu'un de mes sentiments fait une différence","Prendre soin de soi n'est pas égoïste, c'est nécessaire"],trans:["Está bien tomar un descanso cuando te sientes abrumada","Practicar la atención plena me ayuda a mantenerme centrada","Estoy aprendiendo a priorizar mi salud mental","A veces necesito decir no para proteger mi bienestar","Hablar con alguien sobre mis sentimientos marca la diferencia","El autocuidado no es egoísta, es necesario"],taskEs:"Décris comment tu prends soin de ta santé mentale en utilisant 4 phrases"}] },
-    11: { en: [{id:"en11",title:"Culture & global citizenship",level:"A2-B1",duration:20,phrases:["Learning about other cultures opens my mind","I believe in respecting diversity and different traditions","We all have a responsibility to make the world better","Small actions can create big changes in our community","Being open-minded helps me understand others better","We are all citizens of the same planet"],trans:["Aprender sobre otras culturas me abre la mente","Creo en respetar la diversidad y las diferentes tradiciones","Todos tenemos la responsabilidad de hacer un mundo mejor","Pequeñas acciones pueden crear grandes cambios en nuestra comunidad","Tener una mente abierta me ayuda a entender mejor a los demás","Todos somos ciudadanos del mismo planeta"],taskEs:"Describe qué significa ser una ciudadana global usando 4 de las frases aprendidas"}], fr: [{id:"fr11",title:"Culture et citoyenneté mondiale",level:"A2-B1",duration:20,phrases:["Apprendre sur d'autres cultures m'ouvre l'esprit","Je crois en le respect de la diversité et des différentes traditions","Nous avons tous la responsabilité de rendre le monde meilleur","Les petites actions peuvent créer de grands changements dans notre communauté","Être ouverte d'esprit m'aide à mieux comprendre les autres","Nous sommes tous citoyens de la même planète"],trans:["Aprender sobre otras culturas me abre la mente","Creo en respetar la diversidad y las diferentes tradiciones","Todos tenemos la responsabilidad de hacer un mundo mejor","Pequeñas acciones pueden crear grandes cambios en nuestra comunidad","Tener una mente abierta me ayuda a entender mejor a los demás","Todos somos ciudadanos del mismo planeta"],taskEs:"Décris ce que signifie être une citoyenne du monde en utilisant 4 phrases"}] }
-};
-
-// ========== VARIABLES GLOBALES ==========
-let currentLang = "en";
-let karaokeFilter = "all";
-let currentGame = "memory";
-let completedLessons = JSON.parse(localStorage.getItem("laeticia_completed") || "[]");
-let userXP = parseInt(localStorage.getItem("laeticia_xp") || "0");
-let userLevel = parseInt(localStorage.getItem("laeticia_level") || "1");
-let diaryEntries = JSON.parse(localStorage.getItem("laeticia_diary") || "[]");
-let sentInvites = JSON.parse(localStorage.getItem("laeticia_sent_invites") || "[]");
-let receivedInvites = JSON.parse(localStorage.getItem("laeticia_received_invites") || "[]");
-let friends = JSON.parse(localStorage.getItem("laeticia_friends") || "[]");
-let flashcardDeck = [];
-let flashcardIndex = 0;
-let flashcardCorrect = 0;
-let flashcardTotal = 0;
-let flashcardFlipped = false;
-let flashcardMode = "slang";
-let memoryCards = [];
-let memoryFlipped = [];
-let memoryMatched = [];
-let memoryLocked = false;
-let quizWords = [];
-let quizIndex = 0;
-let quizScore = 0;
-let quizTotal = 0;
-let quizTimer = null;
-let quizTimeLeft = 10;
-let scrambleWords = [];
-let scrambleIndex = 0;
-let scrambleScore = 0;
-let scrambleAnswer = [];
-let diaryPhotoData = null;
-let originalPhotoData = null;
-let photoRotation = 0;
-let photoFlipH = false;
-let photoFlipV = false;
-let deferredPrompt;
-let notifSettings = JSON.parse(localStorage.getItem("laeticia_notif_settings") || '{"enabled":false,"time":"17:00","days":[1,2,3,4,5],"message":"📚 ¿Ya practicaste hoy?"}');
-const BACKUP_KEYS = ["laeticia_completed","laeticia_xp","laeticia_level","laeticia_streak","laeticia_diary","laeticia_sent_invites","laeticia_received_invites","laeticia_friends","laeticia_theme","laeticia_dark_mode","laeticia_avatar","laeticia_last_mood","laeticia_mama_playlist","laeticia_notif_settings","laeticia_dad_completadas","laeticia_grammar","laeticia_exam_completed"];
-const TOTAL_LESSONS = 24;
-
-// ========== FUNCIONES PRINCIPALES ==========
-function getCurrentWeekInfo() {
-    if (testWeekOverride !== null) {
-        if (isWeekUnlocked(testWeekOverride)) {
-            return { weekNumber: testWeekOverride + 1, cycleIndex: testWeekOverride, theme: weeklyThemes[testWeekOverride] };
-        } else {
-            testWeekOverride = null;
-        }
-    }
-    const currentLevel = getCurrentAcademyLevel();
-    const w = Math.min(currentLevel, weeklyThemes.length - 1);
-    return { weekNumber: w + 1, cycleIndex: w, theme: weeklyThemes[w] };
-}
-
-function renderWeekSelector() {
-    const currentLevel = getCurrentAcademyLevel();
-    const totalWeeks = 12;
-    const select = document.getElementById("weekSelector");
-    if (!select) return;
-    let html = `<option value="auto">📅 Semana actual (auto)</option>`;
-    for (let i = 0; i <= currentLevel && i < totalWeeks; i++) {
-        const week = weeklyThemes[i];
-        html += `<option value="${i}" ${testWeekOverride === i ? 'selected' : ''}>${week.emoji} S${i + 1}: ${week.name} ✅</option>`;
-    }
-    if (currentLevel >= totalWeeks - 1) {
-        html += `<option disabled>🎉 ¡Todas las semanas desbloqueadas!</option>`;
-    } else {
-        for (let i = currentLevel + 1; i < totalWeeks; i++) {
-            const week = weeklyThemes[i];
-            html += `<option value="${i}" disabled style="color: #999; opacity: 0.5;">🔒 S${i + 1}: ${week.name}</option>`;
-        }
-    }
-    select.innerHTML = html;
-}
-
-function updateWeeklyDisplay() {
-    const wi = getCurrentWeekInfo();
-    const t = wi.theme;
-    const isUnlocked = isWeekUnlocked(wi.cycleIndex);
-    const hero = document.getElementById('weekThemeHero');
-    if (hero) {
-        if (isUnlocked) {
-            hero.innerHTML = `<h3>${t.emoji} Semana ${wi.weekNumber} : ${t.name}</h3><p>${t.desc}</p><div style="font-size:0.7rem;margin-top:8px;color:#10b981;">✅ Semana desbloqueada</div>`;
-            hero.style.background = `linear-gradient(135deg, ${t.color}, white)`;
-            hero.style.opacity = '1';
-        } else {
-            hero.innerHTML = `<h3>🔒 Semana ${wi.weekNumber} : ${t.name}</h3><p>${t.desc}</p><div style="font-size:0.7rem;margin-top:8px;color:#dc2626;">🔒 Completa la semana anterior para desbloquear</div>`;
-            hero.style.background = `linear-gradient(135deg, #e5e7eb, #f3f4f6)`;
-            hero.style.opacity = '0.6';
-        }
-    }
-}
-
-function changeTestWeek() {
-    const v = document.getElementById("weekSelector").value;
-    testWeekOverride = v === "auto" ? null : parseInt(v);
-    updateWeeklyDisplay();
-    if (document.getElementById("viewAcademy").classList.contains("active")) {
-        renderVocab();
-        renderFlashcardModes();
-        loadFlashcards();
-        renderLessons();
-        renderAcademyProgress();
-    }
-}
-
-function getVocabData() {
-    try {
-        const wv = weeklyVocab[getCurrentWeekInfo().cycleIndex];
-        if (wv && wv[currentLang]) return {"Tema": wv[currentLang]};
-    } catch(e) {}
-    return baseVocabData[currentLang] || baseVocabData["en"];
-}
-
-function getSlangData() {
-    try {
-        const ws = weeklySlang[getCurrentWeekInfo().cycleIndex];
-        if (ws && ws[currentLang]) return ws[currentLang];
-    } catch(e) {}
-    return baseSlangData[currentLang] || baseSlangData["en"];
-}
-
-function getLessons() {
-    try {
-        const wl = weeklyLessons[getCurrentWeekInfo().cycleIndex];
-        if (wl && wl[currentLang]) return wl[currentLang];
-    } catch(e) {}
-    return currentLang === "en" ? baseEnglishLessons : baseFrenchLessons;
-}
-
-function getArticlesData() {
-    try {
-        const a = weeklyArticles[getCurrentWeekInfo().cycleIndex];
-        return a && a.length ? a : baseArticles;
-    } catch(e) {
-        return baseArticles;
-    }
-}
-
-function getMomActivitiesData() {
-    try {
-        const a = weeklyMomActivities[getCurrentWeekInfo().cycleIndex];
-        return a && a.length ? a : baseMomActivities;
-    } catch(e) {
-        return baseMomActivities;
-    }
-}
-
-// ========== RENDER FUNCTIONS ==========
-function renderVocab() {
-    const d = getVocabData();
-    const packs = Object.keys(d);
-    const container = document.getElementById("vocabSection");
-    if (!container) return;
-    container.innerHTML = `<div class="badge">📖 Vocabulario</div><div id="vocabPacks">${packs.map(p => `<span class="vocab-pack" data-pack="${p}">📦 ${p}</span>`).join('')}</div><div id="vocabWords" class="vocab-words"></div>`;
-    if (packs.length) {
-        document.getElementById("vocabWords").innerHTML = d[packs[0]].map(i => `<span class="word-card">${i.en || i.fr} → ${i.es}</span>`).join('');
-    }
-    document.querySelectorAll(".vocab-pack").forEach(el => {
-        el.addEventListener("click", () => {
-            const p = el.getAttribute("data-pack");
-            document.getElementById("vocabWords").innerHTML = d[p].map(i => `<span class="word-card">${i.en || i.fr} → ${i.es}</span>`).join('');
-        });
-    });
-}
-
-function renderLessons() {
-    const lessons = getLessons();
-    const container = document.getElementById("lessonsContainer");
-    if (!container) return;
-    container.innerHTML = lessons.map(l => `
-        <div class="lesson-card" onclick="openLesson('${l.id}')">
-            <div class="lesson-level">${l.level} · ${l.duration}min</div>
-            <div class="card-title">${l.title}</div>
-            <div>${completedLessons.includes(l.id) ? "✅" : "📖"}</div>
-        </div>
-    `).join('');
-    document.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
-    document.getElementById(`lang-${currentLang}`).classList.add("active");
-}
-
-function openLesson(id) {
-    const l = getLessons().find(l => l.id === id);
-    if (!l) return;
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>📚 Lección</div>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
-            </div>
-            <div class="card-title">${l.title}</div>
-            <div>📌 ${l.taskEs}</div>
-            <ul>${l.phrases.map((p, i) => `<li><strong>${p}</strong> → ${l.trans[i]} <button class="btn-small" onclick="speakText('${p}','${currentLang}')">🔊</button></li>`).join('')}</ul>
-            <div style="margin-top:20px;text-align:center;"><button class="btn-primary" onclick="completeLesson('${l.id}')">✅ Marcar (+20 XP)</button></div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-}
-
-function completeLesson(id) {
-    if (!completedLessons.includes(id)) {
-        completedLessons.push(id);
-        localStorage.setItem("laeticia_completed", JSON.stringify(completedLessons));
-        userXP += 20;
-        if (userXP >= userLevel * 100) userLevel++;
-        localStorage.setItem("laeticia_xp", userXP);
-        localStorage.setItem("laeticia_level", userLevel);
-        alert("🎉 +20 XP!");
-        renderLessons();
-        updateProfile();
-    }
-    document.querySelector('.modal-overlay')?.remove();
-}
-
-// ========== FUNCIONES QUE FALTABAN ==========
-function togglePlayPause() {
-    if (laeticiaFavSongs && laeticiaFavSongs[currentSongIndex]) {
-        window.open(laeticiaFavSongs[currentSongIndex].url, '_blank');
-    }
-}
-
-function signOutAndClose() {
-    sessionStorage.removeItem('laeticia_logged');
-    sessionStorage.removeItem('laeticia_user');
-    location.reload();
-}
-
-function mostrarAdminDirecto() {
-    const currentUser = sessionStorage.getItem('laeticia_user');
-    const esAdmin = (currentUser === 'jeant.montreuil@gmail.com');
-    if (!esAdmin) {
-        alert("⛔ Acceso denegado. Solo administradores.");
-        return;
-    }
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    const adminView = document.getElementById('viewAdmin');
-    if (adminView) adminView.classList.add('active');
-    const container = document.getElementById('adminStatsContainer');
-    if (container) {
-        let stats = JSON.parse(localStorage.getItem('laeticia_stats') || '{}');
-        if (Object.keys(stats).length === 0) {
-            stats = {
-                "jeant.montreuil@gmail.com": { count: 5, lastAccess: new Date().toLocaleString() },
-                "laeticia@academy.com": { count: 3, lastAccess: new Date().toLocaleString() }
-            };
-            localStorage.setItem('laeticia_stats', JSON.stringify(stats));
-        }
-        let html = '<ul style="list-style:none; padding:0;">';
-        for (const [email, data] of Object.entries(stats)) {
-            let name = email;
-            if (email === 'jeant.montreuil@gmail.com') name = '👑 Admin';
-            else if (email === 'laeticia@academy.com') name = '👧 Laeticia';
-            html += `<li style="padding:8px 0; border-bottom:1px solid var(--border);"><strong>${name}</strong>: ${data.count} veces | Último: ${data.lastAccess || '-'}</li>`;
-        }
-        html += '</ul>';
-        container.innerHTML = html;
-    }
-}
-
-function showView(viewName) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    const target = document.getElementById('view' + viewName.charAt(0).toUpperCase() + viewName.slice(1));
-    if (target) target.classList.add('active');
-    
-    // Cargar contenido según la vista
-    if (viewName === 'home') {
-        renderLaeticiaPlaylist();
-        renderWeekSelector();
-        updateWeeklyDisplay();
-    }
-    if (viewName === 'academy') {
-        renderVocab();
-        renderPronunciation();
-        renderPodcasts();
-        renderConjugation();
-        renderGrammar();
-        renderExam();
-        renderFlashcardModes();
-        loadFlashcards();
-        renderLessons();
-        renderAcademyProgress();
-        renderWeekSelector();
-        updateWeeklyDisplay();
-    }
-    if (viewName === 'discover') {
-        renderDiscoverFilters();
-        renderArticles();
-        renderMomActivities();
-    }
-    if (viewName === 'games') {
-        switchGame(currentGame);
-        cargarAudiolibrosGames();
-    }
-    if (viewName === 'dad') {
-        renderDad();
-        updateDadClock();
-    }
-    if (viewName === 'mama') {
-        updateMamaProgress();
-        renderMamaCorner();
-    }
-    if (viewName === 'karaoke') renderKaraokeSongs();
-    if (viewName === 'diary') renderDiary();
-    if (viewName === 'theme') loadTheme();
-    if (viewName === 'profile') {
-        updateProfile();
-        loadNotifSettings();
-    }
-    if (viewName === 'lifeskills') renderLifeSkills();
-    if (viewName === 'admin') {
-        if (typeof initAdminView === 'function') initAdminView();
-    }
-    window.scrollTo(0, 0);
-}
-
-function goToView(viewName) {
-    const menu = document.getElementById('radialMenu');
-    if (menu) menu.classList.remove('active');
-    
-    if (viewName === 'agenda') {
-        document.getElementById('viewAgendaNueva').classList.add('active');
-        document.getElementById('viewHome').classList.remove('active');
-        iniciarAgendaN();
-        return;
-    }
-    showView(viewName);
-}
-
-function toggleRadialMenu() {
-    const menu = document.getElementById('radialMenu');
-    if (menu) menu.classList.toggle('active');
-}
-
-// ========== INICIALIZACIÓN ==========
-if (!localStorage.getItem('academy_level')) {
-    localStorage.setItem('academy_level', '0');
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    cargarFotosStorage();
-    renderWeekSelector();
-    updateWeeklyDisplay();
-    renderAcademyProgress();
-    renderLaeticiaPlaylist();
-    loadNotifSettings();
-});
-
-// Exposición global de funciones
-window.showView = showView;
-window.goToView = goToView;
-window.toggleRadialMenu = toggleRadialMenu;
-window.changeTestWeek = changeTestWeek;
-window.signOutAndClose = signOutAndClose;
-window.mostrarAdminDirecto = mostrarAdminDirecto;
-window.togglePlayPause = togglePlayPause;
-window.openLesson = openLesson;
-window.completeLesson = completeLesson;
-window.speakText = speakText;
-window.toggleDarkMode = toggleDarkMode;
-window.changeAvatar = changeAvatar;
-window.openMamaPlaylist = openMamaPlaylist;
-window.loadFlashcards = loadFlashcards;
-window.flipFlashcard = flipFlashcard;
-window.flashcardResult = flashcardResult;
-window.nextFlashcard = nextFlashcard;
-window.switchFlashMode = switchFlashMode;
-window.switchGame = switchGame;
-window.flipMemoryCard = flipMemoryCard;
-window.answerSpeedQuiz = answerSpeedQuiz;
-window.pickScrambleLetter = pickScrambleLetter;
-window.resetScrambleAnswer = resetScrambleAnswer;
-window.checkScrambleAnswer = checkScrambleAnswer;
-window.filterKaraokeSongs = filterKaraokeSongs;
-window.saveDiaryEntry = saveDiaryEntry;
-window.previewDiaryPhoto = previewDiaryPhoto;
-window.rotatePhoto = rotatePhoto;
-window.flipPhoto = flipPhoto;
-window.centerPhoto = centerPhoto;
-window.resetPhoto = resetPhoto;
-window.applyEdit = applyEdit;
-window.generateFriendCode = generateFriendCode;
-window.addFriend = addFriend;
-window.approveReceivedInvite = approveReceivedInvite;
-window.rejectReceivedInvite = rejectReceivedInvite;
-window.cancelSentInvite = cancelSentInvite;
-window.applyPreset = applyPreset;
-window.updateTheme = updateTheme;
-window.saveTheme = saveTheme;
-window.installPWA = installPWA;
-window.exportData = exportData;
-window.importData = importData;
-window.toggleNotifications = toggleNotifications;
-window.toggleDay = toggleDay;
-window.saveNotifSettings = saveNotifSettings;
-window.testNotification = testNotification;
-window.openConjugation = openConjugation;
-window.checkConjugationExercise = checkConjugationExercise;
-window.checkGrammarExercise = checkGrammarExercise;
-window.renderLifeSkills = renderLifeSkills;
-window.openSkill = openSkill;
-window.updateMamaProgress = updateMamaProgress;
-window.renderMamaCorner = renderMamaCorner;
-window.updateChallengeStep = updateChallengeStep;
-window.saveReflection = saveReflection;
-window.renderWeekSelector = renderWeekSelector;
-window.updateWeeklyDisplay = updateWeeklyDisplay;
-window.renderAcademyProgress = renderAcademyProgress;
-window.guardarNuevaFoto = guardarNuevaFoto;
-window.borrarFoto = borrarFoto;
-
-// ========== ACRÓSTICO LAETICIA ==========
 function mostrarMensajeAnimo(estado) {
     const acrosticos = {
         happy: `😊 <strong>FELIZ</strong><br><br>
@@ -1823,6 +1323,7 @@ function mostrarMensajeAnimo(estado) {
 <strong>C</strong>ada risa es un pequeño acto de valentía.<br>
 <strong>I</strong>ntensamente vivo cada instante feliz.<br>
 <strong>A</strong>l final, ser feliz es decidir ver lo bueno.`,
+
         calm: `😌 <strong>CALMA</strong><br><br>
 <strong>L</strong>a tranquilidad me envuelve sin prisa.<br>
 <strong>A</strong>cepto el silencio como un abrazo.<br>
@@ -1832,6 +1333,7 @@ function mostrarMensajeAnimo(estado) {
 <strong>C</strong>ierro los ojos y confío en el momento.<br>
 <strong>I</strong>nhalo calma, exhalo tensión.<br>
 <strong>A</strong>quí y ahora, todo está en orden.`,
+
         sad: `😢 <strong>TRISTE</strong><br><br>
 <strong>L</strong>as lágrimas también hablan, también sanan.<br>
 <strong>A</strong>unque hoy duela, sé que escampará.<br>
@@ -1841,6 +1343,7 @@ function mostrarMensajeAnimo(estado) {
 <strong>C</strong>on el tiempo, esto pasará.<br>
 <strong>I</strong>magino un mañana más claro.<br>
 <strong>A</strong>prendo que la tristeza también es parte de mí.`,
+
         stressed: `😰 <strong>ESTRESADA</strong><br><br>
 <strong>L</strong>ibero la presión, respiro hondo.<br>
 <strong>A</strong>cepto que no puedo con todo sola.<br>
@@ -1850,6 +1353,7 @@ function mostrarMensajeAnimo(estado) {
 <strong>C</strong>ada cosa a su tiempo, nada es tan urgente.<br>
 <strong>I</strong>nhalo paz, exhalo preocupación.<br>
 <strong>A</strong>hora me permito parar y recuperarme.`,
+
         motivated: `🤩 <strong>MOTIVADA</strong><br><br>
 <strong>L</strong>a meta es clara, el camino empieza hoy.<br>
 <strong>A</strong>vanzo paso a paso, sin compararme con nadie.<br>
@@ -1859,6 +1363,7 @@ function mostrarMensajeAnimo(estado) {
 <strong>C</strong>on cada pequeño logro, crezco un poco más.<br>
 <strong>I</strong>nspiro confianza, exhalo miedo.<br>
 <strong>A</strong>hora es mi momento, voy a darlo todo.`,
+
         tired: `😴 <strong>CANSADA</strong><br><br>
 <strong>L</strong>a fatiga me pide que me detenga.<br>
 <strong>A</strong>unque el mundo no espere, mi cuerpo sí.<br>
@@ -1869,6 +1374,7 @@ function mostrarMensajeAnimo(estado) {
 <strong>I</strong>magino un sueño reparador y profundo.<br>
 <strong>A</strong>l despertar, todo será más fácil.`
     };
+    
     const acrosticoDiv = document.getElementById('acrosticoLaeticia');
     if (acrosticoDiv) {
         acrosticoDiv.innerHTML = acrosticos[estado] || "Elige cómo te sientes hoy.";
@@ -1886,15 +1392,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ========== RELOJ CLÁSICO ==========
 function actualizarRelojClasico() {
     const ahora = new Date();
     const hora = ahora.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const fecha = ahora.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const dia = ahora.toLocaleDateString('es-MX', { weekday: 'long' });
+    
     const horaElem = document.getElementById('horaClasica');
     const fechaElem = document.getElementById('fechaClasica');
     const diaElem = document.getElementById('diaClasico');
+    
     if (horaElem) horaElem.textContent = hora;
     if (fechaElem) fechaElem.textContent = fecha;
     if (diaElem) diaElem.textContent = dia.charAt(0).toUpperCase() + dia.slice(1);
@@ -1902,128 +1409,195 @@ function actualizarRelojClasico() {
 setInterval(actualizarRelojClasico, 1000);
 actualizarRelojClasico();
 
-// ========== HOME DINÁMICO ==========
 function actualizarBloqueDinamico() {
     const ahora = new Date();
     const hora = ahora.getHours();
-    let titulo = "", contenido = [];
+    
+    let titulo = "";
+    let contenido = [];
+    
     if (hora >= 5 && hora < 9) {
         titulo = "🌅 Inicio del día · Agua + cuerpo + enfoque";
-        contenido = ["💧 Bebe un vaso de agua", "🤸‍♀️ Muévete 3–5 minutos", "🧠 Define una intención simple del día"];
+        contenido = [
+            "💧 Bebe un vaso de agua",
+            "🤸‍♀️ Muévete 3–5 minutos",
+            "🧠 Define una intención simple del día"
+        ];
     } else if (hora >= 9 && hora < 12) {
         titulo = "🏫 Durante la mañana · Cuerpo activo, mente clara";
-        contenido = ["🚶‍♀️ Levántate y muévete cada cierto tiempo", "💧 Toma agua regularmente", "🧘‍♀️ Respira si sientes estrés o presión"];
+        contenido = [
+            "🚶‍♀️ Levántate y muévete cada cierto tiempo",
+            "💧 Toma agua regularmente",
+            "🧘‍♀️ Respira si sientes estrés o presión"
+        ];
     } else if (hora >= 12 && hora < 15) {
         titulo = "🍽️ Mediodía · Nutrición básica";
-        contenido = ["🥗 Come algo con proteína + fruta/verdura", "🍞 Incluye energía (carbohidrato simple)", "🚫 Evita exceso de azúcar o comida pesada"];
+        contenido = [
+            "🥗 Come algo con proteína + fruta/verdura",
+            "🍞 Incluye energía (carbohidrato simple)",
+            "🚫 Evita exceso de azúcar o comida pesada"
+        ];
     } else if (hora >= 15 && hora < 19) {
         titulo = "🌤️ Tarde · Movimiento obligatorio del día";
-        contenido = ["🏃‍♀️ 20–40 min de actividad física", "📱 Reduce tiempo pasivo en pantalla"];
+        contenido = [
+            "🏃‍♀️ 20–40 min de actividad física",
+            "📱 Reduce tiempo pasivo en pantalla"
+        ];
     } else {
         titulo = "🌙 Noche · Calma y recuperación";
-        contenido = ["📵 Baja pantallas 30–60 min antes de dormir", "📖 Haz algo tranquilo (leer, música, respirar)", "😴 Prepárate para dormir 8–10 horas"];
+        contenido = [
+            "📵 Baja pantallas 30–60 min antes de dormir",
+            "📖 Haz algo tranquilo (leer, música, respirar)",
+            "😴 Prepárate para dormir 8–10 horas"
+        ];
     }
-    const titleElem = document.getElementById('blockTitle');
-    const contentElem = document.getElementById('blockContent');
-    if (titleElem) titleElem.innerHTML = titulo;
-    if (contentElem) contentElem.innerHTML = contenido.map(texto => `<span>${texto}</span>`).join('');
+    
+    document.getElementById('blockTitle').innerHTML = titulo;
+    const container = document.getElementById('blockContent');
+    container.innerHTML = contenido.map(texto => `<span>${texto}</span>`).join('');
 }
+
+actualizarBloqueDinamico();
+setInterval(actualizarBloqueDinamico, 3600000);
 actualizarBloqueDinamico();
 setInterval(actualizarBloqueDinamico, 3600000);
 
-// ========== FUNCIONES DE AGENDA ==========
-const horarioPredeterminadoN = {
-    "Lunes": ["OFIMATICA", "OFIMATICA", "HISTORIA", "ESPAÑOL", "BREAK", "OFIMATICA", "ESPAÑOL", "MATEMATICAS", "ARTES"],
-    "Martes": ["EDUCACION FISICA", "EDUCACION FISICA", "FORMACION CIVICA Y ETICA", "FORMACION CIVICA Y ETICA", "BREAK", "FISICA", "FISICA", "ESPAÑOL", "MATEMATICAS"],
-    "Miercoles": ["TUTORIA", "ESPAÑOL", "ESPAÑOL", "HISTORIA", "BREAK", "OFIMATICA", "INGLES", "ARTES", "ARTES"],
-    "Jueves": ["OFIMATICA", "OFIMATICA", "OFIMATICA", "MATEMATICAS", "BREAK", "HISTORIA", "FISICA", "FISICA", "HISTORIA"],
-    "Viernes": ["OFIMATICA", "INGLES", "INGLES", "MATEMATICAS", "BREAK", "MATEMATICAS", "FISICA", "FISICA", "IGUALDAD DE GENERO"]
-};
-const horasClaseN = ["7:00-7:50", "7:50-8:40", "8:40-9:30", "9:30-10:20", "10:20-10:40", "10:40-11:30", "11:30-12:20", "12:20-13:10", "13:10-14:00"];
-
-function guardarHorarioN(h) { localStorage.setItem("laeticia_horario_nuevo", JSON.stringify(h)); }
-function cargarHorarioN() { let g = localStorage.getItem("laeticia_horario_nuevo"); return g ? JSON.parse(g) : JSON.parse(JSON.stringify(horarioPredeterminadoN)); }
-function renderizarHorarioN() {
-    let h = cargarHorarioN();
-    let dias = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
-    let html = '<thead><tr><th>Hora</th>';
-    for (let d of dias) html += `<th>${d}</th>`;
-    html += '</tr></thead><tbody>';
-    for (let i = 0; i < horasClaseN.length; i++) {
-        html += `<tr><td style="background:#8b5cf6; color:white; font-weight:bold; text-align:center;">${horasClaseN[i]}<\/td>`;
-        for (let j = 0; j < dias.length; j++) {
-            let materia = h[dias[j]][i] || "";
-            if (materia.toUpperCase() === "BREAK") {
-                html += `<td class="break-cell" style="background:#fef3c7 !important; font-weight:bold; text-align:center;"><span class="break-emoji">🍎☕🧃</span> ¡RECREO!<br><span style="font-size:0.65rem;">Descansa</span><\/td>`;
-            } else {
-                html += `<td contenteditable="true" onblur="actualizarCeldaN('${dias[j]}', ${i}, this.innerText)" style="text-align:center;">${materia}<\/td>`;
-            }
+function abrirYoga(tipo) {
+    const contenidos = {
+        respira: {
+            titulo: "🌬️ Respiración profunda (4-7-8)",
+            pasos: [
+                "1. Siéntate cómodamente con la espalda recta",
+                "2. Inhala por la nariz durante 4 segundos",
+                "3. Mantén el aire 7 segundos",
+                "4. Exhala lentamente por la boca durante 8 segundos",
+                "5. Repite 4-5 veces",
+                "✨ Beneficio: Reduce la ansiedad y calma el sistema nervioso"
+            ],
+            video: "https://www.youtube.com/results?search_query=respiración+4-7-8+para+ansiedad"
+        },
+        estiramiento: {
+            titulo: "🤸 Estiramientos diarios (5 minutos)",
+            pasos: [
+                "1. Estiramiento de cuello (lado a lado)",
+                "2. Apertura de brazos y hombros",
+                "3. Giro de columna suave",
+                "4. Estiramiento de piernas (tocarse los pies)",
+                "5. Postura del gato-vaca (espalda)",
+                "🧘 Haz cada estiramiento 15-30 segundos"
+            ],
+            video: "https://www.youtube.com/results?search_query=estiramientos+para+adolescentes+5+minutos"
+        },
+        yoga: {
+            titulo: "🧘 Yoga para adolescentes",
+            pasos: [
+                "1. Postura de la montaña (Tadasana) - equilibrio",
+                "2. Perro boca abajo (Adho Mukha Svanasana) - estiramiento completo",
+                "3. Postura del árbol (Vrksasana) - concentración",
+                "4. Postura del niño (Balasana) - descanso",
+                "5. Mariposa (Baddha Konasana) - apertura de cadera",
+                "🕊️ Mantén cada postura 3-5 respiraciones"
+            ],
+            video: "https://www.youtube.com/results?search_query=yoga+para+principiantes+adolescentes"
         }
-        html += '</tr>';
+    };
+    
+    const c = contenidos[tipo];
+    if (!c) return;
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <div>${c.titulo}</div>
+                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+            </div>
+            <div style="margin: 16px 0;">
+                ${c.pasos.map(p => `<p>${p}</p>`).join('')}
+            </div>
+            <div style="margin-top: 16px; text-align: center;">
+                <button class="btn btn-primary" onclick="window.open('${c.video}', '_blank')">🎬 Ver video guía</button>
+                <button class="btn" onclick="this.closest('.modal-overlay').remove()">Cerrar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function cargarAudiolibrosGames() {
+    const container = document.getElementById('audiolibrosContainer');
+    if (!container) return;
+    const audiolibros = [
+    { titulo: "El principito", autor: "Antoine de Saint-Exupéry", desc: "Un clásico sobre la amistad y el sentido de la vida.", link: "https://www.youtube.com/results?search_query=el+principito+audiolibro+completo+español" },
+    { titulo: "Platero y yo", autor: "Juan Ramón Jiménez", desc: "Poemas en prosa que celebran la amistad.", link: "https://www.youtube.com/results?search_query=platero+y+yo+audiolibro+completo" },
+    { titulo: "Las aventuras de Tom Sawyer", autor: "Mark Twain", desc: "Infancia, travesuras y amistad.", link: "https://www.youtube.com/results?search_query=tom+sawyer+audiolibro+completo+español" },
+    { titulo: "Cuentos de la selva", autor: "Horacio Quiroga", desc: "Historias de animales con grandes enseñanzas.", link: "https://www.youtube.com/results?search_query=cuentos+de+la+selva+audiolibro+completo" },
+    { titulo: "Alicia en el país de las maravillas", autor: "Lewis Carroll", desc: "Fantasía y enseñanzas sobre crecer.", link: "https://www.youtube.com/results?search_query=alicia+en+el+pais+de+las+maravillas+audiolibro" },
+    { titulo: "El llamado de la selva", autor: "Jack London", desc: "Aventura, supervivencia y libertad.", link: "https://www.youtube.com/results?search_query=el+llamado+de+la+selva+audiolibro+español" },
+    { titulo: "Momo", autor: "Michael Ende", desc: "Una niña que lucha contra los ladrones de tiempo.", link: "https://www.youtube.com/results?search_query=momo+audiolibro+completo+español" },
+    { titulo: "La isla del tesoro", autor: "Robert Louis Stevenson", desc: "Piratas, mapas y aventura.", link: "https://www.youtube.com/results?search_query=la+isla+del+tesoro+audiolibro+completo" },
+    { titulo: "El fantasma de la ópera", autor: "Gastón Leroux", desc: "Romance, misterio y drama.", link: "https://www.youtube.com/results?search_query=el+fantasma+de+la+opera+audiolibro+español" },
+    { titulo: "Frankenstein", autor: "Mary Shelley", desc: "Clásico de terror y reflexión.", link: "https://www.youtube.com/results?search_query=frankenstein+audiolibro+completo+español" },
+    { titulo: "El jardín secreto", autor: "Frances Hodgson Burnett", desc: "Una niña, un jardín y una transformación.", link: "https://www.youtube.com/results?search_query=el+jardin+secreto+audiolibro+completo" },
+    { titulo: "La historia interminable", autor: "Michael Ende", desc: "Un viaje a través de la imaginación.", link: "https://www.youtube.com/results?search_query=la+historia+interminable+audiolibro+español" },
+    { titulo: "El libro de la selva", autor: "Rudyard Kipling", desc: "Mowgli y sus amigos animales.", link: "https://www.youtube.com/results?search_query=el+libro+de+la+selva+audiolibro+completo" },
+    { titulo: "Cumbres borrascosas", autor: "Emily Brontë", desc: "Romance oscuro y pasión.", link: "https://www.youtube.com/results?search_query=cumbres+borrascosas+audiolibro+español" },
+    { titulo: "El retrato de Dorian Gray", autor: "Oscar Wilde", desc: "Un hombre que no envejece.", link: "https://www.youtube.com/results?search_query=el+retrato+de+dorian+gray+audiolibro" },
+    { titulo: "Orgullo y prejuicio", autor: "Jane Austen", desc: "Romance y crítica social.", link: "https://www.youtube.com/results?search_query=orgullo+y+prejuicio+audiolibro+completo" },
+    { titulo: "Veinte mil leguas de viaje submarino", autor: "Julio Verne", desc: "Aventura bajo el mar.", link: "https://www.youtube.com/results?search_query=veinte+mil+leguas+de+viaje+submarino+audiolibro" },
+    { titulo: "El conde de Montecristo", autor: "Alejandro Dumas", desc: "Venganza y justicia.", link: "https://www.youtube.com/results?search_query=conde+de+montecristo+audiolibro+español" },
+    { titulo: "Los viajes de Gulliver", autor: "Jonathan Swift", desc: "Aventuras fantásticas.", link: "https://www.youtube.com/results?search_query=viajes+de+gulliver+audiolibro+español" },
+    { titulo: "Don Quijote de la Mancha", autor: "Miguel de Cervantes", desc: "El caballero de la triste figura.", link: "https://www.youtube.com/results?search_query=don+quijote+audiolibro+completo+español" }
+];
+    
+    container.innerHTML = audiolibros.map(libro => `
+        <div class="audiolibro-item" onclick="window.open('${libro.link}', '_blank')">
+            <div class="audiolibro-titulo">📖 ${libro.titulo}</div>
+            <div class="audiolibro-autor">✍️ ${libro.autor}</div>
+            <div class="audiolibro-desc">${libro.desc}</div>
+        </div>
+    `).join('');
+}
+
+cargarAudiolibrosGames();
+
+const showViewOriginalGames = window.showView;
+window.showView = function(vn) {
+    showViewOriginalGames(vn);
+    if (vn === 'games') {
+        setTimeout(cargarAudiolibrosGames, 100);
     }
-    html += '</tbody>';
-    let t = document.getElementById("tablaHorarioN");
-    if (t) t.innerHTML = html;
-}
-function actualizarCeldaN(d, i, v) { let h = cargarHorarioN(); h[d][i] = v; guardarHorarioN(h); }
-function restaurarHorarioN() { if (confirm("¿Restaurar horario original?")) { guardarHorarioN(JSON.parse(JSON.stringify(horarioPredeterminadoN))); renderizarHorarioN(); alert("✅ Horario restaurado"); } }
-function exportarHorarioN() { let a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(cargarHorarioN(), null, 2)], { type: "application/json" })); a.download = "horario.json"; a.click(); }
-function cargarTareasN() { let t = localStorage.getItem("laeticia_tareas_nuevo"); return t ? JSON.parse(t) : []; }
-function guardarTareasN(t) { localStorage.setItem("laeticia_tareas_nuevo", JSON.stringify(t)); actualizarStatsN(); renderizarTareasN(); }
-function agregarTareaN() { let txt = document.getElementById("inputTareaN").value.trim(); if (!txt) { alert("Escribe una tarea"); return; } let t = cargarTareasN(); t.push({ id: Date.now(), texto: txt, completada: false }); guardarTareasN(t); document.getElementById("inputTareaN").value = ""; }
-function renderizarTareasN() { let c = document.getElementById("listaTareasN"); if (!c) return; let t = cargarTareasN(), mostrar = document.getElementById("checkMostrarCompletadasN").checked, f = mostrar ? t : t.filter(x => !x.completada); if (f.length === 0) { c.innerHTML = "<p style='text-align:center;padding:20px;'>✨ Sin tareas ✨</p>"; return; } c.innerHTML = f.map(x => `<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;"><span style="${x.completada ? 'text-decoration:line-through;opacity:0.6;' : ''}">${x.texto}</span><div>${!x.completada ? `<button onclick="completarTareaN(${x.id})" style="background:#10b981;border:none;padding:5px 12px;border-radius:20px;">✅</button>` : ''}<button onclick="eliminarTareaN(${x.id})" style="background:#ef4444;border:none;padding:5px 12px;border-radius:20px;">🗑️</button></div></div>`).join(""); }
-function completarTareaN(id) { let t = cargarTareasN(), ta = t.find(x => x.id === id); if (ta) { ta.completada = true; guardarTareasN(t); } }
-function eliminarTareaN(id) { guardarTareasN(cargarTareasN().filter(x => x.id !== id)); }
-function eliminarCompletadasN() { if (confirm("¿Eliminar completadas?")) guardarTareasN(cargarTareasN().filter(x => !x.completada)); }
-function cargarExamenesN() { let e = localStorage.getItem("laeticia_examenes_nuevo"); return e ? JSON.parse(e) : []; }
-function guardarExamenesN(e) { localStorage.setItem("laeticia_examenes_nuevo", JSON.stringify(e)); renderizarExamenesN(); }
-function agregarExamenN() { let nom = document.getElementById("inputExamenN").value.trim(), fec = document.getElementById("inputFechaExamenN").value; if (!nom || !fec) { alert("Completa nombre y fecha"); return; } let e = cargarExamenesN(); e.push({ id: Date.now(), nombre: nom, fecha: fec }); guardarExamenesN(e); document.getElementById("inputExamenN").value = ""; document.getElementById("inputFechaExamenN").value = ""; }
-function renderizarExamenesN() { let c = document.getElementById("listaExamenesN"); if (!c) return; let e = cargarExamenesN(); if (e.length === 0) { c.innerHTML = "<p style='text-align:center;padding:20px;'>📝 Sin exámenes</p>"; return; } c.innerHTML = e.map(x => `<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;"><div><strong>📝 ${x.nombre}</strong><br><small>📅 ${x.fecha}</small></div><button onclick="eliminarExamenN(${x.id})" style="background:#ef4444;border:none;padding:5px 12px;border-radius:20px;">🗑️</button></div>`).join(""); }
-function eliminarExamenN(id) { guardarExamenesN(cargarExamenesN().filter(x => x.id !== id)); }
-function actualizarStatsN() { let p = cargarTareasN().filter(x => !x.completada).length; let pe = document.getElementById("statPendientesN"); if (pe) pe.innerText = p; }
-function mostrarTabN(tab) {
-    let h = document.getElementById("horarioSectionN"), ta = document.getElementById("tareasSectionN"), e = document.getElementById("examenesSectionN"), bh = document.getElementById("btnHorarioN"), bt = document.getElementById("btnTareasN"), be = document.getElementById("btnExamenesN");
-    if (h) h.style.display = tab === "horario" ? "block" : "none";
-    if (ta) ta.style.display = tab === "tareas" ? "block" : "none";
-    if (e) e.style.display = tab === "examenes" ? "block" : "none";
-    if (bh) { bh.style.background = tab === "horario" ? "#8b5cf6" : "white"; bh.style.color = tab === "horario" ? "white" : "#1e1b4b"; }
-    if (bt) { bt.style.background = tab === "tareas" ? "#8b5cf6" : "white"; bt.style.color = tab === "tareas" ? "white" : "#1e1b4b"; }
-    if (be) { be.style.background = tab === "examenes" ? "#8b5cf6" : "white"; be.style.color = tab === "examenes" ? "white" : "#1e1b4b"; }
-    if (tab === "tareas") renderizarTareasN();
-    if (tab === "examenes") renderizarExamenesN();
-}
-function iniciarAgendaN() { renderizarHorarioN(); actualizarStatsN(); renderizarTareasN(); renderizarExamenesN(); let chk = document.getElementById("checkMostrarCompletadasN"); if (chk) chk.onchange = function () { renderizarTareasN(); }; }
+};
+// ============================================================
+// 🎯 SYSTÈME DE PROGRESSION ACADEMY - AJOUTER CE BLOC
+// ============================================================
 
-// ========== SERVICE WORKER ==========
-if ('serviceWorker' in navigator) {
-    const swCode = `self.addEventListener('install',function(e){self.skipWaiting();});self.addEventListener('activate',function(e){e.waitUntil(clients.claim());});self.addEventListener('message',function(e){if(e.data.type==='schedule-notification'){const{title,message,hour,minute}=e.data;const now=new Date();const target=new Date();target.setHours(hour,minute,0,0);if(target<=now)target.setDate(target.getDate()+1);const delay=target-now;setTimeout(()=>{self.registration.showNotification(title,{body:message,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📚</text></svg>',tag:'daily-reminder',requireInteraction:true,vibrate:[200,100,200]});},delay);}});self.addEventListener('notificationclick',function(e){e.notification.close();e.waitUntil(clients.openWindow('/'));});`;
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl).catch(() => {});
-}
-
-// ========== SYSTEME DE PROGRESSION ACADEMY ==========
+// 1. Récupérer le niveau actuel (stocké dans localStorage)
 function getCurrentAcademyLevel() {
     let level = localStorage.getItem('academy_level');
     if (!level) {
-        level = 0;
+        level = 0; // Commence à la semaine 0
         localStorage.setItem('academy_level', '0');
     }
     return parseInt(level);
 }
 
+// 2. Sauvegarder le niveau
 function setAcademyLevel(level) {
     localStorage.setItem('academy_level', String(level));
 }
 
+// 3. Vérifier si une semaine est débloquée
 function isWeekUnlocked(weekIndex) {
     const currentLevel = getCurrentAcademyLevel();
     return weekIndex <= currentLevel;
 }
 
+// 4. Afficher le progrès dans l'Academy
 function renderAcademyProgress() {
     const currentLevel = getCurrentAcademyLevel();
-    const totalWeeks = 12;
+    const totalWeeks = 8;
     const progress = document.getElementById('academyProgress');
     if (!progress) return;
     
@@ -2031,22 +1605,22 @@ function renderAcademyProgress() {
         <div style="background: var(--card); border-radius: 28px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <strong>📚 Progreso Academy</strong>
+                    <strong>📚 Progression Academy</strong>
                     <div style="font-size: 0.8rem; color: var(--subtext);">
-                        Semana ${Math.min(currentLevel + 1, totalWeeks)} / ${totalWeeks}
+                        Semaine ${currentLevel + 1} / ${totalWeeks}
                     </div>
                 </div>
                 <div style="font-size: 1.5rem;">
-                    ${'⭐'.repeat(Math.min(currentLevel + 1, totalWeeks))}${'☆'.repeat(Math.max(0, totalWeeks - currentLevel - 1))}
+                    ${'⭐'.repeat(currentLevel + 1)}${'☆'.repeat(totalWeeks - currentLevel - 1)}
                 </div>
             </div>
             <div class="progress-bar-container" style="margin: 8px 0;">
-                <div class="progress-bar-fill" style="width: ${Math.min(((currentLevel + 1) / totalWeeks) * 100, 100)}%; background: var(--primary);"></div>
+                <div class="progress-bar-fill" style="width: ${((currentLevel + 1) / totalWeeks) * 100}%; background: var(--primary);"></div>
             </div>
-            <div style="display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; font-size: 0.6rem; margin-top: 8px;">
+            <div style="display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; font-size: 0.7rem; margin-top: 8px;">
                 ${Array.from({length: totalWeeks}, (_, i) => `
-                    <span style="padding: 2px 6px; border-radius: 10px; background: ${i <= currentLevel ? 'var(--primary)' : 'var(--border)'}; color: ${i <= currentLevel ? 'white' : 'var(--subtext)'};">
-                        ${i + 1} ${i <= currentLevel ? '✅' : '🔒'}
+                    <span style="padding: 2px 8px; border-radius: 12px; background: ${i <= currentLevel ? 'var(--primary)' : 'var(--border)'}; color: ${i <= currentLevel ? 'white' : 'var(--subtext)'};">
+                        S${i + 1} ${i <= currentLevel ? '✅' : '🔒'}
                     </span>
                 `).join('')}
             </div>
@@ -2054,424 +1628,10 @@ function renderAcademyProgress() {
     `;
     progress.innerHTML = html;
 }
-
-// ========== DATOS DE CONTENIDO ==========
-let testWeekOverride = null;
-
-const weeklyThemes = [
-    { name: "Emociones y Sentimientos", emoji: "💭", color: "#fef3c7", desc: "Aprende a expresar lo que sientes en inglés y francés" },
-    { name: "Escuela y Aprendizaje", emoji: "📚", color: "#e0e7ff", desc: "Vocabulario escolar y frases para la clase" },
-    { name: "Viajes y Aventuras", emoji: "✈️", color: "#d1fae5", desc: "Explora el mundo con nuevos idiomas" },
-    { name: "Tecnología y Futuro", emoji: "🚀", color: "#fce7f3", desc: "El lenguaje de la era digital" },
-    { name: "Música y Arte", emoji: "🎵", color: "#fce7f3", desc: "Expresa tu creatividad en dos idiomas" },
-    { name: "Comida y Gastronomía", emoji: "🍽️", color: "#fef3c7", desc: "Sabores del mundo en inglés y francés" },
-    { name: "Deportes y Salud", emoji: "⚽", color: "#d1fae5", desc: "Mantente activa mientras aprendes idiomas" },
-    { name: "Naturaleza y Planeta", emoji: "🌍", color: "#e0e7ff", desc: "Cuida el planeta mientras aprendes" },
-    { name: "Amistad y Relaciones Sociales", emoji: "👭", color: "#fce7f3", desc: "Aprende a hablar de amistad y conexiones auténticas" },
-    { name: "Futuro y Carrera Profesional", emoji: "💼", color: "#e0e7ff", desc: "Prepárate para tu futuro con vocabulario profesional" },
-    { name: "Salud Mental y Bienestar", emoji: "🧠", color: "#d1fae5", desc: "Cuida tu mente mientras aprendes dos idiomas" },
-    { name: "Cultura y Ciudadanía Global", emoji: "🌎", color: "#fef3c7", desc: "Explora culturas y conviértete en ciudadana del mundo" }
-];
-
-// ========== VOCABULARIO SEMANAS 0-11 ==========
-const weeklyVocab = {
-    0: { en: [{en:"happy",es:"feliz"},{en:"sad",es:"triste"},{en:"angry",es:"enfadado/a"},{en:"excited",es:"emocionado/a"},{en:"calm",es:"tranquilo/a"},{en:"proud",es:"orgulloso/a"},{en:"nervous",es:"nervioso/a"},{en:"brave",es:"valiente"}], fr: [{fr:"heureux",es:"feliz"},{fr:"triste",es:"triste"},{fr:"fâché",es:"enfadado/a"},{fr:"excité",es:"emocionado/a"},{fr:"calme",es:"tranquilo/a"},{fr:"fier",es:"orgulloso/a"},{fr:"nerveux",es:"nervioso/a"},{fr:"courageux",es:"valiente"}] },
-    1: { en: [{en:"teacher",es:"profesor/a"},{en:"homework",es:"deberes"},{en:"exam",es:"examen"},{en:"notebook",es:"cuaderno"},{en:"pencil",es:"lápiz"},{en:"library",es:"biblioteca"}], fr: [{fr:"professeur",es:"profesor/a"},{fr:"devoir",es:"deberes"},{fr:"examen",es:"examen"},{fr:"cahier",es:"cuaderno"},{fr:"crayon",es:"lápiz"},{fr:"bibliothèque",es:"biblioteca"}] },
-    2: { en: [{en:"passport",es:"pasaporte"},{en:"flight",es:"vuelo"},{en:"hotel",es:"hotel"},{en:"map",es:"mapa"},{en:"adventure",es:"aventura"},{en:"destination",es:"destino"}], fr: [{fr:"passeport",es:"pasaporte"},{fr:"vol",es:"vuelo"},{fr:"hôtel",es:"hotel"},{fr:"carte",es:"mapa"},{fr:"aventure",es:"aventura"},{fr:"destination",es:"destino"}] },
-    3: { en: [{en:"password",es:"contraseña"},{en:"download",es:"descargar"},{en:"screen",es:"pantalla"},{en:"network",es:"red"},{en:"data",es:"datos"},{en:"code",es:"código"}], fr: [{fr:"mot de passe",es:"contraseña"},{fr:"télécharger",es:"descargar"},{fr:"écran",es:"pantalla"},{fr:"réseau",es:"red"},{fr:"données",es:"datos"},{fr:"code",es:"código"}] },
-    4: { en: [{en:"song",es:"canción"},{en:"melody",es:"melodía"},{en:"painting",es:"pintura"},{en:"gallery",es:"galería"},{en:"creativity",es:"creatividad"}], fr: [{fr:"chanson",es:"canción"},{fr:"mélodie",es:"melodía"},{fr:"peinture",es:"pintura"},{fr:"galerie",es:"galería"},{fr:"créativité",es:"creatividad"}] },
-    5: { en: [{en:"recipe",es:"receta"},{en:"delicious",es:"delicioso/a"},{en:"spicy",es:"picante"},{en:"breakfast",es:"desayuno"},{en:"dinner",es:"cena"},{en:"dessert",es:"postre"}], fr: [{fr:"recette",es:"receta"},{fr:"délicieux",es:"delicioso/a"},{fr:"épicé",es:"picante"},{fr:"petit-déjeuner",es:"desayuno"},{fr:"dîner",es:"cena"},{fr:"dessert",es:"postre"}] },
-    6: { en: [{en:"exercise",es:"ejercicio"},{en:"strength",es:"fuerza"},{en:"healthy",es:"saludable"},{en:"team",es:"equipo"},{en:"victory",es:"victoria"},{en:"training",es:"entrenamiento"}], fr: [{fr:"exercice",es:"ejercicio"},{fr:"force",es:"fuerza"},{fr:"sain",es:"saludable"},{fr:"équipe",es:"equipo"},{fr:"victoire",es:"victoria"},{fr:"entraînement",es:"entrenamiento"}] },
-    7: { en: [{en:"forest",es:"bosque"},{en:"ocean",es:"océano"},{en:"mountain",es:"montaña"},{en:"recycle",es:"reciclar"},{en:"planet",es:"planeta"},{en:"wildlife",es:"vida salvaje"}], fr: [{fr:"forêt",es:"bosque"},{fr:"océan",es:"océano"},{fr:"montagne",es:"montaña"},{fr:"recycler",es:"reciclar"},{fr:"planète",es:"planeta"},{fr:"faune",es:"vida salvaje"}] },
-    // Semana 9: Amistad
-    8: { en: [{en:"friend",es:"amigo/a"},{en:"trust",es:"confianza"},{en:"loyal",es:"leal"},{en:"support",es:"apoyo/apoyar"},{en:"honesty",es:"honestidad"},{en:"betrayal",es:"traición"},{en:"conflict",es:"conflicto"},{en:"reconciliation",es:"reconciliación"}], fr: [{fr:"ami(e)",es:"amigo/a"},{fr:"confiance",es:"confianza"},{fr:"fidèle",es:"leal"},{fr:"soutien",es:"apoyo"},{fr:"honnêteté",es:"honestidad"},{fr:"trahison",es:"traición"},{fr:"conflit",es:"conflicto"},{fr:"réconciliation",es:"reconciliación"}] },
-    // Semana 10: Futuro
-    9: { en: [{en:"career",es:"carrera profesional"},{en:"dream job",es:"trabajo soñado"},{en:"skills",es:"habilidades"},{en:"experience",es:"experiencia"},{en:"goal",es:"meta/objetivo"},{en:"interview",es:"entrevista"},{en:"salary",es:"salario"},{en:"promotion",es:"ascenso"}], fr: [{fr:"carrière",es:"carrera profesional"},{fr:"métier de rêve",es:"trabajo soñado"},{fr:"compétences",es:"habilidades"},{fr:"expérience",es:"experiencia"},{fr:"objectif",es:"meta/objetivo"},{fr:"entretien",es:"entrevista"},{fr:"salaire",es:"salario"},{fr:"promotion",es:"ascenso"}] },
-    // Semana 11: Salud Mental
-    10: { en: [{en:"anxiety",es:"ansiedad"},{en:"stress",es:"estrés"},{en:"self-care",es:"autocuidado"},{en:"therapy",es:"terapia"},{en:"mental health",es:"salud mental"},{en:"wellness",es:"bienestar"},{en:"rest",es:"descanso"},{en:"balance",es:"equilibrio"}], fr: [{fr:"anxiété",es:"ansiedad"},{fr:"stress",es:"estrés"},{fr:"soins personnels",es:"autocuidado"},{fr:"thérapie",es:"terapia"},{fr:"santé mentale",es:"salud mental"},{fr:"bien-être",es:"bienestar"},{fr:"repos",es:"descanso"},{fr:"équilibre",es:"equilibrio"}] },
-    // Semana 12: Cultura
-    11: { en: [{en:"culture",es:"cultura"},{en:"tradition",es:"tradición"},{en:"diversity",es:"diversidad"},{en:"citizen",es:"ciudadano/a"},{en:"rights",es:"derechos"},{en:"responsibility",es:"responsabilidad"},{en:"community",es:"comunidad"},{en:"global",es:"global"}], fr: [{fr:"culture",es:"cultura"},{fr:"tradition",es:"tradición"},{fr:"diversité",es:"diversidad"},{fr:"citoyen(ne)",es:"ciudadano/a"},{fr:"droits",es:"derechos"},{fr:"responsabilité",es:"responsabilidad"},{fr:"communauté",es:"comunidad"},{fr:"mondial",es:"global"}] }
-};
-
-// ========== DATOS BASE ==========
-const baseVocabData = {en:{"Básico":[{en:"happy",es:"feliz"},{en:"sad",es:"triste"}]},fr:{"Básico":[{fr:"heureux",es:"feliz"},{fr:"triste",es:"triste"}]}};
-const baseSlangData = {en:[{phrase:"What's up?",meaning:"¿Qué tal?",level:"beginner"}],fr:[{phrase:"Ça va ?",meaning:"¿Qué tal?",level:"beginner"}]};
-const baseEnglishLessons = [{id:"en1",title:"How to give your opinion",level:"B1",duration:10,phrases:["I think that…"],trans:["Yo pienso que…"],taskEs:"Da tu opinión"}];
-const baseFrenchLessons = [{id:"fr1",title:"Exprimer son avis",level:"B1",duration:10,phrases:["Je pense que…"],trans:["Yo pienso que…"],taskEs:"Da tu opinión"}];
-const baseArticles = [{id:1,category:"🔬 Ciencia",title:"Mujeres que cambiaron la ciencia",icon:"🔬",excerpt:"Marie Curie.",content:"<p>Primera persona en ganar dos Premios Nobel.</p>"}];
-const baseMomActivities = [{id:"m1",title:"🎨 Tarjeta de emociones",type:"manualidad",description:"Escribe emociones.",steps:"1. Dobla.\n2. Escriban.",talkQuestions:"¿Qué emoción?"}];
-
-// ========== SLANG SEMANAS 0-11 ==========
-const weeklySlang = {
-    0: { en: [{phrase:"I'm so over it",meaning:"Ya estoy harta de esto",context:"Frustración",level:"intermediate"},{phrase:"That hit me in the feels",meaning:"Me llegó al corazón",context:"Emoción",level:"intermediate"},{phrase:"No biggie",meaning:"No es para tanto",context:"Restar importancia",level:"beginner"},{phrase:"I'm shook",meaning:"Estoy en shock",context:"Sorpresa",level:"intermediate"},{phrase:"That's a mood",meaning:"Me identifico totalmente",context:"Conexión emocional",level:"intermediate"},{phrase:"I can't even",meaning:"No tengo palabras",context:"Sorpresa o frustración",level:"intermediate"},{phrase:"It's not that deep",meaning:"No es para tanto",context:"Minimizar",level:"intermediate"},{phrase:"For real",meaning:"¿En serio?",context:"Confirmar",level:"beginner"}], fr: [{phrase:"Je suis au bout de ma vie",meaning:"Estoy harto/a",context:"Frustración",level:"intermediate"},{phrase:"Avoir le seum",meaning:"Estar enfadado/a",context:"Rabia",level:"intermediate"},{phrase:"C'est la vie",meaning:"Así es la vida",context:"Aceptación",level:"beginner"},{phrase:"Être en PLS",meaning:"Estar agotado/a",context:"Fatiga",level:"intermediate"},{phrase:"Avoir le cafard",meaning:"Estar triste",context:"Melancolía",level:"beginner"}] },
-    1: { en: [{phrase:"Cramming",meaning:"Estudiar a última hora",context:"Exámenes",level:"beginner"},{phrase:"Ace a test",meaning:"Sacar 10",context:"Éxito académico",level:"beginner"},{phrase:"Pull an all-nighter",meaning:"No dormir estudiando",context:"Estudio intenso",level:"intermediate"},{phrase:"I blanked out",meaning:"Me quedé en blanco",context:"Olvidar",level:"intermediate"},{phrase:"That's a freebie",meaning:"Esa pregunta es regalada",context:"Algo fácil",level:"intermediate"},{phrase:"I'm behind on homework",meaning:"Voy atrasada con la tarea",context:"Acumulación",level:"beginner"},{phrase:"The teacher called me out",meaning:"La maestra me señaló",context:"En clase",level:"intermediate"},{phrase:"It's a no-brainer",meaning:"Es obvio",context:"Decisión fácil",level:"intermediate"}], fr: [{phrase:"Bachoter",meaning:"Estudiar a última hora",context:"Exámenes",level:"beginner"},{phrase:"Cartonner",meaning:"Tener éxito",context:"Éxito",level:"beginner"},{phrase:"Sécher un cours",meaning:"Saltarse clase",context:"Novillos",level:"beginner"},{phrase:"C'est du gâteau",meaning:"Es pan comido",context:"Fácil",level:"beginner"},{phrase:"Le chouchou du prof",meaning:"Favorito del profe",context:"Compañero ejemplar",level:"beginner"}] },
-    2: { en: [{phrase:"Wanderlust",meaning:"Pasión por viajar",context:"Viajes",level:"beginner"},{phrase:"Catch flights, not feelings",meaning:"Viaja, no te enamores",context:"Filosofía viajera",level:"intermediate"},{phrase:"Living my best life",meaning:"Viviendo al máximo",context:"Felicidad",level:"beginner"},{phrase:"Main character energy",meaning:"Energía de protagonista",context:"Actitud segura",level:"intermediate"},{phrase:"Let's hit the road",meaning:"Vámonos ya",context:"Iniciar viaje",level:"beginner"},{phrase:"I'm totally jet-lagged",meaning:"Estoy muy desvelada",context:"Efecto del viaje",level:"intermediate"},{phrase:"Take me back",meaning:"Llévame otra vez",context:"Extrañar un lugar",level:"beginner"},{phrase:"That's a bucket list destination",meaning:"Es un destino soñado",context:"Lugar por conocer",level:"intermediate"}], fr: [{phrase:"Avoir la bougeotte",meaning:"No poder quedarse quieto",context:"Movimiento",level:"beginner"},{phrase:"Voyager dans sa tête",meaning:"Soñar despierto",context:"Imaginación",level:"beginner"},{phrase:"Prendre la poudre d'escampette",meaning:"Escaparse",context:"Huir",level:"intermediate"},{phrase:"C'est le bout du monde",meaning:"Está lejísimos",context:"Distancia",level:"beginner"},{phrase:"Avoir le mal du pays",meaning:"Extrañar casa",context:"Nostalgia",level:"beginner"}] },
-    3: { en: [{phrase:"My battery is about to die",meaning:"Mi batería está a punto de acabarse",context:"Tecnología",level:"beginner"},{phrase:"DM me",meaning:"Escríbeme por mensaje directo",context:"Redes sociales",level:"beginner"},{phrase:"This app is a total game changer",meaning:"Esta app cambia las reglas",context:"Innovación",level:"intermediate"},{phrase:"I'm trying to limit my screen time",meaning:"Intento reducir tiempo en pantalla",context:"Salud digital",level:"intermediate"},{phrase:"You're blowing up my phone",meaning:"No dejas de escribirme",context:"Muchas notificaciones",level:"intermediate"},{phrase:"I got ghosted",meaning:"Me dejaron de hablar",context:"Desaparecer sin aviso",level:"intermediate"},{phrase:"That's so last season",meaning:"Eso ya pasó de moda",context:"Obsoleto",level:"intermediate"},{phrase:"Don't @ me",meaning:"No me etiquetes",context:"Evitar polémica",level:"advanced"}], fr: [{phrase:"C'est chelou",meaning:"Es raro",context:"Sospecha",level:"intermediate"},{phrase:"C'est relou",meaning:"Es pesado",context:"Molestia",level:"intermediate"},{phrase:"C'est la hess",meaning:"Es la miseria",context:"Dificultad",level:"intermediate"},{phrase:"Trop stylé",meaning:"¡Muy guay!",context:"Elogio",level:"beginner"},{phrase:"Être matrixé(e)",meaning:"Estar obsesionado",context:"Obsesión",level:"intermediate"}] },
-    4: { en: [{phrase:"That song slaps",meaning:"Esa canción está increíble",context:"Música",level:"intermediate"},{phrase:"It's a bop",meaning:"Es muy pegadiza",context:"Canción",level:"beginner"},{phrase:"Drop the beat",meaning:"Que suene la música",context:"Fiesta",level:"beginner"},{phrase:"This is fire",meaning:"Está súper bueno",context:"Algo excelente",level:"beginner"},{phrase:"Earworm",meaning:"Canción pegadiza",context:"Melodía mental",level:"intermediate"},{phrase:"She ate that performance",meaning:"Arrasó con su presentación",context:"Elogio",level:"intermediate"},{phrase:"That's my jam",meaning:"Esa es mi canción favorita",context:"Tema que te representa",level:"beginner"},{phrase:"I've had this on repeat",meaning:"La he tenido en repetición",context:"Obsesión musical",level:"intermediate"}], fr: [{phrase:"Ça déchire",meaning:"Es genial",context:"Impresionante",level:"intermediate"},{phrase:"Avoir la musique dans la peau",meaning:"Llevar la música dentro",context:"Pasión",level:"beginner"},{phrase:"C'est de la bombe",meaning:"Es excelente",context:"Calidad",level:"beginner"},{phrase:"Un tube",meaning:"Un hit musical",context:"Éxito",level:"beginner"},{phrase:"Avoir le rythme dans la peau",meaning:"Tener ritmo natural",context:"Baile",level:"beginner"}] },
-    5: { en: [{phrase:"I'm starving",meaning:"Me muero de hambre",context:"Hambre",level:"beginner"},{phrase:"It's finger-lickin' good",meaning:"Para chuparse los dedos",context:"Comida deliciosa",level:"intermediate"},{phrase:"Let's grab a bite",meaning:"Vamos a comer algo rápido",context:"Plan informal",level:"beginner"},{phrase:"Food coma",meaning:"Sueño después de comer",context:"Modorra",level:"beginner"},{phrase:"This is my guilty pleasure",meaning:"Es mi placer culpable",context:"Algo que te gusta",level:"intermediate"},{phrase:"I'm craving something sweet",meaning:"Se me antoja algo dulce",context:"Antojo",level:"beginner"},{phrase:"That's overpriced",meaning:"Está muy caro",context:"Queja por precio",level:"intermediate"},{phrase:"Can I get a doggy bag?",meaning:"¿Me lo puedo llevar?",context:"Comida que sobra",level:"beginner"}], fr: [{phrase:"Avoir la dalle",meaning:"Tener mucha hambre",context:"Hambre",level:"intermediate"},{phrase:"C'est un régal",meaning:"Es una delicia",context:"Excelente",level:"beginner"},{phrase:"Manger sur le pouce",meaning:"Comer rápido",context:"Informal",level:"intermediate"},{phrase:"Avoir les crocs",meaning:"Tener hambre",context:"Hambre",level:"beginner"},{phrase:"Se régaler",meaning:"Disfrutar comiendo",context:"Placer",level:"beginner"}] },
-    6: { en: [{phrase:"No pain, no gain",meaning:"Sin esfuerzo no hay resultado",context:"Motivación",level:"beginner"},{phrase:"Let's hit the gym",meaning:"Vamos al gimnasio",context:"Ejercicio",level:"beginner"},{phrase:"You got this",meaning:"Tú puedes",context:"Ánimo",level:"beginner"},{phrase:"I'm sore but worth it",meaning:"Adolorida pero valió la pena",context:"Después de entrenar",level:"intermediate"},{phrase:"Crushing it",meaning:"Arrasando",context:"Rendimiento excelente",level:"intermediate"},{phrase:"I need to stretch",meaning:"Necesito estirarme",context:"Antes o después del ejercicio",level:"beginner"},{phrase:"I'm in beast mode",meaning:"Estoy a tope",context:"Energía máxima",level:"intermediate"},{phrase:"That was a good sweat",meaning:"Eso fue un buen entrenamiento",context:"Esfuerzo físico",level:"beginner"}], fr: [{phrase:"Avoir la pêche",meaning:"Tener energía",context:"Vitalidad",level:"beginner"},{phrase:"Se donner à fond",meaning:"Darlo todo",context:"Esfuerzo",level:"intermediate"},{phrase:"C'est dans la poche",meaning:"Está ganado",context:"Victoria",level:"beginner"},{phrase:"Avoir du souffle",meaning:"Tener resistencia",context:"Físico",level:"beginner"},{phrase:"Être au taquet",meaning:"Estar al máximo",context:"Motivación",level:"intermediate"}] },
-    7: { en: [{phrase:"Go green",meaning:"Sé ecológico",context:"Ecología",level:"beginner"},{phrase:"Reduce your carbon footprint",meaning:"Reduce tu huella de carbono",context:"Ambiente",level:"intermediate"},{phrase:"Save the planet",meaning:"Salva el planeta",context:"Activismo",level:"beginner"},{phrase:"Leave no trace",meaning:"No dejes rastro",context:"Respeto por la naturaleza",level:"intermediate"},{phrase:"It's a breath of fresh air",meaning:"Es un respiro de aire fresco",context:"Algo que te renueva",level:"intermediate"},{phrase:"I'm an outdoor person",meaning:"Soy de estar al aire libre",context:"Personalidad",level:"beginner"},{phrase:"Let's go zero waste",meaning:"Intentemos no generar basura",context:"Sostenible",level:"intermediate"},{phrase:"Mother Nature is angry",meaning:"La naturaleza está enfadada",context:"Cambio climático",level:"intermediate"}], fr: [{phrase:"Être écolo",meaning:"Ser ecológico",context:"Ecología",level:"beginner"},{phrase:"Sauver la planète",meaning:"Salvar el planeta",context:"Activismo",level:"beginner"},{phrase:"C'est pas la mer à boire",meaning:"No es tan difícil",context:"Minimizar",level:"intermediate"},{phrase:"Avoir la main verte",meaning:"Buena mano plantas",context:"Jardinería",level:"beginner"},{phrase:"Un geste pour la planète",meaning:"Un gesto por el planeta",context:"Acción",level:"beginner"}] },
-    // Semana 9: Amistad
-    8: { en: [{phrase:"BFF",meaning:"Mejor amiga para siempre",context:"Amistad",level:"beginner"},{phrase:"We're tight",meaning:"Somos muy unidas",context:"Amistad cercana",level:"intermediate"},{phrase:"I got your back",meaning:"Te apoyo",context:"Apoyo",level:"intermediate"},{phrase:"She's my ride or die",meaning:"Es mi amiga incondicional",context:"Lealtad",level:"intermediate"},{phrase:"We had a falling out",meaning:"Tuvimos un conflicto",context:"Pelea",level:"intermediate"},{phrase:"Let's bury the hatchet",meaning:"Hagamos las paces",context:"Reconciliación",level:"advanced"},{phrase:"Frenemy",meaning:"Amigo-enemigo",context:"Relación tóxica",level:"intermediate"},{phrase:"You're a real one",meaning:"Eres una persona auténtica",context:"Elogio",level:"intermediate"}], fr: [{phrase:"Ma meilleure pote",meaning:"Mi mejor amiga",context:"Amistad",level:"beginner"},{phrase:"On est inséparables",meaning:"Somos inseparables",context:"Amistad cercana",level:"intermediate"},{phrase:"Je te soutiens",meaning:"Te apoyo",context:"Apoyo",level:"beginner"},{phrase:"C'est ma sœur de cœur",meaning:"Es mi hermana del corazón",context:"Lealtad",level:"intermediate"},{phrase:"On s'est disputées",meaning:"Tuvimos una pelea",context:"Conflicto",level:"intermediate"},{phrase:"Faire la paix",meaning:"Hacer las paces",context:"Reconciliación",level:"beginner"},{phrase:"Être en froid",meaning:"Estar distanciadas",context:"Relación tensa",level:"intermediate"},{phrase:"Une amie sincère",meaning:"Una amiga sincera",context:"Elogio",level:"beginner"}] },
-    // Semana 10: Futuro
-    9: { en: [{phrase:"Dream job",meaning:"Trabajo soñado",context:"Carrera",level:"beginner"},{phrase:"Level up",meaning:"Subir de nivel",context:"Crecimiento",level:"intermediate"},{phrase:"Hustle",meaning:"Trabajar duro/emprender",context:"Esfuerzo",level:"intermediate"},{phrase:"I'm in my bag",meaning:"Estoy enfocada en mis metas",context:"Concentración",level:"advanced"},{phrase:"Networking",meaning:"Hacer contactos",context:"Conexiones",level:"intermediate"},{phrase:"Career path",meaning:"Trayectoria profesional",context:"Futuro",level:"intermediate"},{phrase:"Work-life balance",meaning:"Equilibrio trabajo-vida",context:"Bienestar",level:"advanced"},{phrase:"You're going places",meaning:"Vas a llegar lejos",context:"Motivación",level:"intermediate"}], fr: [{phrase:"Métier de rêve",meaning:"Trabajo soñado",context:"Carrera",level:"beginner"},{phrase:"Monter en grade",meaning:"Ascender",context:"Crecimiento",level:"intermediate"},{phrase:"Travailler dur",meaning:"Trabajar duro",context:"Esfuerzo",level:"beginner"},{phrase:"J'ai la vision",meaning:"Tengo la visión clara",context:"Metas",level:"intermediate"},{phrase:"Réseautage",meaning:"Hacer contactos",context:"Conexiones",level:"intermediate"},{phrase:"Parcours professionnel",meaning:"Trayectoria",context:"Futuro",level:"intermediate"},{phrase:"Équilibre pro-perso",meaning:"Equilibrio trabajo-vida",context:"Bienestar",level:"advanced"},{phrase:"Tu iras loin",meaning:"Vas a llegar lejos",context:"Motivación",level:"beginner"}] },
-    // Semana 11: Salud Mental
-    10: { en: [{phrase:"Self-care day",meaning:"Día de autocuidado",context:"Bienestar",level:"beginner"},{phrase:"I'm overwhelmed",meaning:"Estoy abrumada",context:"Estrés",level:"intermediate"},{phrase:"Take a breather",meaning:"Tomar un respiro",context:"Descanso",level:"intermediate"},{phrase:"Mental health matters",meaning:"La salud mental importa",context:"Conciencia",level:"beginner"},{phrase:"It's okay to not be okay",meaning:"Está bien no estar bien",context:"Aceptación",level:"intermediate"},{phrase:"Burnout",meaning:"Agotamiento extremo",context:"Estrés",level:"intermediate"},{phrase:"Check in with yourself",meaning:"Conectar con tu interior",context:"Autocuidado",level:"advanced"},{phrase:"You are enough",meaning:"Eres suficiente",context:"Autoestima",level:"beginner"}], fr: [{phrase:"Journée cocooning",meaning:"Día de autocuidado",context:"Bienestar",level:"beginner"},{phrase:"Je suis débordée",meaning:"Estoy abrumada",context:"Estrés",level:"intermediate"},{phrase:"Prendre du recul",meaning:"Tomar distancia",context:"Descanso",level:"intermediate"},{phrase:"La santé mentale compte",meaning:"La salud mental importa",context:"Conciencia",level:"beginner"},{phrase:"Ça va aller",meaning:"Todo va a estar bien",context:"Apoyo",level:"beginner"},{phrase:"Épuisement",meaning:"Agotamiento",context:"Estrés",level:"intermediate"},{phrase:"S'écouter",meaning:"Escucharse",context:"Autocuidado",level:"advanced"},{phrase:"Tu es suffisante",meaning:"Eres suficiente",context:"Autoestima",level:"beginner"}] },
-    // Semana 12: Cultura
-    11: { en: [{phrase:"Cultural exchange",meaning:"Intercambio cultural",context:"Cultura",level:"beginner"},{phrase:"World citizen",meaning:"Ciudadana del mundo",context:"Identidad",level:"intermediate"},{phrase:"Break down barriers",meaning:"Romper barreras",context:"Inclusión",level:"intermediate"},{phrase:"Diversity is our strength",meaning:"La diversidad es nuestra fuerza",context:"Valores",level:"intermediate"},{phrase:"Give back to the community",meaning:"Devolver a la comunidad",context:"Responsabilidad",level:"advanced"},{phrase:"Open-minded",meaning:"Mente abierta",context:"Actitud",level:"beginner"},{phrase:"Make a difference",meaning:"Hacer la diferencia",context:"Impacto",level:"intermediate"},{phrase:"Global perspective",meaning:"Perspectiva global",context:"Visión",level:"advanced"}], fr: [{phrase:"Échange culturel",meaning:"Intercambio cultural",context:"Cultura",level:"beginner"},{phrase:"Citoyenne du monde",meaning:"Ciudadana del mundo",context:"Identidad",level:"intermediate"},{phrase:"Briser les barrières",meaning:"Romper barreras",context:"Inclusión",level:"intermediate"},{phrase:"La diversité est notre force",meaning:"La diversidad es nuestra fuerza",context:"Valores",level:"intermediate"},{phrase:"S'engager",meaning:"Comprometerse",context:"Responsabilidad",level:"intermediate"},{phrase:"Ouverte d'esprit",meaning:"Mente abierta",context:"Actitud",level:"beginner"},{phrase:"Faire une différence",meaning:"Hacer la diferencia",context:"Impacto",level:"intermediate"},{phrase:"Perspective mondiale",meaning:"Perspectiva global",context:"Visión",level:"advanced"}] }
-};
-
-// ========== LECCIONES SEMANAS 0-11 ==========
-const weeklyLessons = {
-    0: { en: [{id:"en0",title:"Expressing your feelings like a pro",level:"A2",duration:15,phrases:["I feel a bit overwhelmed today","That made me really happy!","I'm going through a rough patch","Honestly, I'm feeling mixed emotions","It is what it is, I'll get over it"],trans:["Me siento un poco abrumada hoy","¡Eso me hizo muy feliz!","Estoy pasando por un momento difícil","Honestamente, tengo emociones encontradas","Es lo que hay, lo superaré"],taskEs:"Describe cómo te sientes hoy usando 3 frases"}], fr: [{id:"fr0",title:"Exprimer tes sentiments comme une pro",level:"A2",duration:15,phrases:["Je me sens un peu dépassée aujourd'hui","Ça m'a rendue vraiment heureuse!","Je traverse une période difficile","Honnêtement, j'ai des émotions mitigées","C'est comme ça, je vais m'en remettre"],trans:["Me siento un poco abrumada hoy","¡Eso me hizo muy feliz!","Estoy pasando por un momento difícil","Honestamente, tengo emociones encontradas","Es lo que hay, lo superaré"],taskEs:"Décris comment tu te sens aujourd'hui avec 3 phrases"}] },
-    1: { en: [{id:"en1",title:"Surviving school like a boss",level:"A2",duration:15,phrases:["I have a ton of homework due tomorrow","Can I get an extension on this assignment?","I totally spaced out during class","This subject is actually growing on me","Let's team up for the group project"],trans:["Tengo un montón de tarea para mañana","¿Puedo tener una extensión en esta tarea?","Me distraje completamente en clase","Esta materia me está gustando cada vez más","Hagamos equipo para el proyecto grupal"],taskEs:"Describe tu día escolar con 3 frases"}], fr: [{id:"fr1",title:"Survivre à l'école comme un chef",level:"A2",duration:15,phrases:["J'ai une tonne de devoirs pour demain","Je peux avoir un délai pour ce devoir?","J'étais complètement ailleurs en cours","Cette matière commence à me plaire","On fait équipe pour le projet de groupe?"],trans:["Tengo un montón de tarea para mañana","¿Puedo tener una extensión en esta tarea?","Me distraje completamente en clase","Esta materia me está gustando cada vez más","Hagamos equipo para el proyecto grupal"],taskEs:"Décris ta journée scolaire avec 3 phrases"}] },
-    2: { en: [{id:"en2",title:"Travel like an influencer",level:"A2",duration:15,phrases:["I'm so excited for my trip next week!","What's the best way to get around here?","This view is absolutely breathtaking","I need to pick up some souvenirs","Do you know any cool spots off the beaten path?"],trans:["¡Estoy tan emocionada por mi viaje!","¿Cuál es la mejor forma de moverse?","Esta vista es absolutamente impresionante","Necesito comprar algunos recuerdos","¿Conoces lugares geniales fuera de lo turístico?"],taskEs:"Describe un viaje que te gustaría hacer"}], fr: [{id:"fr2",title:"Voyager comme un influenceur",level:"A2",duration:15,phrases:["Je suis trop excitée pour mon voyage!","Quel est le meilleur moyen de se déplacer?","Cette vue est à couper le souffle","Je dois acheter quelques souvenirs","Tu connais des endroits hors des sentiers battus?"],trans:["¡Estoy tan emocionada por mi viaje!","¿Cuál es la mejor forma de moverse?","Esta vista es absolutamente impresionante","Necesito comprar algunos recuerdos","¿Conoces lugares geniales fuera de lo turístico?"],taskEs:"Décris un voyage que tu aimerais faire"}] },
-    3: { en: [{id:"en3",title:"Tech talk for teens",level:"A2",duration:15,phrases:["My phone battery is about to die","Can you send me the link via DM?","This app is a total game changer","I'm trying to limit my screen time","Have you checked out that new AI tool?"],trans:["Mi batería está a punto de morir","¿Me envías el enlace por DM?","Esta app cambia totalmente las reglas","Estoy tratando de limitar mi tiempo en pantalla","¿Ya probaste esa nueva herramienta de IA?"],taskEs:"Describe cómo usas la tecnología en tu día"}], fr: [{id:"fr3",title:"Parler tech pour ados",level:"A2",duration:15,phrases:["Ma batterie va bientôt mourir","Tu peux m'envoyer le lien en DM?","Cette appli change complètement la donne","J'essaie de limiter mon temps d'écran","T'as déjà testé ce nouvel outil IA?"],trans:["Mi batería está a punto de morir","¿Me envías el enlace por DM?","Esta app cambia totalmente las reglas","Estoy tratando de limitar mi tiempo en pantalla","¿Ya probaste esa nueva herramienta de IA?"],taskEs:"Décris comment tu utilises la technologie"}] },
-    4: { en: [{id:"en4",title:"Music vibes & conversations",level:"A2",duration:15,phrases:["This song hits different at night","I've had this track on repeat all week","The lyrics speak to my soul","She absolutely killed that performance","What's your go-to playlist for studying?"],trans:["Esta canción se siente diferente de noche","He tenido esta canción en repetición toda la semana","La letra le habla a mi alma","Ella arrasó con esa presentación","¿Cuál es tu playlist para estudiar?"],taskEs:"Describe tu canción favorita y por qué te gusta"}], fr: [{id:"fr4",title:"Vibes musicales et conversations",level:"A2",duration:15,phrases:["Cette chanson fait un effet différent la nuit","J'ai ce morceau en boucle depuis une semaine","Les paroles parlent à mon âme","Elle a complètement déchiré sa performance","C'est quoi ta playlist pour étudier?"],trans:["Esta canción se siente diferente de noche","He tenido esta canción en repetición toda la semana","La letra le habla a mi alma","Ella arrasó con esa presentación","¿Cuál es tu playlist para estudiar?"],taskEs:"Décris ta chanson préférée"}] },
-    5: { en: [{id:"en5",title:"Foodie conversations",level:"A2",duration:15,phrases:["I'm totally craving tacos right now","This dish is to die for!","I could eat this every single day","I'm not a picky eater at all","Let's grab a bite somewhere new"],trans:["Se me antojan unos tacos ahora mismo","¡Este platillo está para morirse!","Podría comer esto todos los días","No soy nada quisquillosa con la comida","Vamos a comer algo a un lugar nuevo"],taskEs:"Describe tu comida favorita"}], fr: [{id:"fr5",title:"Conversations de foodie",level:"A2",duration:15,phrases:["J'ai trop envie de tacos là tout de suite","Ce plat est à tomber par terre!","Je pourrais manger ça tous les jours","Je ne suis pas du tout difficile","On va manger un bout dans un nouvel endroit?"],trans:["Se me antojan unos tacos ahora mismo","¡Este platillo está para morirse!","Podría comer esto todos los días","No soy nada quisquillosa con la comida","Vamos a comer algo a un lugar nuevo"],taskEs:"Décris ton plat préféré"}] },
-    6: { en: [{id:"en6",title:"Sports talk & motivation",level:"A2",duration:15,phrases:["I'm really into yoga lately","Let's go for a run, it'll clear your mind","No pain, no gain, right?","She's absolutely crushing it on the field!","I need to stretch before this workout"],trans:["Últimamente me está gustando mucho el yoga","Vamos a correr, te despejará la mente","Sin dolor no hay ganancia, ¿no?","¡La está rompiendo en la cancha!","Necesito estirar antes de este entrenamiento"],taskEs:"Describe tu deporte favorito"}], fr: [{id:"fr6",title:"Sport & motivation",level:"A2",duration:15,phrases:["Je suis à fond dans le yoga en ce moment","On va courir? Ça va te vider la tête","Pas de douleur, pas de gain, non?","Elle déchire tout sur le terrain!","Je dois m'étirer avant cette séance"],trans:["Últimamente me está gustando mucho el yoga","Vamos a correr, te despejará la mente","Sin dolor no hay ganancia, ¿no?","¡La está rompiendo en la cancha!","Necesito estirar antes de este entrenamiento"],taskEs:"Décris ton sport préféré"}] },
-    7: { en: [{id:"en7",title:"Eco-friendly & nature convos",level:"A2",duration:15,phrases:["I'm trying to reduce my plastic waste","Nature is honestly the best therapy","Let's go hiking this weekend!","We should all do our part for the planet","This beach cleanup is so rewarding"],trans:["Estoy tratando de reducir mis residuos plásticos","La naturaleza es la mejor terapia","¡Vamos de excursión este fin de semana!","Todos deberíamos hacer nuestra parte","Esta limpieza de playa es tan gratificante"],taskEs:"Describe 3 cosas que haces para ayudar al planeta"}], fr: [{id:"fr7",title:"Écolo & nature",level:"A2",duration:15,phrases:["J'essaie de réduire mes déchets plastiques","La nature est franchement la meilleure thérapie","On part en rando ce week-end!","On devrait tous faire notre part","Ce nettoyage de plage est tellement gratifiant"],trans:["Estoy tratando de reducir mis residuos plásticos","La naturaleza es la mejor terapia","¡Vamos de excursión este fin de semana!","Todos deberíamos hacer nuestra parte","Esta limpieza de playa es tan gratificante"],taskEs:"Décris 3 choses que tu fais pour la planète"}] },
-    // Semana 9: Amistad
-    8: { en: [{id:"en8",title:"Talking about friendship & relationships",level:"A2-B1",duration:20,phrases:["She's been my best friend since primary school","I really value her honesty and loyalty","We had a disagreement, but we talked it out","A true friend supports you through tough times","Sometimes friendships need space to grow","I'm grateful for the people who truly care about me"],trans:["Ella ha sido mi mejor amiga desde la primaria","Valoro mucho su honestidad y lealtad","Tuvimos un desacuerdo, pero lo hablamos","Una verdadera amiga te apoya en los momentos difíciles","A veces las amistades necesitan espacio para crecer","Estoy agradecida por las personas que realmente se preocupan por mí"],taskEs:"Describe a tu mejor amiga o amigo usando 4 de las frases aprendidas"}], fr: [{id:"fr8",title:"Parler d'amitié et de relations",level:"A2-B1",duration:20,phrases:["C'est ma meilleure amie depuis l'école primaire","Je valorise beaucoup son honnêteté et sa loyauté","On a eu un désaccord, mais on en a parlé","Une vraie amie te soutient dans les moments difficiles","Parfois, les amitiés ont besoin d'espace pour grandir","Je suis reconnaissante pour les personnes qui se soucient vraiment de moi"],trans:["Ella ha sido mi mejor amiga desde la primaria","Valoro mucho su honestidad y lealtad","Tuvimos un desacuerdo, pero lo hablamos","Una verdadera amiga te apoya en los momentos difíciles","A veces las amistades necesitan espacio para crecer","Estoy agradecida por las personas que realmente se preocupan por mí"],taskEs:"Décris ta meilleure amie en utilisant 4 des phrases apprises"}] },
-    // Semana 10: Futuro
-    9: { en: [{id:"en9",title:"Planning your future & career",level:"A2-B1",duration:20,phrases:["I'm thinking about studying psychology at university","What skills do I need for my dream job?","I want to make a positive impact in the world","It's important to gain experience and learn every day","I'm working hard to achieve my goals","Balance between work and personal life is essential"],trans:["Estoy pensando en estudiar psicología en la universidad","¿Qué habilidades necesito para mi trabajo soñado?","Quiero tener un impacto positivo en el mundo","Es importante ganar experiencia y aprender cada día","Estoy trabajando duro para alcanzar mis metas","El equilibrio entre trabajo y vida personal es esencial"],taskEs:"Describe tu plan de futuro usando 4 de las frases aprendidas"}], fr: [{id:"fr9",title:"Planifier ton avenir et ta carrière",level:"A2-B1",duration:20,phrases:["Je pense à étudier la psychologie à l'université","Quelles compétences sont nécessaires pour mon métier de rêve?","Je veux avoir un impact positif sur le monde","Il est important d'acquérir de l'expérience et d'apprendre chaque jour","Je travaille dur pour atteindre mes objectifs","L'équilibre entre le travail et la vie personnelle est essentiel"],trans:["Estoy pensando en estudiar psicología en la universidad","¿Qué habilidades necesito para mi trabajo soñado?","Quiero tener un impacto positivo en el mundo","Es importante ganar experiencia y aprender cada día","Estoy trabajando duro para alcanzar mis metas","El equilibrio entre trabajo y vida personal es esencial"],taskEs:"Décris ton plan d'avenir en utilisant 4 des phrases apprises"}] },
-    // Semana 11: Salud Mental
-    10: { en: [{id:"en10",title:"Mental health & self-care",level:"A2-B1",duration:20,phrases:["It's okay to take a break when you're feeling overwhelmed","Practicing mindfulness helps me stay grounded","I'm learning to prioritize my mental health","Sometimes I need to say no to protect my well-being","Talking to someone about my feelings makes a difference","Self-care is not selfish, it's necessary"],trans:["Está bien tomar un descanso cuando te sientes abrumada","Practicar la atención plena me ayuda a mantenerme centrada","Estoy aprendiendo a priorizar mi salud mental","A veces necesito decir no para proteger mi bienestar","Hablar con alguien sobre mis sentimientos marca la diferencia","El autocuidado no es egoísta, es necesario"],taskEs:"Describe cómo cuidas tu salud mental usando 4 de las frases aprendidas"}], fr: [{id:"fr10",title:"Santé mentale et soins personnels",level:"A2-B1",duration:20,phrases:["C'est normal de prendre une pause quand on se sent dépassée","Pratiquer la pleine conscience m'aide à rester centrée","J'apprends à prioriser ma santé mentale","Parfois, je dois dire non pour protéger mon bien-être","Parler à quelqu'un de mes sentiments fait une différence","Prendre soin de soi n'est pas égoïste, c'est nécessaire"],trans:["Está bien tomar un descanso cuando te sientes abrumada","Practicar la atención plena me ayuda a mantenerme centrada","Estoy aprendiendo a priorizar mi salud mental","A veces necesito decir no para proteger mi bienestar","Hablar con alguien sobre mis sentimientos marca la diferencia","El autocuidado no es egoísta, es necesario"],taskEs:"Décris comment tu prends soin de ta santé mentale en utilisant 4 phrases"}] },
-    // Semana 12: Cultura
-    11: { en: [{id:"en11",title:"Culture & global citizenship",level:"A2-B1",duration:20,phrases:["Learning about other cultures opens my mind","I believe in respecting diversity and different traditions","We all have a responsibility to make the world better","Small actions can create big changes in our community","Being open-minded helps me understand others better","We are all citizens of the same planet"],trans:["Aprender sobre otras culturas me abre la mente","Creo en respetar la diversidad y las diferentes tradiciones","Todos tenemos la responsabilidad de hacer un mundo mejor","Pequeñas acciones pueden crear grandes cambios en nuestra comunidad","Tener una mente abierta me ayuda a entender mejor a los demás","Todos somos ciudadanos del mismo planeta"],taskEs:"Describe qué significa ser una ciudadana global usando 4 de las frases aprendidas"}], fr: [{id:"fr11",title:"Culture et citoyenneté mondiale",level:"A2-B1",duration:20,phrases:["Apprendre sur d'autres cultures m'ouvre l'esprit","Je crois en le respect de la diversité et des différentes traditions","Nous avons tous la responsabilité de rendre le monde meilleur","Les petites actions peuvent créer de grands changements dans notre communauté","Être ouverte d'esprit m'aide à mieux comprendre les autres","Nous sommes tous citoyens de la même planète"],trans:["Aprender sobre otras culturas me abre la mente","Creo en respetar la diversidad y las diferentes tradiciones","Todos tenemos la responsabilidad de hacer un mundo mejor","Pequeñas acciones pueden crear grandes cambios en nuestra comunidad","Tener una mente abierta me ayuda a entender mejor a los demás","Todos somos ciudadanos del mismo planeta"],taskEs:"Décris ce que signifie être une citoyenne du monde en utilisant 4 phrases"}] }
-};
-
-// ========== VARIABLES GLOBALES ==========
-let currentLang = "en";
-let karaokeFilter = "all";
-let currentGame = "memory";
-let completedLessons = JSON.parse(localStorage.getItem("laeticia_completed") || "[]");
-let userXP = parseInt(localStorage.getItem("laeticia_xp") || "0");
-let userLevel = parseInt(localStorage.getItem("laeticia_level") || "1");
-let diaryEntries = JSON.parse(localStorage.getItem("laeticia_diary") || "[]");
-let sentInvites = JSON.parse(localStorage.getItem("laeticia_sent_invites") || "[]");
-let receivedInvites = JSON.parse(localStorage.getItem("laeticia_received_invites") || "[]");
-let friends = JSON.parse(localStorage.getItem("laeticia_friends") || "[]");
-let flashcardDeck = [];
-let flashcardIndex = 0;
-let flashcardCorrect = 0;
-let flashcardTotal = 0;
-let flashcardFlipped = false;
-let flashcardMode = "slang";
-let memoryCards = [];
-let memoryFlipped = [];
-let memoryMatched = [];
-let memoryLocked = false;
-let quizWords = [];
-let quizIndex = 0;
-let quizScore = 0;
-let quizTotal = 0;
-let quizTimer = null;
-let quizTimeLeft = 10;
-let scrambleWords = [];
-let scrambleIndex = 0;
-let scrambleScore = 0;
-let scrambleAnswer = [];
-let diaryPhotoData = null;
-let originalPhotoData = null;
-let photoRotation = 0;
-let photoFlipH = false;
-let photoFlipV = false;
-let deferredPrompt;
-let notifSettings = JSON.parse(localStorage.getItem("laeticia_notif_settings") || '{"enabled":false,"time":"17:00","days":[1,2,3,4,5],"message":"📚 ¿Ya practicaste hoy?"}');
-const BACKUP_KEYS = ["laeticia_completed","laeticia_xp","laeticia_level","laeticia_streak","laeticia_diary","laeticia_sent_invites","laeticia_received_invites","laeticia_friends","laeticia_theme","laeticia_dark_mode","laeticia_avatar","laeticia_last_mood","laeticia_mama_playlist","laeticia_notif_settings","laeticia_dad_completadas","laeticia_grammar","laeticia_exam_completed"];
-const TOTAL_LESSONS = 24;
-
-// ========== FUNCIONES PRINCIPALES ==========
-function getCurrentWeekInfo() {
-    if (testWeekOverride !== null) {
-        if (isWeekUnlocked(testWeekOverride)) {
-            return { weekNumber: testWeekOverride + 1, cycleIndex: testWeekOverride, theme: weeklyThemes[testWeekOverride] };
-        } else {
-            testWeekOverride = null;
-        }
-    }
-    const currentLevel = getCurrentAcademyLevel();
-    const w = Math.min(currentLevel, weeklyThemes.length - 1);
-    return { weekNumber: w + 1, cycleIndex: w, theme: weeklyThemes[w] };
-}
-
-function renderWeekSelector() {
-    const currentLevel = getCurrentAcademyLevel();
-    const totalWeeks = 12;
-    const select = document.getElementById("weekSelector");
-    if (!select) return;
-    let html = `<option value="auto">📅 Semana actual (auto)</option>`;
-    for (let i = 0; i <= currentLevel && i < totalWeeks; i++) {
-        const week = weeklyThemes[i];
-        html += `<option value="${i}" ${testWeekOverride === i ? 'selected' : ''}>${week.emoji} S${i + 1}: ${week.name} ✅</option>`;
-    }
-    if (currentLevel >= totalWeeks - 1) {
-        html += `<option disabled>🎉 ¡Todas las semanas desbloqueadas!</option>`;
-    } else {
-        for (let i = currentLevel + 1; i < totalWeeks; i++) {
-            const week = weeklyThemes[i];
-            html += `<option value="${i}" disabled style="color: #999; opacity: 0.5;">🔒 S${i + 1}: ${week.name}</option>`;
-        }
-    }
-    select.innerHTML = html;
-}
-
-function updateWeeklyDisplay() {
-    const wi = getCurrentWeekInfo();
-    const t = wi.theme;
-    const isUnlocked = isWeekUnlocked(wi.cycleIndex);
-    const hero = document.getElementById('weekThemeHero');
-    if (hero) {
-        if (isUnlocked) {
-            hero.innerHTML = `<h3>${t.emoji} Semana ${wi.weekNumber} : ${t.name}</h3><p>${t.desc}</p><div style="font-size:0.7rem;margin-top:8px;color:#10b981;">✅ Semana desbloqueada</div>`;
-            hero.style.background = `linear-gradient(135deg, ${t.color}, white)`;
-            hero.style.opacity = '1';
-        } else {
-            hero.innerHTML = `<h3>🔒 Semana ${wi.weekNumber} : ${t.name}</h3><p>${t.desc}</p><div style="font-size:0.7rem;margin-top:8px;color:#dc2626;">🔒 Completa la semana anterior para desbloquear</div>`;
-            hero.style.background = `linear-gradient(135deg, #e5e7eb, #f3f4f6)`;
-            hero.style.opacity = '0.6';
-        }
-    }
-}
-
-function changeTestWeek() {
-    const v = document.getElementById("weekSelector").value;
-    testWeekOverride = v === "auto" ? null : parseInt(v);
-    updateWeeklyDisplay();
-    if (document.getElementById("viewAcademy").classList.contains("active")) {
-        renderVocab();
-        renderFlashcardModes();
-        loadFlashcards();
-        renderLessons();
-        renderAcademyProgress();
-    }
-}
-
-function getVocabData() {
-    try {
-        const wv = weeklyVocab[getCurrentWeekInfo().cycleIndex];
-        if (wv && wv[currentLang]) return {"Tema": wv[currentLang]};
-    } catch(e) {}
-    return baseVocabData[currentLang] || baseVocabData["en"];
-}
-
-function getSlangData() {
-    try {
-        const ws = weeklySlang[getCurrentWeekInfo().cycleIndex];
-        if (ws && ws[currentLang]) return ws[currentLang];
-    } catch(e) {}
-    return baseSlangData[currentLang] || baseSlangData["en"];
-}
-
-function getLessons() {
-    try {
-        const wl = weeklyLessons[getCurrentWeekInfo().cycleIndex];
-        if (wl && wl[currentLang]) return wl[currentLang];
-    } catch(e) {}
-    return currentLang === "en" ? baseEnglishLessons : baseFrenchLessons;
-}
-
-function getArticlesData() {
-    try {
-        const a = weeklyArticles[getCurrentWeekInfo().cycleIndex];
-        return a && a.length ? a : baseArticles;
-    } catch(e) {
-        return baseArticles;
-    }
-}
-
-function getMomActivitiesData() {
-    try {
-        const a = weeklyMomActivities[getCurrentWeekInfo().cycleIndex];
-        return a && a.length ? a : baseMomActivities;
-    } catch(e) {
-        return baseMomActivities;
-    }
-}
-
-// ========== RENDER FUNCTIONS ==========
-function renderVocab() {
-    const d = getVocabData();
-    const packs = Object.keys(d);
-    const container = document.getElementById("vocabSection");
-    if (!container) return;
-    container.innerHTML = `<div class="badge">📖 Vocabulario</div><div id="vocabPacks">${packs.map(p => `<span class="vocab-pack" data-pack="${p}">📦 ${p}</span>`).join('')}</div><div id="vocabWords" class="vocab-words"></div>`;
-    if (packs.length) {
-        document.getElementById("vocabWords").innerHTML = d[packs[0]].map(i => `<span class="word-card">${i.en || i.fr} → ${i.es}</span>`).join('');
-    }
-    document.querySelectorAll(".vocab-pack").forEach(el => {
-        el.addEventListener("click", () => {
-            const p = el.getAttribute("data-pack");
-            document.getElementById("vocabWords").innerHTML = d[p].map(i => `<span class="word-card">${i.en || i.fr} → ${i.es}</span>`).join('');
-        });
-    });
-}
-
-function renderLessons() {
-    const lessons = getLessons();
-    const container = document.getElementById("lessonsContainer");
-    if (!container) return;
-    container.innerHTML = lessons.map(l => `
-        <div class="lesson-card" onclick="openLesson('${l.id}')">
-            <div class="lesson-level">${l.level} · ${l.duration}min</div>
-            <div class="card-title">${l.title}</div>
-            <div>${completedLessons.includes(l.id) ? "✅" : "📖"}</div>
-        </div>
-    `).join('');
-    document.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
-    document.getElementById(`lang-${currentLang}`).classList.add("active");
-}
-
-function openLesson(id) {
-    const l = getLessons().find(l => l.id === id);
-    if (!l) return;
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>📚 Lección</div>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
-            </div>
-            <div class="card-title">${l.title}</div>
-            <div>📌 ${l.taskEs}</div>
-            <ul>${l.phrases.map((p, i) => `<li><strong>${p}</strong> → ${l.trans[i]} <button class="btn-small" onclick="speakText('${p}','${currentLang}')">🔊</button></li>`).join('')}</ul>
-            <div style="margin-top:20px;text-align:center;"><button class="btn-primary" onclick="completeLesson('${l.id}')">✅ Marcar (+20 XP)</button></div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-}
-
-function completeLesson(id) {
-    if (!completedLessons.includes(id)) {
-        completedLessons.push(id);
-        localStorage.setItem("laeticia_completed", JSON.stringify(completedLessons));
-        userXP += 20;
-        if (userXP >= userLevel * 100) userLevel++;
-        localStorage.setItem("laeticia_xp", userXP);
-        localStorage.setItem("laeticia_level", userLevel);
-        alert("🎉 +20 XP!");
-        renderLessons();
-        updateProfile();
-    }
-    document.querySelector('.modal-overlay')?.remove();
-}
-
-// ========== FUNCIONES QUE FALTABAN ==========
-function togglePlayPause() {
-    if (laeticiaFavSongs[currentSongIndex]) {
-        window.open(laeticiaFavSongs[currentSongIndex].url, '_blank');
-    }
-}
-
-function signOutAndClose() {
-    sessionStorage.removeItem('laeticia_logged');
-    sessionStorage.removeItem('laeticia_user');
-    location.reload();
-}
-
-function mostrarAdminDirecto() {
-    const currentUser = sessionStorage.getItem('laeticia_user');
-    const esAdmin = (currentUser === 'jeant.montreuil@gmail.com');
-    if (!esAdmin) {
-        alert("⛔ Acceso denegado. Solo administradores.");
-        return;
-    }
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    const adminView = document.getElementById('viewAdmin');
-    if (adminView) adminView.classList.add('active');
-    const container = document.getElementById('adminStatsContainer');
-    if (container) {
-        let stats = JSON.parse(localStorage.getItem('laeticia_stats') || '{}');
-        if (Object.keys(stats).length === 0) {
-            stats = {
-                "jeant.montreuil@gmail.com": { count: 5, lastAccess: new Date().toLocaleString() },
-                "laeticia@academy.com": { count: 3, lastAccess: new Date().toLocaleString() }
-            };
-            localStorage.setItem('laeticia_stats', JSON.stringify(stats));
-        }
-        let html = '<ul style="list-style:none; padding:0;">';
-        for (const [email, data] of Object.entries(stats)) {
-            let name = email;
-            if (email === 'jeant.montreuil@gmail.com') name = '👑 Admin';
-            else if (email === 'laeticia@academy.com') name = '👧 Laeticia';
-            html += `<li style="padding:8px 0; border-bottom:1px solid var(--border);"><strong>${name}</strong>: ${data.count} veces | Último: ${data.lastAccess || '-'}</li>`;
-        }
-        html += '</ul>';
-        container.innerHTML = html;
-    }
-}
-
-// ========== INICIALIZACIÓN ==========
-if (!localStorage.getItem('academy_level')) {
-    localStorage.setItem('academy_level', '0');
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    cargarFotosStorage();
-    renderWeekSelector();
-    updateWeeklyDisplay();
-    renderAcademyProgress();
-});
-
-// Exposición global de funciones
-window.showView = showView;
-window.changeTestWeek = changeTestWeek;
-window.toggleRadialMenu = toggleRadialMenu;
-window.goToView = goToView;
-window.signOutAndClose = signOutAndClose;
-window.mostrarAdminDirecto = mostrarAdminDirecto;
-window.togglePlayPause = togglePlayPause;
-window.openLesson = openLesson;
-window.completeLesson = completeLesson;
-window.speakText = speakText;
-window.toggleDarkMode = toggleDarkMode;
-window.changeAvatar = changeAvatar;
-window.openMamaPlaylist = openMamaPlaylist;
-window.loadFlashcards = loadFlashcards;
-window.flipFlashcard = flipFlashcard;
-window.flashcardResult = flashcardResult;
-window.nextFlashcard = nextFlashcard;
-window.switchFlashMode = switchFlashMode;
-window.switchGame = switchGame;
-window.flipMemoryCard = flipMemoryCard;
-window.answerSpeedQuiz = answerSpeedQuiz;
-window.pickScrambleLetter = pickScrambleLetter;
-window.resetScrambleAnswer = resetScrambleAnswer;
-window.checkScrambleAnswer = checkScrambleAnswer;
-window.filterKaraokeSongs = filterKaraokeSongs;
-window.saveDiaryEntry = saveDiaryEntry;
-window.previewDiaryPhoto = previewDiaryPhoto;
-window.rotatePhoto = rotatePhoto;
-window.flipPhoto = flipPhoto;
-window.centerPhoto = centerPhoto;
-window.resetPhoto = resetPhoto;
-window.applyEdit = applyEdit;
-window.generateFriendCode = generateFriendCode;
-window.addFriend = addFriend;
-window.approveReceivedInvite = approveReceivedInvite;
-window.rejectReceivedInvite = rejectReceivedInvite;
-window.cancelSentInvite = cancelSentInvite;
-window.applyPreset = applyPreset;
-window.updateTheme = updateTheme;
-window.saveTheme = saveTheme;
-window.installPWA = installPWA;
-window.exportData = exportData;
-window.importData = importData;
-window.toggleNotifications = toggleNotifications;
-window.toggleDay = toggleDay;
-window.saveNotifSettings = saveNotifSettings;
-window.testNotification = testNotification;
-window.openConjugation = openConjugation;
-window.checkConjugationExercise = checkConjugationExercise;
-window.checkGrammarExercise = checkGrammarExercise;
-window.renderLifeSkills = renderLifeSkills;
-window.openSkill = openSkill;
-window.updateMamaProgress = updateMamaProgress;
-window.renderMamaCorner = renderMamaCorner;
-window.updateChallengeStep = updateChallengeStep;
-window.saveReflection = saveReflection;
+// Initialiser le sélecteur de semaine au chargement
+renderWeekSelector();
+updateWeeklyDisplay();    
+</script>
 
 <div class="float-circle circle-signout" onclick="signOutAndClose()" title="Cerrar sesión y salir">🚪</div>
 <div class="float-circle circle-menu" onclick="toggleRadialMenu()" title="Menú">📱</div>
@@ -2576,10 +1736,6 @@ const weeklyThemes = [
     { name: "Comida y Gastronomía", emoji: "🍽️", color: "#fef3c7", desc: "Sabores del mundo en inglés y francés" },
     { name: "Deportes y Salud", emoji: "⚽", color: "#d1fae5", desc: "Mantente activa mientras aprendes idiomas" },
     { name: "Naturaleza y Planeta", emoji: "🌍", color: "#e0e7ff", desc: "Cuida el planeta mientras aprendes" }
-    { name: "Amistad y Relaciones Sociales", emoji: "👭", color: "#fce7f3", desc: "Aprende a hablar de amistad y conexiones auténticas" },
-    { name: "Futuro y Carrera Profesional", emoji: "💼", color: "#e0e7ff", desc: "Prepárate para tu futuro con vocabulario profesional" },
-    { name: "Salud Mental y Bienestar", emoji: "🧠", color: "#d1fae5", desc: "Cuida tu mente mientras aprendes dos idiomas" },
-    { name: "Cultura y Ciudadanía Global", emoji: "🌎", color: "#fef3c7", desc: "Explora culturas y conviértete en ciudadana del mundo" }
 ];
 
 const weeklyVocab = {
@@ -4474,6 +3630,7 @@ function showView(vn){
     let agendaNueva = document.getElementById('viewAgendaNueva');
     if (agendaNueva) agendaNueva.classList.remove('active');
 }
+
 function getCurrentWeekInfo() {
     // Si l'utilisateur a forcé une semaine
     if (testWeekOverride !== null) {
@@ -4485,12 +3642,6 @@ function getCurrentWeekInfo() {
             testWeekOverride = null;
         }
     }
-    
-    // Semaine actuelle = la plus haute débloquée
-    const currentLevel = getCurrentAcademyLevel();
-    const w = Math.min(currentLevel, weeklyThemes.length - 1);
-    return { weekNumber: w + 1, cycleIndex: w, theme: weeklyThemes[w] };
-}}
     
     // Semaine actuelle = la plus haute débloquée
     const currentLevel = getCurrentAcademyLevel();
