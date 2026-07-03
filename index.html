@@ -412,6 +412,10 @@
             <option value="5">🍽️ S6: Comida</option>
             <option value="6">⚽ S7: Deportes</option>
             <option value="7">🌍 S8: Naturaleza</option>
+            <option value="8">👭 S9: Amistad</option>
+            <option value="9">💼 S10: Futuro</option>
+            <option value="10">🧠 S11: Salud Mental</option>
+            <option value="11">🌎 S12: Cultura</option>
         </select>
     </div>
 <div id="dynamicBlock" class="dynamic-block" style="background: var(--card); border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);">
@@ -1577,7 +1581,7 @@ window.showView = function(vn) {
 function getCurrentAcademyLevel() {
     let level = localStorage.getItem('academy_level');
     if (!level) {
-        level = 0; // Commence à la semaine 0
+        level = 0;
         localStorage.setItem('academy_level', '0');
     }
     return parseInt(level);
@@ -1735,7 +1739,11 @@ const weeklyThemes = [
     { name: "Música y Arte", emoji: "🎵", color: "#fce7f3", desc: "Expresa tu creatividad en dos idiomas" },
     { name: "Comida y Gastronomía", emoji: "🍽️", color: "#fef3c7", desc: "Sabores del mundo en inglés y francés" },
     { name: "Deportes y Salud", emoji: "⚽", color: "#d1fae5", desc: "Mantente activa mientras aprendes idiomas" },
-    { name: "Naturaleza y Planeta", emoji: "🌍", color: "#e0e7ff", desc: "Cuida el planeta mientras aprendes" }
+    { name: "Naturaleza y Planeta", emoji: "🌍", color: "#e0e7ff", desc: "Cuida el planeta mientras aprendes" },
+    { name: "Amistad y Relaciones Sociales", emoji: "👭", color: "#fce7f3", desc: "Aprende a hablar de amistad y conexiones auténticas" },
+    { name: "Futuro y Carrera Profesional", emoji: "💼", color: "#e0e7ff", desc: "Prepárate para tu futuro con vocabulario profesional" },
+    { name: "Salud Mental y Bienestar", emoji: "🧠", color: "#d1fae5", desc: "Cuida tu mente mientras aprendes dos idiomas" },
+    { name: "Cultura y Ciudadanía Global", emoji: "🌎", color: "#fef3c7", desc: "Explora culturas y conviértete en ciudadana del mundo" }
 ];
 
 const weeklyVocab = {
@@ -1747,6 +1755,26 @@ const weeklyVocab = {
     5: { en: [{en:"recipe",es:"receta"},{en:"delicious",es:"delicioso/a"},{en:"spicy",es:"picante"},{en:"breakfast",es:"desayuno"},{en:"dinner",es:"cena"},{en:"dessert",es:"postre"}], fr: [{fr:"recette",es:"receta"},{fr:"délicieux",es:"delicioso/a"},{fr:"épicé",es:"picante"},{fr:"petit-déjeuner",es:"desayuno"},{fr:"dîner",es:"cena"},{fr:"dessert",es:"postre"}] },
     6: { en: [{en:"exercise",es:"ejercicio"},{en:"strength",es:"fuerza"},{en:"healthy",es:"saludable"},{en:"team",es:"equipo"},{en:"victory",es:"victoria"},{en:"training",es:"entrenamiento"}], fr: [{fr:"exercice",es:"ejercicio"},{fr:"force",es:"fuerza"},{fr:"sain",es:"saludable"},{fr:"équipe",es:"equipo"},{fr:"victoire",es:"victoria"},{fr:"entraînement",es:"entrenamiento"}] },
     7: { en: [{en:"forest",es:"bosque"},{en:"ocean",es:"océano"},{en:"mountain",es:"montaña"},{en:"recycle",es:"reciclar"},{en:"planet",es:"planeta"},{en:"wildlife",es:"vida salvaje"}], fr: [{fr:"forêt",es:"bosque"},{fr:"océan",es:"océano"},{fr:"montagne",es:"montaña"},{fr:"recycler",es:"reciclar"},{fr:"planète",es:"planeta"},{fr:"faune",es:"vida salvaje"}] }
+    // Semana 9: Amistad (índice 8)
+8: {
+    en: [{en:"friend",es:"amigo/a"},{en:"trust",es:"confianza"},{en:"loyal",es:"leal"},{en:"support",es:"apoyo/apoyar"},{en:"honesty",es:"honestidad"},{en:"betrayal",es:"traición"},{en:"conflict",es:"conflicto"},{en:"reconciliation",es:"reconciliación"}],
+    fr: [{fr:"ami(e)",es:"amigo/a"},{fr:"confiance",es:"confianza"},{fr:"fidèle",es:"leal"},{fr:"soutien",es:"apoyo"},{fr:"honnêteté",es:"honestidad"},{fr:"trahison",es:"traición"},{fr:"conflit",es:"conflicto"},{fr:"réconciliation",es:"reconciliación"}]
+},
+// Semana 10: Futuro (índice 9)
+9: {
+    en: [{en:"career",es:"carrera profesional"},{en:"dream job",es:"trabajo soñado"},{en:"skills",es:"habilidades"},{en:"experience",es:"experiencia"},{en:"goal",es:"meta/objetivo"},{en:"interview",es:"entrevista"},{en:"salary",es:"salario"},{en:"promotion",es:"ascenso"}],
+    fr: [{fr:"carrière",es:"carrera profesional"},{fr:"métier de rêve",es:"trabajo soñado"},{fr:"compétences",es:"habilidades"},{fr:"expérience",es:"experiencia"},{fr:"objectif",es:"meta/objetivo"},{fr:"entretien",es:"entrevista"},{fr:"salaire",es:"salario"},{fr:"promotion",es:"ascenso"}]
+},
+// Semana 11: Salud Mental (índice 10)
+10: {
+    en: [{en:"anxiety",es:"ansiedad"},{en:"stress",es:"estrés"},{en:"self-care",es:"autocuidado"},{en:"therapy",es:"terapia"},{en:"mental health",es:"salud mental"},{en:"wellness",es:"bienestar"},{en:"rest",es:"descanso"},{en:"balance",es:"equilibrio"}],
+    fr: [{fr:"anxiété",es:"ansiedad"},{fr:"stress",es:"estrés"},{fr:"soins personnels",es:"autocuidado"},{fr:"thérapie",es:"terapia"},{fr:"santé mentale",es:"salud mental"},{fr:"bien-être",es:"bienestar"},{fr:"repos",es:"descanso"},{fr:"équilibre",es:"equilibrio"}]
+},
+// Semana 12: Cultura (índice 11)
+11: {
+    en: [{en:"culture",es:"cultura"},{en:"tradition",es:"tradición"},{en:"diversity",es:"diversidad"},{en:"citizen",es:"ciudadano/a"},{en:"rights",es:"derechos"},{en:"responsibility",es:"responsabilidad"},{en:"community",es:"comunidad"},{en:"global",es:"global"}],
+    fr: [{fr:"culture",es:"cultura"},{fr:"tradition",es:"tradición"},{fr:"diversité",es:"diversidad"},{fr:"citoyen(ne)",es:"ciudadano/a"},{fr:"droits",es:"derechos"},{fr:"responsabilité",es:"responsabilidad"},{fr:"communauté",es:"comunidad"},{fr:"mondial",es:"global"}]
+}
 };
 
 const weeklySlang = {
@@ -1758,6 +1786,26 @@ const weeklySlang = {
     5: { en: [{phrase:"I'm starving",meaning:"Me muero de hambre",context:"Hambre",level:"beginner"},{phrase:"It's finger-lickin' good",meaning:"Para chuparse los dedos",context:"Comida deliciosa",level:"intermediate"},{phrase:"Let's grab a bite",meaning:"Vamos a comer algo rápido",context:"Plan informal",level:"beginner"},{phrase:"Food coma",meaning:"Sueño después de comer",context:"Modorra",level:"beginner"},{phrase:"This is my guilty pleasure",meaning:"Es mi placer culpable",context:"Algo que te gusta",level:"intermediate"},{phrase:"I'm craving something sweet",meaning:"Se me antoja algo dulce",context:"Antojo",level:"beginner"},{phrase:"That's overpriced",meaning:"Está muy caro",context:"Queja por precio",level:"intermediate"},{phrase:"Can I get a doggy bag?",meaning:"¿Me lo puedo llevar?",context:"Comida que sobra",level:"beginner"}], fr: [{phrase:"Avoir la dalle",meaning:"Tener mucha hambre",context:"Hambre",level:"intermediate"},{phrase:"C'est un régal",meaning:"Es una delicia",context:"Excelente",level:"beginner"},{phrase:"Manger sur le pouce",meaning:"Comer rápido",context:"Informal",level:"intermediate"},{phrase:"Avoir les crocs",meaning:"Tener hambre",context:"Hambre",level:"beginner"},{phrase:"Se régaler",meaning:"Disfrutar comiendo",context:"Placer",level:"beginner"}] },
     6: { en: [{phrase:"No pain, no gain",meaning:"Sin esfuerzo no hay resultado",context:"Motivación",level:"beginner"},{phrase:"Let's hit the gym",meaning:"Vamos al gimnasio",context:"Ejercicio",level:"beginner"},{phrase:"You got this",meaning:"Tú puedes",context:"Ánimo",level:"beginner"},{phrase:"I'm sore but worth it",meaning:"Adolorida pero valió la pena",context:"Después de entrenar",level:"intermediate"},{phrase:"Crushing it",meaning:"Arrasando",context:"Rendimiento excelente",level:"intermediate"},{phrase:"I need to stretch",meaning:"Necesito estirarme",context:"Antes o después del ejercicio",level:"beginner"},{phrase:"I'm in beast mode",meaning:"Estoy a tope",context:"Energía máxima",level:"intermediate"},{phrase:"That was a good sweat",meaning:"Eso fue un buen entrenamiento",context:"Esfuerzo físico",level:"beginner"}], fr: [{phrase:"Avoir la pêche",meaning:"Tener energía",context:"Vitalidad",level:"beginner"},{phrase:"Se donner à fond",meaning:"Darlo todo",context:"Esfuerzo",level:"intermediate"},{phrase:"C'est dans la poche",meaning:"Está ganado",context:"Victoria",level:"beginner"},{phrase:"Avoir du souffle",meaning:"Tener resistencia",context:"Físico",level:"beginner"},{phrase:"Être au taquet",meaning:"Estar al máximo",context:"Motivación",level:"intermediate"}] },
     7: { en: [{phrase:"Go green",meaning:"Sé ecológico",context:"Ecología",level:"beginner"},{phrase:"Reduce your carbon footprint",meaning:"Reduce tu huella de carbono",context:"Ambiente",level:"intermediate"},{phrase:"Save the planet",meaning:"Salva el planeta",context:"Activismo",level:"beginner"},{phrase:"Leave no trace",meaning:"No dejes rastro",context:"Respeto por la naturaleza",level:"intermediate"},{phrase:"It's a breath of fresh air",meaning:"Es un respiro de aire fresco",context:"Algo que te renueva",level:"intermediate"},{phrase:"I'm an outdoor person",meaning:"Soy de estar al aire libre",context:"Personalidad",level:"beginner"},{phrase:"Let's go zero waste",meaning:"Intentemos no generar basura",context:"Sostenible",level:"intermediate"},{phrase:"Mother Nature is angry",meaning:"La naturaleza está enfadada",context:"Cambio climático",level:"intermediate"}], fr: [{phrase:"Être écolo",meaning:"Ser ecológico",context:"Ecología",level:"beginner"},{phrase:"Sauver la planète",meaning:"Salvar el planeta",context:"Activismo",level:"beginner"},{phrase:"C'est pas la mer à boire",meaning:"No es tan difícil",context:"Minimizar",level:"intermediate"},{phrase:"Avoir la main verte",meaning:"Buena mano plantas",context:"Jardinería",level:"beginner"},{phrase:"Un geste pour la planète",meaning:"Un gesto por el planeta",context:"Acción",level:"beginner"}] }
+// Semana 9: Amistad (índice 8)
+8: {
+    en: [{phrase:"BFF",meaning:"Mejor amiga para siempre",context:"Amistad",level:"beginner"},{phrase:"We're tight",meaning:"Somos muy unidas",context:"Amistad cercana",level:"intermediate"},{phrase:"I got your back",meaning:"Te apoyo",context:"Apoyo",level:"intermediate"},{phrase:"She's my ride or die",meaning:"Es mi amiga incondicional",context:"Lealtad",level:"intermediate"},{phrase:"We had a falling out",meaning:"Tuvimos un conflicto",context:"Pelea",level:"intermediate"},{phrase:"Let's bury the hatchet",meaning:"Hagamos las paces",context:"Reconciliación",level:"advanced"},{phrase:"Frenemy",meaning:"Amigo-enemigo",context:"Relación tóxica",level:"intermediate"},{phrase:"You're a real one",meaning:"Eres una persona auténtica",context:"Elogio",level:"intermediate"}],
+    fr: [{phrase:"Ma meilleure pote",meaning:"Mi mejor amiga",context:"Amistad",level:"beginner"},{phrase:"On est inséparables",meaning:"Somos inseparables",context:"Amistad cercana",level:"intermediate"},{phrase:"Je te soutiens",meaning:"Te apoyo",context:"Apoyo",level:"beginner"},{phrase:"C'est ma sœur de cœur",meaning:"Es mi hermana del corazón",context:"Lealtad",level:"intermediate"},{phrase:"On s'est disputées",meaning:"Tuvimos una pelea",context:"Conflicto",level:"intermediate"},{phrase:"Faire la paix",meaning:"Hacer las paces",context:"Reconciliación",level:"beginner"},{phrase:"Être en froid",meaning:"Estar distanciadas",context:"Relación tensa",level:"intermediate"},{phrase:"Une amie sincère",meaning:"Una amiga sincera",context:"Elogio",level:"beginner"}]
+},
+// Semana 10: Futuro (índice 9)
+9: {
+    en: [{phrase:"Dream job",meaning:"Trabajo soñado",context:"Carrera",level:"beginner"},{phrase:"Level up",meaning:"Subir de nivel",context:"Crecimiento",level:"intermediate"},{phrase:"Hustle",meaning:"Trabajar duro/emprender",context:"Esfuerzo",level:"intermediate"},{phrase:"I'm in my bag",meaning:"Estoy enfocada en mis metas",context:"Concentración",level:"advanced"},{phrase:"Networking",meaning:"Hacer contactos",context:"Conexiones",level:"intermediate"},{phrase:"Career path",meaning:"Trayectoria profesional",context:"Futuro",level:"intermediate"},{phrase:"Work-life balance",meaning:"Equilibrio trabajo-vida",context:"Bienestar",level:"advanced"},{phrase:"You're going places",meaning:"Vas a llegar lejos",context:"Motivación",level:"intermediate"}],
+    fr: [{phrase:"Métier de rêve",meaning:"Trabajo soñado",context:"Carrera",level:"beginner"},{phrase:"Monter en grade",meaning:"Ascender",context:"Crecimiento",level:"intermediate"},{phrase:"Travailler dur",meaning:"Trabajar duro",context:"Esfuerzo",level:"beginner"},{phrase:"J'ai la vision",meaning:"Tengo la visión clara",context:"Metas",level:"intermediate"},{phrase:"Réseautage",meaning:"Hacer contactos",context:"Conexiones",level:"intermediate"},{phrase:"Parcours professionnel",meaning:"Trayectoria",context:"Futuro",level:"intermediate"},{phrase:"Équilibre pro-perso",meaning:"Equilibrio trabajo-vida",context:"Bienestar",level:"advanced"},{phrase:"Tu iras loin",meaning:"Vas a llegar lejos",context:"Motivación",level:"beginner"}]
+},
+// Semana 11: Salud Mental (índice 10)
+10: {
+    en: [{phrase:"Self-care day",meaning:"Día de autocuidado",context:"Bienestar",level:"beginner"},{phrase:"I'm overwhelmed",meaning:"Estoy abrumada",context:"Estrés",level:"intermediate"},{phrase:"Take a breather",meaning:"Tomar un respiro",context:"Descanso",level:"intermediate"},{phrase:"Mental health matters",meaning:"La salud mental importa",context:"Conciencia",level:"beginner"},{phrase:"It's okay to not be okay",meaning:"Está bien no estar bien",context:"Aceptación",level:"intermediate"},{phrase:"Burnout",meaning:"Agotamiento extremo",context:"Estrés",level:"intermediate"},{phrase:"Check in with yourself",meaning:"Conectar con tu interior",context:"Autocuidado",level:"advanced"},{phrase:"You are enough",meaning:"Eres suficiente",context:"Autoestima",level:"beginner"}],
+    fr: [{phrase:"Journée cocooning",meaning:"Día de autocuidado",context:"Bienestar",level:"beginner"},{phrase:"Je suis débordée",meaning:"Estoy abrumada",context:"Estrés",level:"intermediate"},{phrase:"Prendre du recul",meaning:"Tomar distancia",context:"Descanso",level:"intermediate"},{phrase:"La santé mentale compte",meaning:"La salud mental importa",context:"Conciencia",level:"beginner"},{phrase:"Ça va aller",meaning:"Todo va a estar bien",context:"Apoyo",level:"beginner"},{phrase:"Épuisement",meaning:"Agotamiento",context:"Estrés",level:"intermediate"},{phrase:"S'écouter",meaning:"Escucharse",context:"Autocuidado",level:"advanced"},{phrase:"Tu es suffisante",meaning:"Eres suficiente",context:"Autoestima",level:"beginner"}]
+},
+// Semana 12: Cultura (índice 11)
+11: {
+    en: [{phrase:"Cultural exchange",meaning:"Intercambio cultural",context:"Cultura",level:"beginner"},{phrase:"World citizen",meaning:"Ciudadana del mundo",context:"Identidad",level:"intermediate"},{phrase:"Break down barriers",meaning:"Romper barreras",context:"Inclusión",level:"intermediate"},{phrase:"Diversity is our strength",meaning:"La diversidad es nuestra fuerza",context:"Valores",level:"intermediate"},{phrase:"Give back to the community",meaning:"Devolver a la comunidad",context:"Responsabilidad",level:"advanced"},{phrase:"Open-minded",meaning:"Mente abierta",context:"Actitud",level:"beginner"},{phrase:"Make a difference",meaning:"Hacer la diferencia",context:"Impacto",level:"intermediate"},{phrase:"Global perspective",meaning:"Perspectiva global",context:"Visión",level:"advanced"}],
+    fr: [{phrase:"Échange culturel",meaning:"Intercambio cultural",context:"Cultura",level:"beginner"},{phrase:"Citoyenne du monde",meaning:"Ciudadana del mundo",context:"Identidad",level:"intermediate"},{phrase:"Briser les barrières",meaning:"Romper barreras",context:"Inclusión",level:"intermediate"},{phrase:"La diversité est notre force",meaning:"La diversidad es nuestra fuerza",context:"Valores",level:"intermediate"},{phrase:"S'engager",meaning:"Comprometerse",context:"Responsabilidad",level:"intermediate"},{phrase:"Ouverte d'esprit",meaning:"Mente abierta",context:"Actitud",level:"beginner"},{phrase:"Faire une différence",meaning:"Hacer la diferencia",context:"Impacto",level:"intermediate"},{phrase:"Perspective mondiale",meaning:"Perspectiva global",context:"Visión",level:"advanced"}]
+}
 };
 
 const weeklyLessons = {0:{en:[{id:"en1",title:"Expressing your feelings like a pro",level:"A2",duration:15,phrases:["I feel a bit overwhelmed today","That made me really happy!","I'm going through a rough patch","Honestly, I'm feeling mixed emotions","It is what it is, I'll get over it"],trans:["Me siento un poco abrumada hoy","¡Eso me hizo muy feliz!","Estoy pasando por un momento difícil","Honestamente, tengo emociones encontradas","Es lo que hay, lo superaré"],taskEs:"Describe cómo te sientes hoy usando 3 frases"}],fr:[{id:"fr1",title:"Exprimer tes sentiments comme une pro",level:"A2",duration:15,phrases:["Je me sens un peu dépassée aujourd'hui","Ça m'a rendue vraiment heureuse!","Je traverse une période difficile","Honnêtement, j'ai des émotions mitigées","C'est comme ça, je vais m'en remettre"],trans:["Me siento un poco abrumada hoy","¡Eso me hizo muy feliz!","Estoy pasando por un momento difícil","Honestamente, tengo emociones encontradas","Es lo que hay, lo superaré"],taskEs:"Décris comment tu te sens aujourd'hui avec 3 phrases"}]},1:{en:[{id:"en1",title:"Surviving school like a boss",level:"A2",duration:15,phrases:["I have a ton of homework due tomorrow","Can I get an extension on this assignment?","I totally spaced out during class","This subject is actually growing on me","Let's team up for the group project"],trans:["Tengo un montón de tarea para mañana","¿Puedo tener una extensión en esta tarea?","Me distraje completamente en clase","Esta materia me está gustando cada vez más","Hagamos equipo para el proyecto grupal"],taskEs:"Describe tu día escolar con 3 frases"}],fr:[{id:"fr1",title:"Survivre à l'école comme un chef",level:"A2",duration:15,phrases:["J'ai une tonne de devoirs pour demain","Je peux avoir un délai pour ce devoir?","J'étais complètement ailleurs en cours","Cette matière commence à me plaire","On fait équipe pour le projet de groupe?"],trans:["Tengo un montón de tarea para mañana","¿Puedo tener una extensión en esta tarea?","Me distraje completamente en clase","Esta materia me está gustando cada vez más","Hagamos equipo para el proyecto grupal"],taskEs:"Décris ta journée scolaire avec 3 phrases"}]},2:{en:[{id:"en1",title:"Travel like an influencer",level:"A2",duration:15,phrases:["I'm so excited for my trip next week!","What's the best way to get around here?","This view is absolutely breathtaking","I need to pick up some souvenirs","Do you know any cool spots off the beaten path?"],trans:["¡Estoy tan emocionada por mi viaje!","¿Cuál es la mejor forma de moverse?","Esta vista es absolutamente impresionante","Necesito comprar algunos recuerdos","¿Conoces lugares geniales fuera de lo turístico?"],taskEs:"Describe un viaje que te gustaría hacer"}],fr:[{id:"fr1",title:"Voyager comme un influenceur",level:"A2",duration:15,phrases:["Je suis trop excitée pour mon voyage!","Quel est le meilleur moyen de se déplacer?","Cette vue est à couper le souffle","Je dois acheter quelques souvenirs","Tu connais des endroits hors des sentiers battus?"],trans:["¡Estoy tan emocionada por mi viaje!","¿Cuál es la mejor forma de moverse?","Esta vista es absolutamente impresionante","Necesito comprar algunos recuerdos","¿Conoces lugares geniales fuera de lo turístico?"],taskEs:"Décris un voyage que tu aimerais faire"}]},3:{en:[{id:"en1",title:"Tech talk for teens",level:"A2",duration:15,phrases:["My phone battery is about to die","Can you send me the link via DM?","This app is a total game changer","I'm trying to limit my screen time","Have you checked out that new AI tool?"],trans:["Mi batería está a punto de morir","¿Me envías el enlace por DM?","Esta app cambia totalmente las reglas","Estoy tratando de limitar mi tiempo en pantalla","¿Ya probaste esa nueva herramienta de IA?"],taskEs:"Describe cómo usas la tecnología en tu día"}],fr:[{id:"fr1",title:"Parler tech pour ados",level:"A2",duration:15,phrases:["Ma batterie va bientôt mourir","Tu peux m'envoyer le lien en DM?","Cette appli change complètement la donne","J'essaie de limiter mon temps d'écran","T'as déjà testé ce nouvel outil IA?"],trans:["Mi batería está a punto de morir","¿Me envías el enlace por DM?","Esta app cambia totalmente las reglas","Estoy tratando de limitar mi tiempo en pantalla","¿Ya probaste esa nueva herramienta de IA?"],taskEs:"Décris comment tu utilises la technologie"}]},4:{en:[{id:"en1",title:"Music vibes & conversations",level:"A2",duration:15,phrases:["This song hits different at night","I've had this track on repeat all week","The lyrics speak to my soul","She absolutely killed that performance","What's your go-to playlist for studying?"],trans:["Esta canción se siente diferente de noche","He tenido esta canción en repetición toda la semana","La letra le habla a mi alma","Ella arrasó con esa presentación","¿Cuál es tu playlist para estudiar?"],taskEs:"Describe tu canción favorita y por qué te gusta"}],fr:[{id:"fr1",title:"Vibes musicales et conversations",level:"A2",duration:15,phrases:["Cette chanson fait un effet différent la nuit","J'ai ce morceau en boucle depuis une semaine","Les paroles parlent à mon âme","Elle a complètement déchiré sa performance","C'est quoi ta playlist pour étudier?"],trans:["Esta canción se siente diferente de noche","He tenido esta canción en repetición toda la semana","La letra le habla a mi alma","Ella arrasó con esa presentación","¿Cuál es tu playlist para estudiar?"],taskEs:"Décris ta chanson préférée"}]},5:{en:[{id:"en1",title:"Foodie conversations",level:"A2",duration:15,phrases:["I'm totally craving tacos right now","This dish is to die for!","I could eat this every single day","I'm not a picky eater at all","Let's grab a bite somewhere new"],trans:["Se me antojan unos tacos ahora mismo","¡Este platillo está para morirse!","Podría comer esto todos los días","No soy nada quisquillosa con la comida","Vamos a comer algo a un lugar nuevo"],taskEs:"Describe tu comida favorita"}],fr:[{id:"fr1",title:"Conversations de foodie",level:"A2",duration:15,phrases:["J'ai trop envie de tacos là tout de suite","Ce plat est à tomber par terre!","Je pourrais manger ça tous les jours","Je ne suis pas du tout difficile","On va manger un bout dans un nouvel endroit?"],trans:["Se me antojan unos tacos ahora mismo","¡Este platillo está para morirse!","Podría comer esto todos los días","No soy nada quisquillosa con la comida","Vamos a comer algo a un lugar nuevo"],taskEs:"Décris ton plat préféré"}]},6:{en:[{id:"en1",title:"Sports talk & motivation",level:"A2",duration:15,phrases:["I'm really into yoga lately","Let's go for a run, it'll clear your mind","No pain, no gain, right?","She's absolutely crushing it on the field!","I need to stretch before this workout"],trans:["Últimamente me está gustando mucho el yoga","Vamos a correr, te despejará la mente","Sin dolor no hay ganancia, ¿no?","¡La está rompiendo en la cancha!","Necesito estirar antes de este entrenamiento"],taskEs:"Describe tu deporte favorito"}],fr:[{id:"fr1",title:"Sport & motivation",level:"A2",duration:15,phrases:["Je suis à fond dans le yoga en ce moment","On va courir? Ça va te vider la tête","Pas de douleur, pas de gain, non?","Elle déchire tout sur le terrain!","Je dois m'étirer avant cette séance"],trans:["Últimamente me está gustando mucho el yoga","Vamos a correr, te despejará la mente","Sin dolor no hay ganancia, ¿no?","¡La está rompiendo en la cancha!","Necesito estirar antes de este entrenamiento"],taskEs:"Décris ton sport préféré"}]},7:{en:[{id:"en1",title:"Eco-friendly & nature convos",level:"A2",duration:15,phrases:["I'm trying to reduce my plastic waste","Nature is honestly the best therapy","Let's go hiking this weekend!","We should all do our part for the planet","This beach cleanup is so rewarding"],trans:["Estoy tratando de reducir mis residuos plásticos","La naturaleza es la mejor terapia","¡Vamos de excursión este fin de semana!","Todos deberíamos hacer nuestra parte","Esta limpieza de playa es tan gratificante"],taskEs:"Describe 3 cosas que haces para ayudar al planeta"}],fr:[{id:"fr1",title:"Écolo & nature",level:"A2",duration:15,phrases:["J'essaie de réduire mes déchets plastiques","La nature est franchement la meilleure thérapie","On part en rando ce week-end!","On devrait tous faire notre part","Ce nettoyage de plage est tellement gratifiant"],trans:["Estoy tratando de reducir mis residuos plásticos","La naturaleza es la mejor terapia","¡Vamos de excursión este fin de semana!","Todos deberíamos hacer nuestra parte","Esta limpieza de playa es tan gratificante"],taskEs:"Décris 3 choses que tu fais pour la planète"}]}};
@@ -2098,6 +2146,27 @@ const weeklyArticles = {
             <p>💪 <strong>Inspiración:</strong> Empieza hoy.</p>`
         }
     ]
+    
+// Semana 9: Amistad (índice 8)
+8: {
+    en: [{id:"en8",title:"Talking about friendship & relationships",level:"A2-B1",duration:20,phrases:["She's been my best friend since primary school","I really value her honesty and loyalty","We had a disagreement, but we talked it out","A true friend supports you through tough times","Sometimes friendships need space to grow","I'm grateful for the people who truly care about me"],trans:["Ella ha sido mi mejor amiga desde la primaria","Valoro mucho su honestidad y lealtad","Tuvimos un desacuerdo, pero lo hablamos","Una verdadera amiga te apoya en los momentos difíciles","A veces las amistades necesitan espacio para crecer","Estoy agradecida por las personas que realmente se preocupan por mí"],taskEs:"Describe a tu mejor amiga o amigo usando 4 de las frases aprendidas"}],
+    fr: [{id:"fr8",title:"Parler d'amitié et de relations",level:"A2-B1",duration:20,phrases:["C'est ma meilleure amie depuis l'école primaire","Je valorise beaucoup son honnêteté et sa loyauté","On a eu un désaccord, mais on en a parlé","Une vraie amie te soutient dans les moments difficiles","Parfois, les amitiés ont besoin d'espace pour grandir","Je suis reconnaissante pour les personnes qui se soucient vraiment de moi"],trans:["Ella ha sido mi mejor amiga desde la primaria","Valoro mucho su honestidad y lealtad","Tuvimos un desacuerdo, pero lo hablamos","Una verdadera amiga te apoya en los momentos difíciles","A veces las amistades necesitan espacio para crecer","Estoy agradecida por las personas que realmente se preocupan por mí"],taskEs:"Décris ta meilleure amie en utilisant 4 des phrases apprises"}]
+},
+// Semana 10: Futuro (índice 9)
+9: {
+    en: [{id:"en9",title:"Planning your future & career",level:"A2-B1",duration:20,phrases:["I'm thinking about studying psychology at university","What skills do I need for my dream job?","I want to make a positive impact in the world","It's important to gain experience and learn every day","I'm working hard to achieve my goals","Balance between work and personal life is essential"],trans:["Estoy pensando en estudiar psicología en la universidad","¿Qué habilidades necesito para mi trabajo soñado?","Quiero tener un impacto positivo en el mundo","Es importante ganar experiencia y aprender cada día","Estoy trabajando duro para alcanzar mis metas","El equilibrio entre trabajo y vida personal es esencial"],taskEs:"Describe tu plan de futuro usando 4 de las frases aprendidas"}],
+    fr: [{id:"fr9",title:"Planifier ton avenir et ta carrière",level:"A2-B1",duration:20,phrases:["Je pense à étudier la psychologie à l'université","Quelles compétences sont nécessaires pour mon métier de rêve?","Je veux avoir un impact positif sur le monde","Il est important d'acquérir de l'expérience et d'apprendre chaque jour","Je travaille dur pour atteindre mes objectifs","L'équilibre entre le travail et la vie personnelle est essentiel"],trans:["Estoy pensando en estudiar psicología en la universidad","¿Qué habilidades necesito para mi trabajo soñado?","Quiero tener un impacto positivo en el mundo","Es importante ganar experiencia y aprender cada día","Estoy trabajando duro para alcanzar mis metas","El equilibrio entre trabajo y vida personal es esencial"],taskEs:"Décris ton plan d'avenir en utilisant 4 des phrases apprises"}]
+},
+// Semana 11: Salud Mental (índice 10)
+10: {
+    en: [{id:"en10",title:"Mental health & self-care",level:"A2-B1",duration:20,phrases:["It's okay to take a break when you're feeling overwhelmed","Practicing mindfulness helps me stay grounded","I'm learning to prioritize my mental health","Sometimes I need to say no to protect my well-being","Talking to someone about my feelings makes a difference","Self-care is not selfish, it's necessary"],trans:["Está bien tomar un descanso cuando te sientes abrumada","Practicar la atención plena me ayuda a mantenerme centrada","Estoy aprendiendo a priorizar mi salud mental","A veces necesito decir no para proteger mi bienestar","Hablar con alguien sobre mis sentimientos marca la diferencia","El autocuidado no es egoísta, es necesario"],taskEs:"Describe cómo cuidas tu salud mental usando 4 de las frases aprendidas"}],
+    fr: [{id:"fr10",title:"Santé mentale et soins personnels",level:"A2-B1",duration:20,phrases:["C'est normal de prendre une pause quand on se sent dépassée","Pratiquer la pleine conscience m'aide à rester centrée","J'apprends à prioriser ma santé mentale","Parfois, je dois dire non pour protéger mon bien-être","Parler à quelqu'un de mes sentiments fait une différence","Prendre soin de soi n'est pas égoïste, c'est nécessaire"],trans:["Está bien tomar un descanso cuando te sientes abrumada","Practicar la atención plena me ayuda a mantenerme centrada","Estoy aprendiendo a priorizar mi salud mental","A veces necesito decir no para proteger mi bienestar","Hablar con alguien sobre mis sentimientos marca la diferencia","El autocuidado no es egoísta, es necesario"],taskEs:"Décris comment tu prends soin de ta santé mentale en utilisant 4 phrases"}]
+},
+// Semana 12: Cultura (índice 11)
+11: {
+    en: [{id:"en11",title:"Culture & global citizenship",level:"A2-B1",duration:20,phrases:["Learning about other cultures opens my mind","I believe in respecting diversity and different traditions","We all have a responsibility to make the world better","Small actions can create big changes in our community","Being open-minded helps me understand others better","We are all citizens of the same planet"],trans:["Aprender sobre otras culturas me abre la mente","Creo en respetar la diversidad y las diferentes tradiciones","Todos tenemos la responsabilidad de hacer un mundo mejor","Pequeñas acciones pueden crear grandes cambios en nuestra comunidad","Tener una mente abierta me ayuda a entender mejor a los demás","Todos somos ciudadanos del mismo planeta"],taskEs:"Describe qué significa ser una ciudadana global usando 4 de las frases aprendidas"}],
+    fr: [{id:"fr11",title:"Culture et citoyenneté mondiale",level:"A2-B1",duration:20,phrases:["Apprendre sur d'autres cultures m'ouvre l'esprit","Je crois en le respect de la diversité et des différentes traditions","Nous avons tous la responsabilité de rendre le monde meilleur","Les petites actions peuvent créer de grands changements dans notre communauté","Être ouverte d'esprit m'aide à mieux comprendre les autres","Nous sommes tous citoyens de la même planète"],trans:["Aprender sobre otras culturas me abre la mente","Creo en respetar la diversidad y las diferentes tradiciones","Todos tenemos la responsabilidad de hacer un mundo mejor","Pequeñas acciones pueden crear grandes cambios en nuestra comunidad","Tener una mente abierta me ayuda a entender mejor a los demás","Todos somos ciudadanos del mismo planeta"],taskEs:"Décris ce que signifie être une citoyenne du monde en utilisant 4 phrases"}]
+}
 };
     
 const weeklyMomActivities = {
@@ -3602,7 +3671,7 @@ function showView(vn){
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     const target=document.getElementById('view'+vn.charAt(0).toUpperCase()+vn.slice(1));
     if(target)target.classList.add('active');
-    if(vn==='home'){ renderLaeticiaPlaylist(); renderWeekSelector();}
+    if(vn==='home'){ renderLaeticiaPlaylist(); renderWeekSelector();updateWeeklyDisplay();}
     if(vn==='academy'){ 
         renderVocab(); 
         renderPronunciation(); 
@@ -3615,6 +3684,7 @@ function showView(vn){
         renderLessons(); 
         renderAcademyProgress();
         renderWeekSelector();
+        updateWeeklyDisplay();
     }
     if(vn==='discover'){ renderDiscoverFilters(); renderArticles(); renderMomActivities(); }
     if(vn==='games'){ switchGame(currentGame); }
@@ -3632,18 +3702,13 @@ function showView(vn){
 }
 
 function getCurrentWeekInfo() {
-    // Si l'utilisateur a forcé une semaine
     if (testWeekOverride !== null) {
-        // Vérifier si la semaine forcée est débloquée
         if (isWeekUnlocked(testWeekOverride)) {
             return { weekNumber: testWeekOverride + 1, cycleIndex: testWeekOverride, theme: weeklyThemes[testWeekOverride] };
         } else {
-            // Si la semaine n'est pas débloquée, revenir à la semaine actuelle
             testWeekOverride = null;
         }
     }
-    
-    // Semaine actuelle = la plus haute débloquée
     const currentLevel = getCurrentAcademyLevel();
     const w = Math.min(currentLevel, weeklyThemes.length - 1);
     return { weekNumber: w + 1, cycleIndex: w, theme: weeklyThemes[w] };
@@ -3654,41 +3719,23 @@ function changeTestWeek(){ const v=document.getElementById("weekSelector").value
 // ============================================================
 
 function renderWeekSelector() {
-    const currentLevel = getCurrentAcademyLevel(); // 0 = semaine 1 débloquée
-    const totalWeeks = 8;
+    const currentLevel = getCurrentAcademyLevel();
+    const totalWeeks = 12;
     const select = document.getElementById("weekSelector");
     if (!select) return;
-    
-    // Garder l'option "auto"
     let html = `<option value="auto">📅 Semana actual (auto)</option>`;
-    
-    // Ajouter UNIQUEMENT les semaines débloquées
     for (let i = 0; i <= currentLevel && i < totalWeeks; i++) {
         const week = weeklyThemes[i];
-        const isUnlocked = i <= currentLevel;
-        html += `
-            <option value="${i}" ${testWeekOverride === i ? 'selected' : ''}>
-                ${week.emoji} S${i + 1}: ${week.name}
-                ${isUnlocked ? '✅' : '🔒'}
-            </option>
-        `;
+        html += `<option value="${i}" ${testWeekOverride === i ? 'selected' : ''}>${week.emoji} S${i + 1}: ${week.name} ✅</option>`;
     }
-    
-    // Si toutes les semaines sont débloquées, afficher un message
     if (currentLevel >= totalWeeks - 1) {
         html += `<option disabled>🎉 ¡Todas las semanas desbloqueadas!</option>`;
     } else {
-        // Afficher les semaines verrouillées (en grisé)
         for (let i = currentLevel + 1; i < totalWeeks; i++) {
             const week = weeklyThemes[i];
-            html += `
-                <option value="${i}" disabled style="color: #999; opacity: 0.5;">
-                    🔒 S${i + 1}: ${week.name} (Bloqueada)
-                </option>
-            `;
+            html += `<option value="${i}" disabled style="color: #999; opacity: 0.5;">🔒 S${i + 1}: ${week.name}</option>`;
         }
     }
-    
     select.innerHTML = html;
 }
 function updateWeeklyDisplay() {
