@@ -412,6 +412,10 @@
             <option value="5">🍽️ S6: Comida</option>
             <option value="6">⚽ S7: Deportes</option>
             <option value="7">🌍 S8: Naturaleza</option>
+            <option value="8">👭 S9: Amistad</option>
+            <option value="9">💼 S10: Futuro</option>
+            <option value="10">🧠 S11: Salud Mental</option>
+            <option value="11">🌎 S12: Cultura</option>
         </select>
     </div>
 <div id="dynamicBlock" class="dynamic-block" style="background: var(--card); border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);">
@@ -1737,6 +1741,950 @@ const weeklyThemes = [
     { name: "Deportes y Salud", emoji: "⚽", color: "#d1fae5", desc: "Mantente activa mientras aprendes idiomas" },
     { name: "Naturaleza y Planeta", emoji: "🌍", color: "#e0e7ff", desc: "Cuida el planeta mientras aprendes" }
 ];
+// ==================== SEMANAS 9 A 12 - NUEVOS TEMAS ====================
+
+// Extender weeklyThemes
+weeklyThemes.push(
+    { name: "Amistad y Relaciones Sociales", emoji: "👭", color: "#fce7f3", desc: "Aprende a hablar de amistad y conexiones auténticas" },
+    { name: "Futuro y Carrera Profesional", emoji: "💼", color: "#e0e7ff", desc: "Prepárate para tu futuro con vocabulario profesional" },
+    { name: "Salud Mental y Bienestar", emoji: "🧠", color: "#d1fae5", desc: "Cuida tu mente mientras aprendes dos idiomas" },
+    { name: "Cultura y Ciudadanía Global", emoji: "🌎", color: "#fef3c7", desc: "Explora culturas y conviértete en ciudadana del mundo" }
+);
+
+// ==================== VOCABULARIO SEMANAS 9-12 ====================
+weeklyVocab[8] = { // Semana 9: Amistad
+    en: [
+        {en:"friend", es:"amigo/a"},
+        {en:"trust", es:"confianza"},
+        {en:"loyal", es:"leal"},
+        {en:"support", es:"apoyo/apoyar"},
+        {en:"honesty", es:"honestidad"},
+        {en:"betrayal", es:"traición"},
+        {en:"conflict", es:"conflicto"},
+        {en:"reconciliation", es:"reconciliación"}
+    ],
+    fr: [
+        {fr:"ami(e)", es:"amigo/a"},
+        {fr:"confiance", es:"confianza"},
+        {fr:"fidèle", es:"leal"},
+        {fr:"soutien", es:"apoyo"},
+        {fr:"honnêteté", es:"honestidad"},
+        {fr:"trahison", es:"traición"},
+        {fr:"conflit", es:"conflicto"},
+        {fr:"réconciliation", es:"reconciliación"}
+    ]
+};
+
+weeklyVocab[9] = { // Semana 10: Futuro y Carrera
+    en: [
+        {en:"career", es:"carrera profesional"},
+        {en:"dream job", es:"trabajo soñado"},
+        {en:"skills", es:"habilidades"},
+        {en:"experience", es:"experiencia"},
+        {en:"goal", es:"meta/objetivo"},
+        {en:"interview", es:"entrevista"},
+        {en:"salary", es:"salario"},
+        {en:"promotion", es:"ascenso"}
+    ],
+    fr: [
+        {fr:"carrière", es:"carrera profesional"},
+        {fr:"métier de rêve", es:"trabajo soñado"},
+        {fr:"compétences", es:"habilidades"},
+        {fr:"expérience", es:"experiencia"},
+        {fr:"objectif", es:"meta/objetivo"},
+        {fr:"entretien", es:"entrevista"},
+        {fr:"salaire", es:"salario"},
+        {fr:"promotion", es:"ascenso"}
+    ]
+};
+
+weeklyVocab[10] = { // Semana 11: Salud Mental
+    en: [
+        {en:"anxiety", es:"ansiedad"},
+        {en:"stress", es:"estrés"},
+        {en:"self-care", es:"autocuidado"},
+        {en:"therapy", es:"terapia"},
+        {en:"mental health", es:"salud mental"},
+        {en:"wellness", es:"bienestar"},
+        {en:"rest", es:"descanso"},
+        {en:"balance", es:"equilibrio"}
+    ],
+    fr: [
+        {fr:"anxiété", es:"ansiedad"},
+        {fr:"stress", es:"estrés"},
+        {fr:"soins personnels", es:"autocuidado"},
+        {fr:"thérapie", es:"terapia"},
+        {fr:"santé mentale", es:"salud mental"},
+        {fr:"bien-être", es:"bienestar"},
+        {fr:"repos", es:"descanso"},
+        {fr:"équilibre", es:"equilibrio"}
+    ]
+};
+
+weeklyVocab[11] = { // Semana 12: Cultura y Ciudadanía
+    en: [
+        {en:"culture", es:"cultura"},
+        {en:"tradition", es:"tradición"},
+        {en:"diversity", es:"diversidad"},
+        {en:"citizen", es:"ciudadano/a"},
+        {en:"rights", es:"derechos"},
+        {en:"responsibility", es:"responsabilidad"},
+        {en:"community", es:"comunidad"},
+        {en:"global", es:"global"}
+    ],
+    fr: [
+        {fr:"culture", es:"cultura"},
+        {fr:"tradition", es:"tradición"},
+        {fr:"diversité", es:"diversidad"},
+        {fr:"citoyen(ne)", es:"ciudadano/a"},
+        {fr:"droits", es:"derechos"},
+        {fr:"responsabilité", es:"responsabilidad"},
+        {fr:"communauté", es:"comunidad"},
+        {fr:"mondial", es:"global"}
+    ]
+};
+
+// ==================== SLANG SEMANAS 9-12 ====================
+weeklySlang[8] = { // Semana 9: Amistad
+    en: [
+        {phrase:"BFF", meaning:"Mejor amiga para siempre", context:"Amistad", level:"beginner"},
+        {phrase:"We're tight", meaning:"Somos muy unidas", context:"Amistad cercana", level:"intermediate"},
+        {phrase:"I got your back", meaning:"Te apoyo", context:"Apoyo", level:"intermediate"},
+        {phrase:"She's my ride or die", meaning:"Es mi amiga incondicional", context:"Lealtad", level:"intermediate"},
+        {phrase:"We had a falling out", meaning:"Tuvimos un conflicto", context:"Pelea", level:"intermediate"},
+        {phrase:"Let's bury the hatchet", meaning:"Hagamos las paces", context:"Reconciliación", level:"advanced"},
+        {phrase:"Frenemy", meaning:"Amigo-enemigo", context:"Relación tóxica", level:"intermediate"},
+        {phrase:"You're a real one", meaning:"Eres una persona auténtica", context:"Elogio", level:"intermediate"}
+    ],
+    fr: [
+        {phrase:"Ma meilleure pote", meaning:"Mi mejor amiga", context:"Amistad", level:"beginner"},
+        {phrase:"On est inséparables", meaning:"Somos inseparables", context:"Amistad cercana", level:"intermediate"},
+        {phrase:"Je te soutiens", meaning:"Te apoyo", context:"Apoyo", level:"beginner"},
+        {phrase:"C'est ma sœur de cœur", meaning:"Es mi hermana del corazón", context:"Lealtad", level:"intermediate"},
+        {phrase:"On s'est disputées", meaning:"Tuvimos una pelea", context:"Conflicto", level:"intermediate"},
+        {phrase:"Faire la paix", meaning:"Hacer las paces", context:"Reconciliación", level:"beginner"},
+        {phrase:"Être en froid", meaning:"Estar distanciadas", context:"Relación tensa", level:"intermediate"},
+        {phrase:"Une amie sincère", meaning:"Una amiga sincera", context:"Elogio", level:"beginner"}
+    ]
+};
+
+weeklySlang[9] = { // Semana 10: Futuro y Carrera
+    en: [
+        {phrase:"Dream job", meaning:"Trabajo soñado", context:"Carrera", level:"beginner"},
+        {phrase:"Level up", meaning:"Subir de nivel", context:"Crecimiento", level:"intermediate"},
+        {phrase:"Hustle", meaning:"Trabajar duro/emprender", context:"Esfuerzo", level:"intermediate"},
+        {phrase:"I'm in my bag", meaning:"Estoy enfocada en mis metas", context:"Concentración", level:"advanced"},
+        {phrase:"Networking", meaning:"Hacer contactos", context:"Conexiones", level:"intermediate"},
+        {phrase:"Career path", meaning:"Trayectoria profesional", context:"Futuro", level:"intermediate"},
+        {phrase:"Work-life balance", meaning:"Equilibrio trabajo-vida", context:"Bienestar", level:"advanced"},
+        {phrase:"You're going places", meaning:"Vas a llegar lejos", context:"Motivación", level:"intermediate"}
+    ],
+    fr: [
+        {phrase:"Métier de rêve", meaning:"Trabajo soñado", context:"Carrera", level:"beginner"},
+        {phrase:"Monter en grade", meaning:"Ascender", context:"Crecimiento", level:"intermediate"},
+        {phrase:"Travailler dur", meaning:"Trabajar duro", context:"Esfuerzo", level:"beginner"},
+        {phrase:"J'ai la vision", meaning:"Tengo la visión clara", context:"Metas", level:"intermediate"},
+        {phrase:"Réseautage", meaning:"Hacer contactos", context:"Conexiones", level:"intermediate"},
+        {phrase:"Parcours professionnel", meaning:"Trayectoria", context:"Futuro", level:"intermediate"},
+        {phrase:"Équilibre pro-perso", meaning:"Equilibrio trabajo-vida", context:"Bienestar", level:"advanced"},
+        {phrase:"Tu iras loin", meaning:"Vas a llegar lejos", context:"Motivación", level:"beginner"}
+    ]
+};
+
+weeklySlang[10] = { // Semana 11: Salud Mental
+    en: [
+        {phrase:"Self-care day", meaning:"Día de autocuidado", context:"Bienestar", level:"beginner"},
+        {phrase:"I'm overwhelmed", meaning:"Estoy abrumada", context:"Estrés", level:"intermediate"},
+        {phrase:"Take a breather", meaning:"Tomar un respiro", context:"Descanso", level:"intermediate"},
+        {phrase:"Mental health matters", meaning:"La salud mental importa", context:"Conciencia", level:"beginner"},
+        {phrase:"It's okay to not be okay", meaning:"Está bien no estar bien", context:"Aceptación", level:"intermediate"},
+        {phrase:"Burnout", meaning:"Agotamiento extremo", context:"Estrés", level:"intermediate"},
+        {phrase:"Check in with yourself", meaning:"Conectar con tu interior", context:"Autocuidado", level:"advanced"},
+        {phrase:"You are enough", meaning:"Eres suficiente", context:"Autoestima", level:"beginner"}
+    ],
+    fr: [
+        {phrase:"Journée cocooning", meaning:"Día de autocuidado", context:"Bienestar", level:"beginner"},
+        {phrase:"Je suis débordée", meaning:"Estoy abrumada", context:"Estrés", level:"intermediate"},
+        {phrase:"Prendre du recul", meaning:"Tomar distancia", context:"Descanso", level:"intermediate"},
+        {phrase:"La santé mentale compte", meaning:"La salud mental importa", context:"Conciencia", level:"beginner"},
+        {phrase:"Ça va aller", meaning:"Todo va a estar bien", context:"Apoyo", level:"beginner"},
+        {phrase:"Épuisement", meaning:"Agotamiento", context:"Estrés", level:"intermediate"},
+        {phrase:"S'écouter", meaning:"Escucharse", context:"Autocuidado", level:"advanced"},
+        {phrase:"Tu es suffisante", meaning:"Eres suficiente", context:"Autoestima", level:"beginner"}
+    ]
+};
+
+weeklySlang[11] = { // Semana 12: Cultura y Ciudadanía
+    en: [
+        {phrase:"Cultural exchange", meaning:"Intercambio cultural", context:"Cultura", level:"beginner"},
+        {phrase:"World citizen", meaning:"Ciudadana del mundo", context:"Identidad", level:"intermediate"},
+        {phrase:"Break down barriers", meaning:"Romper barreras", context:"Inclusión", level:"intermediate"},
+        {phrase:"Diversity is our strength", meaning:"La diversidad es nuestra fuerza", context:"Valores", level:"intermediate"},
+        {phrase:"Give back to the community", meaning:"Devolver a la comunidad", context:"Responsabilidad", level:"advanced"},
+        {phrase:"Open-minded", meaning:"Mente abierta", context:"Actitud", level:"beginner"},
+        {phrase:"Make a difference", meaning:"Hacer la diferencia", context:"Impacto", level:"intermediate"},
+        {phrase:"Global perspective", meaning:"Perspectiva global", context:"Visión", level:"advanced"}
+    ],
+    fr: [
+        {phrase:"Échange culturel", meaning:"Intercambio cultural", context:"Cultura", level:"beginner"},
+        {phrase:"Citoyenne du monde", meaning:"Ciudadana del mundo", context:"Identidad", level:"intermediate"},
+        {phrase:"Briser les barrières", meaning:"Romper barreras", context:"Inclusión", level:"intermediate"},
+        {phrase:"La diversité est notre force", meaning:"La diversidad es nuestra fuerza", context:"Valores", level:"intermediate"},
+        {phrase:"S'engager", meaning:"Comprometerse", context:"Responsabilidad", level:"intermediate"},
+        {phrase:"Ouverte d'esprit", meaning:"Mente abierta", context:"Actitud", level:"beginner"},
+        {phrase:"Faire une différence", meaning:"Hacer la diferencia", context:"Impacto", level:"intermediate"},
+        {phrase:"Perspective mondiale", meaning:"Perspectiva global", context:"Visión", level:"advanced"}
+    ]
+};
+
+// ==================== LECCIONES SEMANAS 9-12 ====================
+weeklyLessons[8] = { // Semana 9: Amistad
+    en: [
+        {
+            id: "en9_1",
+            title: "Talking about friendship & relationships",
+            level: "A2-B1",
+            duration: 20,
+            phrases: [
+                "She's been my best friend since primary school",
+                "I really value her honesty and loyalty",
+                "We had a disagreement, but we talked it out",
+                "A true friend supports you through tough times",
+                "Sometimes friendships need space to grow",
+                "I'm grateful for the people who truly care about me"
+            ],
+            trans: [
+                "Ella ha sido mi mejor amiga desde la primaria",
+                "Valoro mucho su honestidad y lealtad",
+                "Tuvimos un desacuerdo, pero lo hablamos",
+                "Una verdadera amiga te apoya en los momentos difíciles",
+                "A veces las amistades necesitan espacio para crecer",
+                "Estoy agradecida por las personas que realmente se preocupan por mí"
+            ],
+            taskEs: "Describe a tu mejor amiga o amigo usando 4 de las frases aprendidas"
+        }
+    ],
+    fr: [
+        {
+            id: "fr9_1",
+            title: "Parler d'amitié et de relations",
+            level: "A2-B1",
+            duration: 20,
+            phrases: [
+                "C'est ma meilleure amie depuis l'école primaire",
+                "Je valorise beaucoup son honnêteté et sa loyauté",
+                "On a eu un désaccord, mais on en a parlé",
+                "Une vraie amie te soutient dans les moments difficiles",
+                "Parfois, les amitiés ont besoin d'espace pour grandir",
+                "Je suis reconnaissante pour les personnes qui se soucient vraiment de moi"
+            ],
+            trans: [
+                "Ella ha sido mi mejor amiga desde la primaria",
+                "Valoro mucho su honestidad y lealtad",
+                "Tuvimos un desacuerdo, pero lo hablamos",
+                "Una verdadera amiga te apoya en los momentos difíciles",
+                "A veces las amistades necesitan espacio para crecer",
+                "Estoy agradecida por las personas que realmente se preocupan por mí"
+            ],
+            taskEs: "Décris ta meilleure amie en utilisant 4 des phrases apprises"
+        }
+    ]
+};
+
+weeklyLessons[9] = { // Semana 10: Futuro y Carrera
+    en: [
+        {
+            id: "en10_1",
+            title: "Planning your future & career",
+            level: "A2-B1",
+            duration: 20,
+            phrases: [
+                "I'm thinking about studying psychology at university",
+                "What skills do I need for my dream job?",
+                "I want to make a positive impact in the world",
+                "It's important to gain experience and learn every day",
+                "I'm working hard to achieve my goals",
+                "Balance between work and personal life is essential"
+            ],
+            trans: [
+                "Estoy pensando en estudiar psicología en la universidad",
+                "¿Qué habilidades necesito para mi trabajo soñado?",
+                "Quiero tener un impacto positivo en el mundo",
+                "Es importante ganar experiencia y aprender cada día",
+                "Estoy trabajando duro para alcanzar mis metas",
+                "El equilibrio entre trabajo y vida personal es esencial"
+            ],
+            taskEs: "Describe tu plan de futuro usando 4 de las frases aprendidas"
+        }
+    ],
+    fr: [
+        {
+            id: "fr10_1",
+            title: "Planifier ton avenir et ta carrière",
+            level: "A2-B1",
+            duration: 20,
+            phrases: [
+                "Je pense à étudier la psychologie à l'université",
+                "Quelles compétences sont nécessaires pour mon métier de rêve?",
+                "Je veux avoir un impact positif sur le monde",
+                "Il est important d'acquérir de l'expérience et d'apprendre chaque jour",
+                "Je travaille dur pour atteindre mes objectifs",
+                "L'équilibre entre le travail et la vie personnelle est essentiel"
+            ],
+            trans: [
+                "Estoy pensando en estudiar psicología en la universidad",
+                "¿Qué habilidades necesito para mi trabajo soñado?",
+                "Quiero tener un impacto positivo en el mundo",
+                "Es importante ganar experiencia y aprender cada día",
+                "Estoy trabajando duro para alcanzar mis metas",
+                "El equilibrio entre trabajo y vida personal es esencial"
+            ],
+            taskEs: "Décris ton plan d'avenir en utilisant 4 des phrases apprises"
+        }
+    ]
+};
+
+weeklyLessons[10] = { // Semana 11: Salud Mental
+    en: [
+        {
+            id: "en11_1",
+            title: "Mental health & self-care",
+            level: "A2-B1",
+            duration: 20,
+            phrases: [
+                "It's okay to take a break when you're feeling overwhelmed",
+                "Practicing mindfulness helps me stay grounded",
+                "I'm learning to prioritize my mental health",
+                "Sometimes I need to say no to protect my well-being",
+                "Talking to someone about my feelings makes a difference",
+                "Self-care is not selfish, it's necessary"
+            ],
+            trans: [
+                "Está bien tomar un descanso cuando te sientes abrumada",
+                "Practicar la atención plena me ayuda a mantenerme centrada",
+                "Estoy aprendiendo a priorizar mi salud mental",
+                "A veces necesito decir no para proteger mi bienestar",
+                "Hablar con alguien sobre mis sentimientos marca la diferencia",
+                "El autocuidado no es egoísta, es necesario"
+            ],
+            taskEs: "Describe cómo cuidas tu salud mental usando 4 de las frases aprendidas"
+        }
+    ],
+    fr: [
+        {
+            id: "fr11_1",
+            title: "Santé mentale et soins personnels",
+            level: "A2-B1",
+            duration: 20,
+            phrases: [
+                "C'est normal de prendre une pause quand on se sent dépassée",
+                "Pratiquer la pleine conscience m'aide à rester centrée",
+                "J'apprends à prioriser ma santé mentale",
+                "Parfois, je dois dire non pour protéger mon bien-être",
+                "Parler à quelqu'un de mes sentiments fait une différence",
+                "Prendre soin de soi n'est pas égoïste, c'est nécessaire"
+            ],
+            trans: [
+                "Está bien tomar un descanso cuando te sientes abrumada",
+                "Practicar la atención plena me ayuda a mantenerme centrada",
+                "Estoy aprendiendo a priorizar mi salud mental",
+                "A veces necesito decir no para proteger mi bienestar",
+                "Hablar con alguien sobre mis sentimientos marca la diferencia",
+                "El autocuidado no es egoísta, es necesario"
+            ],
+            taskEs: "Décris comment tu prends soin de ta santé mentale en utilisant 4 phrases"
+        }
+    ]
+};
+
+weeklyLessons[11] = { // Semana 12: Cultura y Ciudadanía
+    en: [
+        {
+            id: "en12_1",
+            title: "Culture & global citizenship",
+            level: "A2-B1",
+            duration: 20,
+            phrases: [
+                "Learning about other cultures opens my mind",
+                "I believe in respecting diversity and different traditions",
+                "We all have a responsibility to make the world better",
+                "Small actions can create big changes in our community",
+                "Being open-minded helps me understand others better",
+                "We are all citizens of the same planet"
+            ],
+            trans: [
+                "Aprender sobre otras culturas me abre la mente",
+                "Creo en respetar la diversidad y las diferentes tradiciones",
+                "Todos tenemos la responsabilidad de hacer un mundo mejor",
+                "Pequeñas acciones pueden crear grandes cambios en nuestra comunidad",
+                "Tener una mente abierta me ayuda a entender mejor a los demás",
+                "Todos somos ciudadanos del mismo planeta"
+            ],
+            taskEs: "Describe qué significa ser una ciudadana global usando 4 de las frases aprendidas"
+        }
+    ],
+    fr: [
+        {
+            id: "fr12_1",
+            title: "Culture et citoyenneté mondiale",
+            level: "A2-B1",
+            duration: 20,
+            phrases: [
+                "Apprendre sur d'autres cultures m'ouvre l'esprit",
+                "Je crois en le respect de la diversité et des différentes traditions",
+                "Nous avons tous la responsabilité de rendre le monde meilleur",
+                "Les petites actions peuvent créer de grands changements dans notre communauté",
+                "Être ouverte d'esprit m'aide à mieux comprendre les autres",
+                "Nous sommes tous citoyens de la même planète"
+            ],
+            trans: [
+                "Aprender sobre otras culturas me abre la mente",
+                "Creo en respetar la diversidad y las diferentes tradiciones",
+                "Todos tenemos la responsabilidad de hacer un mundo mejor",
+                "Pequeñas acciones pueden crear grandes cambios en nuestra comunidad",
+                "Tener una mente abierta me ayuda a entender mejor a los demás",
+                "Todos somos ciudadanos del mismo planeta"
+            ],
+            taskEs: "Décris ce que signifie être une citoyenne du monde en utilisant 4 phrases"
+        }
+    ]
+};
+
+// ==================== EXÁMENES SEMANAS 9-12 ====================
+weeklyExams[8] = { // Semana 9: Amistad
+    title: "📝 Examen Final · Semana 9: Amistad y Relaciones Sociales",
+    description: "25 preguntas sobre vocabulario de amistad y relaciones en inglés y francés",
+    passingScore: 18,
+    xpReward: 50,
+    questions: [
+        { text: "¿Cómo se dice 'amigo/a' en inglés?", options: ["Friend", "Enemy", "Stranger", "Colleague"], correct: 0 },
+        { text: "¿Cómo se dice 'confianza' en inglés?", options: ["Trust", "Fear", "Doubt", "Hate"], correct: 0 },
+        { text: "¿Cómo se dice 'leal' en inglés?", options: ["Loyal", "Disloyal", "Honest", "Kind"], correct: 0 },
+        { text: "¿Cómo se dice 'apoyo' en inglés?", options: ["Support", "Attack", "Ignore", "Reject"], correct: 0 },
+        { text: "¿Cómo se dice 'honestidad' en inglés?", options: ["Honesty", "Lies", "Deceit", "Betrayal"], correct: 0 },
+        { text: "¿Cómo se dice 'traición' en inglés?", options: ["Loyalty", "Betrayal", "Friendship", "Trust"], correct: 1 },
+        { text: "¿Cómo se dice 'conflicto' en inglés?", options: ["Peace", "Conflict", "Joy", "Love"], correct: 1 },
+        { text: "¿Cómo se dice 'reconciliación' en inglés?", options: ["Reconciliation", "Separation", "Fight", "Hate"], correct: 0 },
+        { text: "¿Cómo se dice 'ami(e)' en español?", options: ["Amigo/a", "Enemigo", "Desconocido", "Colega"], correct: 0 },
+        { text: "¿Cómo se dice 'confiance' en español?", options: ["Confianza", "Miedo", "Duda", "Odio"], correct: 0 },
+        { text: "¿Cómo se dice 'fidèle' en español?", options: ["Desleal", "Leal", "Honesto", "Amable"], correct: 1 },
+        { text: "¿Cómo se dice 'soutien' en español?", options: ["Apoyo", "Ataque", "Ignorar", "Rechazar"], correct: 0 },
+        { text: "Slang: 'BFF' significa...", options: ["Best friend forever", "Boy friend forever", "Bad friend forever", "Big friendly family"], correct: 0 },
+        { text: "Slang: 'We're tight' significa...", options: ["Somos muy unidas", "Estamos enojadas", "Somos enemigas", "No nos llevamos bien"], correct: 0 },
+        { text: "Slang: 'I got your back' significa...", options: ["Te apoyo", "Te ignoro", "Te ataco", "Te abandono"], correct: 0 },
+        { text: "Slang: 'Ride or die' se refiere a...", options: ["Una amiga incondicional", "Una enemiga", "Un viaje peligroso", "Un coche"], correct: 0 },
+        { text: "Slang: 'Frenemy' es una mezcla de...", options: ["Friend y enemy", "Friend y family", "Fresh y enemy", "French y enemy"], correct: 0 },
+        { text: "Slang: 'You're a real one' significa...", options: ["Eres una persona auténtica", "Eres falsa", "Eres divertida", "Eres aburrida"], correct: 0 },
+        { text: "Slang: 'Ma meilleure pote' en francés significa...", options: ["Mi peor enemiga", "Mi mejor amiga", "Mi prima", "Mi hermana"], correct: 1 },
+        { text: "Slang: 'On est inséparables' significa...", options: ["Somos inseparables", "No nos soportamos", "Somos diferentes", "Nos odiamos"], correct: 0 },
+        { text: "Slang: 'Je te soutiens' significa...", options: ["Te ataco", "Te apoyo", "Te ignoro", "Te rechazo"], correct: 1 },
+        { text: "Slang: 'Sœur de cœur' significa...", options: ["Hermana de sangre", "Hermana del corazón", "Prima", "Amiga de la infancia"], correct: 1 },
+        { text: "Slang: 'Faire la paix' significa...", options: ["Hacer las paces", "Hacer la guerra", "Ignorar", "Pelear"], correct: 0 },
+        { text: "Frases: 'A true friend supports you' significa...", options: ["Un amigo te traiciona", "Un verdadero amigo te apoya", "Un amigo te ignora", "Un amigo te critica"], correct: 1 },
+        { text: "Frases: 'We talked it out' significa...", options: ["Nos ignoramos", "Lo hablamos", "Peleamos", "Nos fuimos"], correct: 1 }
+    ]
+};
+
+weeklyExams[9] = { // Semana 10: Futuro y Carrera
+    title: "📝 Examen Final · Semana 10: Futuro y Carrera Profesional",
+    description: "25 preguntas sobre vocabulario profesional y de futuro",
+    passingScore: 18,
+    xpReward: 50,
+    questions: [
+        { text: "¿Cómo se dice 'carrera profesional' en inglés?", options: ["Career", "Job", "Work", "Task"], correct: 0 },
+        { text: "¿Cómo se dice 'trabajo soñado' en inglés?", options: ["Dream job", "Hard job", "Easy job", "Boring job"], correct: 0 },
+        { text: "¿Cómo se dice 'habilidades' en inglés?", options: ["Skills", "Jobs", "Tasks", "Duties"], correct: 0 },
+        { text: "¿Cómo se dice 'experiencia' en inglés?", options: ["Experience", "Knowledge", "Skill", "Talent"], correct: 0 },
+        { text: "¿Cómo se dice 'meta' en inglés?", options: ["Goal", "Task", "Job", "Work"], correct: 0 },
+        { text: "¿Cómo se dice 'entrevista' en inglés?", options: ["Interview", "Meeting", "Call", "Chat"], correct: 0 },
+        { text: "¿Cómo se dice 'salario' en inglés?", options: ["Salary", "Money", "Payment", "Income"], correct: 0 },
+        { text: "¿Cómo se dice 'ascenso' en inglés?", options: ["Promotion", "Demotion", "Change", "Move"], correct: 0 },
+        { text: "¿Cómo se dice 'carrière' en español?", options: ["Carrera", "Trabajo", "Empleo", "Oficio"], correct: 0 },
+        { text: "¿Cómo se dice 'métier de rêve' en español?", options: ["Trabajo soñado", "Trabajo difícil", "Trabajo aburrido", "Trabajo fácil"], correct: 0 },
+        { text: "¿Cómo se dice 'compétences' en español?", options: ["Habilidades", "Tareas", "Trabajos", "Deberes"], correct: 0 },
+        { text: "¿Cómo se dice 'expérience' en español?", options: ["Experiencia", "Conocimiento", "Habilidad", "Talento"], correct: 0 },
+        { text: "Slang: 'Level up' significa...", options: ["Subir de nivel", "Bajar de nivel", "Quedarse igual", "Perder"], correct: 0 },
+        { text: "Slang: 'Hustle' se refiere a...", options: ["Trabajar duro", "Descansar", "Dormir", "Jugar"], correct: 0 },
+        { text: "Slang: 'I'm in my bag' significa...", options: ["Estoy enfocada", "Estoy distraída", "Estoy cansada", "Estoy enojada"], correct: 0 },
+        { text: "Slang: 'Networking' significa...", options: ["Hacer contactos", "Navegar", "Descansar", "Estudiar"], correct: 0 },
+        { text: "Slang: 'Career path' se refiere a...", options: ["Trayectoria profesional", "Camino de casa", "Ruta de viaje", "Sendero"], correct: 0 },
+        { text: "Slang: 'Work-life balance' significa...", options: ["Equilibrio trabajo-vida", "Solo trabajar", "Solo descansar", "No hacer nada"], correct: 0 },
+        { text: "Slang: 'Monter en grade' en francés significa...", options: ["Ascender", "Descender", "Quedarse igual", "Renunciar"], correct: 0 },
+        { text: "Slang: 'Réseautage' en francés se refiere a...", options: ["Hacer contactos", "Navegar", "Descansar", "Estudiar"], correct: 0 },
+        { text: "Slang: 'Parcours professionnel' en francés es...", options: ["Trayectoria profesional", "Ruta de viaje", "Camino de casa", "Calle"], correct: 0 },
+        { text: "Frases: 'I want to make a positive impact' significa...", options: ["Quiero tener un impacto positivo", "Quiero tener un impacto negativo", "No quiero hacer nada", "Quiero descansar"], correct: 0 },
+        { text: "Frases: 'Gain experience' significa...", options: ["Ganar experiencia", "Perder tiempo", "Descansar", "Estudiar"], correct: 0 },
+        { text: "Frases: 'Achieve my goals' significa...", options: ["Alcanzar mis metas", "Perder mis metas", "Ignorar mis metas", "Olvidar mis metas"], correct: 0 },
+        { text: "Frases: 'You're going places' significa...", options: ["Vas a llegar lejos", "Te vas a quedar", "Vas a perder", "Vas a fracasar"], correct: 0 }
+    ]
+};
+
+weeklyExams[10] = { // Semana 11: Salud Mental
+    title: "📝 Examen Final · Semana 11: Salud Mental y Bienestar",
+    description: "25 preguntas sobre vocabulario de salud mental y bienestar",
+    passingScore: 18,
+    xpReward: 50,
+    questions: [
+        { text: "¿Cómo se dice 'ansiedad' en inglés?", options: ["Anxiety", "Calm", "Peace", "Joy"], correct: 0 },
+        { text: "¿Cómo se dice 'estrés' en inglés?", options: ["Stress", "Relax", "Peace", "Calm"], correct: 0 },
+        { text: "¿Cómo se dice 'autocuidado' en inglés?", options: ["Self-care", "Selfish", "Selfishness", "Care"], correct: 0 },
+        { text: "¿Cómo se dice 'terapia' en inglés?", options: ["Therapy", "Medicine", "Treatment", "Care"], correct: 0 },
+        { text: "¿Cómo se dice 'salud mental' en inglés?", options: ["Mental health", "Physical health", "Emotional health", "Spiritual health"], correct: 0 },
+        { text: "¿Cómo se dice 'bienestar' en inglés?", options: ["Wellness", "Illness", "Sickness", "Disease"], correct: 0 },
+        { text: "¿Cómo se dice 'descanso' en inglés?", options: ["Rest", "Work", "Activity", "Exercise"], correct: 0 },
+        { text: "¿Cómo se dice 'equilibrio' en inglés?", options: ["Balance", "Imbalance", "Chaos", "Disorder"], correct: 0 },
+        { text: "¿Cómo se dice 'anxiété' en español?", options: ["Ansiedad", "Calma", "Paz", "Alegría"], correct: 0 },
+        { text: "¿Cómo se dice 'stress' en español?", options: ["Estrés", "Relajación", "Paz", "Calma"], correct: 0 },
+        { text: "¿Cómo se dice 'soins personnels' en español?", options: ["Autocuidado", "Egoísmo", "Cuidado", "Atención"], correct: 0 },
+        { text: "¿Cómo se dice 'thérapie' en español?", options: ["Terapia", "Medicina", "Tratamiento", "Cuidado"], correct: 0 },
+        { text: "Slang: 'Self-care day' significa...", options: ["Día de autocuidado", "Día de trabajo", "Día de estudio", "Día de descanso"], correct: 0 },
+        { text: "Slang: 'I'm overwhelmed' significa...", options: ["Estoy abrumada", "Estoy tranquila", "Estoy feliz", "Estoy enojada"], correct: 0 },
+        { text: "Slang: 'Take a breather' significa...", options: ["Tomar un respiro", "Dejar de respirar", "Correr", "Saltar"], correct: 0 },
+        { text: "Slang: 'Mental health matters' significa...", options: ["La salud mental importa", "La salud mental no importa", "La salud mental es secundaria", "La salud mental es opcional"], correct: 0 },
+        { text: "Slang: 'It's okay to not be okay' significa...", options: ["Está bien no estar bien", "No está bien estar mal", "Hay que estar siempre bien", "No hay que sentir"], correct: 0 },
+        { text: "Slang: 'Burnout' significa...", options: ["Agotamiento extremo", "Energía total", "Felicidad", "Alegría"], correct: 0 },
+        { text: "Slang: 'Journée cocooning' en francés significa...", options: ["Día de autocuidado", "Día de trabajo", "Día de estudio", "Día de limpieza"], correct: 0 },
+        { text: "Slang: 'Je suis débordée' en francés significa...", options: ["Estoy abrumada", "Estoy tranquila", "Estoy feliz", "Estoy enojada"], correct: 0 },
+        { text: "Slang: 'Prendre du recul' en francés significa...", options: ["Tomar distancia", "Acercarse", "Avanzar", "Correr"], correct: 0 },
+        { text: "Slang: 'Ça va aller' en francés significa...", options: ["Todo va a estar bien", "Todo va a estar mal", "Nada va a cambiar", "Todo es terrible"], correct: 0 },
+        { text: "Slang: 'S'écouter' en francés significa...", options: ["Escucharse", "Ignorarse", "Criticarse", "Gritarse"], correct: 0 },
+        { text: "Frases: 'Talking to someone makes a difference' significa...", options: ["Hablar con alguien marca la diferencia", "Hablar con alguien no sirve de nada", "Es mejor no hablar", "Hablar es peligroso"], correct: 0 },
+        { text: "Frases: 'You are enough' significa...", options: ["Eres suficiente", "No eres suficiente", "Eres demasiado", "Eres poco"], correct: 0 }
+    ]
+};
+
+weeklyExams[11] = { // Semana 12: Cultura y Ciudadanía
+    title: "📝 Examen Final · Semana 12: Cultura y Ciudadanía Global",
+    description: "25 preguntas sobre cultura, diversidad y ciudadanía global",
+    passingScore: 18,
+    xpReward: 50,
+    questions: [
+        { text: "¿Cómo se dice 'cultura' en inglés?", options: ["Culture", "Traditions", "Customs", "Habits"], correct: 0 },
+        { text: "¿Cómo se dice 'tradición' en inglés?", options: ["Tradition", "Culture", "Custom", "Practice"], correct: 0 },
+        { text: "¿Cómo se dice 'diversidad' en inglés?", options: ["Diversity", "Unity", "Similarity", "Equality"], correct: 0 },
+        { text: "¿Cómo se dice 'ciudadano/a' en inglés?", options: ["Citizen", "Stranger", "Foreigner", "Tourist"], correct: 0 },
+        { text: "¿Cómo se dice 'derechos' en inglés?", options: ["Rights", "Duties", "Obligations", "Responsibilities"], correct: 0 },
+        { text: "¿Cómo se dice 'responsabilidad' en inglés?", options: ["Responsibility", "Right", "Freedom", "Choice"], correct: 0 },
+        { text: "¿Cómo se dice 'comunidad' en inglés?", options: ["Community", "Society", "Group", "Population"], correct: 0 },
+        { text: "¿Cómo se dice 'global' en inglés?", options: ["Global", "Local", "National", "Regional"], correct: 0 },
+        { text: "¿Cómo se dice 'culture' en español?", options: ["Cultura", "Tradición", "Costumbre", "Hábito"], correct: 0 },
+        { text: "¿Cómo se dice 'tradition' en español?", options: ["Tradición", "Cultura", "Costumbre", "Práctica"], correct: 0 },
+        { text: "¿Cómo se dice 'diversité' en español?", options: ["Diversidad", "Unidad", "Similitud", "Igualdad"], correct: 0 },
+        { text: "¿Cómo se dice 'citoyen(ne)' en español?", options: ["Ciudadano/a", "Extranjero/a", "Turista", "Visitante"], correct: 0 },
+        { text: "Slang: 'Cultural exchange' significa...", options: ["Intercambio cultural", "Intercambio comercial", "Intercambio de regalos", "Intercambio de ideas"], correct: 0 },
+        { text: "Slang: 'World citizen' significa...", options: ["Ciudadana del mundo", "Ciudadana de un país", "Turista", "Visitante"], correct: 0 },
+        { text: "Slang: 'Break down barriers' significa...", options: ["Romper barreras", "Construir barreras", "Ignorar barreras", "Mantener barreras"], correct: 0 },
+        { text: "Slang: 'Diversity is our strength' significa...", options: ["La diversidad es nuestra fuerza", "La diversidad es nuestra debilidad", "La diversidad no importa", "Todos somos iguales"], correct: 0 },
+        { text: "Slang: 'Give back to the community' significa...", options: ["Devolver a la comunidad", "Tomar de la comunidad", "Ignorar la comunidad", "Abandonar la comunidad"], correct: 0 },
+        { text: "Slang: 'Open-minded' significa...", options: ["Mente abierta", "Mente cerrada", "Mente confundida", "Mente distraída"], correct: 0 },
+        { text: "Slang: 'Make a difference' significa...", options: ["Hacer la diferencia", "No hacer nada", "Hacer daño", "Hacer el bien"], correct: 0 },
+        { text: "Slang: 'Échange culturel' en francés significa...", options: ["Intercambio cultural", "Intercambio comercial", "Intercambio de regalos", "Intercambio de ideas"], correct: 0 },
+        { text: "Slang: 'Citoyenne du monde' en francés es...", options: ["Ciudadana del mundo", "Ciudadana de un país", "Turista", "Visitante"], correct: 0 },
+        { text: "Slang: 'Briser les barrières' en francés significa...", options: ["Romper barreras", "Construir barreras", "Ignorar barreras", "Mantener barreras"], correct: 0 },
+        { text: "Slang: 'S'engager' en francés significa...", options: ["Comprometerse", "Retirarse", "Ignorar", "Abandonar"], correct: 0 },
+        { text: "Frases: 'Learning about other cultures opens my mind' significa...", options: ["Aprender sobre otras culturas me abre la mente", "Aprender sobre otras culturas me cierra la mente", "Las culturas no importan", "Todas las culturas son iguales"], correct: 0 },
+        { text: "Frases: 'Small actions can create big changes' significa...", options: ["Pequeñas acciones pueden crear grandes cambios", "Pequeñas acciones no cambian nada", "Solo las grandes acciones importan", "Las acciones no importan"], correct: 0 }
+    ]
+};
+
+// ==================== ARTÍCULOS SEMANAS 9-12 ====================
+weeklyArticles[8] = [ // Semana 9: Amistad
+    {
+        id: 1,
+        category: "👭 Amistad",
+        title: "El arte de mantener amistades auténticas",
+        icon: "💜",
+        excerpt: "Las amistades verdaderas no se encuentran, se construyen con tiempo, honestidad y presencia.",
+        content: `<h4>📖 5 pilares de una amistad saludable</h4>
+        <ul>
+            <li><strong>Confianza:</strong> La base de toda relación. Sin confianza, no hay conexión profunda.</li>
+            <li><strong>Honestidad:</strong> Decir la verdad con amor. Las amigas de verdad se dicen las cosas.</li>
+            <li><strong>Apoyo mutuo:</strong> Celebrar los éxitos y estar presente en los momentos difíciles.</li>
+            <li><strong>Respeto:</strong> Aceptar las diferencias y no intentar cambiar a la otra persona.</li>
+            <li><strong>Presencia:</strong> No solo estar físicamente, sino emocionalmente presente.</li>
+        </ul>
+        <p><strong>💭 Para reflexionar:</strong> ¿Qué cualidad valoras más en tus amistades?</p>`
+    },
+    {
+        id: 2,
+        category: "👭 Amistad",
+        title: "Cómo manejar conflictos con amigas",
+        icon: "🕊️",
+        excerpt: "Los conflictos son normales. Lo importante es cómo los resuelves.",
+        content: `<h4>📖 Pasos para una resolución saludable</h4>
+        <ol>
+            <li><strong>Calma:</strong> Respira antes de responder. No tomes decisiones en caliente.</li>
+            <li><strong>Escucha:</strong> Intenta entender su punto de vista sin interrumpir.</li>
+            <li><strong>Expresa:</strong> Usa frases con "yo siento..." para evitar acusaciones.</li>
+            <li><strong>Busca soluciones:</strong> Pregunta: "¿Qué podemos hacer para resolver esto?"</li>
+            <li><strong>Perdona:</strong> No guardes rencor. La reconciliación es un proceso.</li>
+        </ol>
+        <p><strong>🎯 Ejercicio:</strong> Piensa en un conflicto reciente y aplica estos pasos mentalmente.</p>`
+    },
+    {
+        id: 3,
+        category: "👭 Amistad",
+        title: "Amistades que suman: cómo identificar relaciones tóxicas",
+        icon: "🚩",
+        excerpt: "No todas las amistades son saludables. Aprende a reconocer las señales.",
+        content: `<h4>🚩 Señales de una amistad tóxica</h4>
+        <ul>
+            <li><strong>Competencia:</strong> Siempre quiere ser mejor que tú y no celebra tus logros.</li>
+            <li><strong>Crítica constante:</strong> Te hace sentir menos o te critica de forma destructiva.</li>
+            <li><strong>Manipulación:</strong> Te hace sentir culpable por cosas que no son tu responsabilidad.</li>
+            <li><strong>Dependencia excesiva:</strong> No respeta tu espacio ni tu tiempo.</li>
+            <li><strong>Falta de reciprocidad:</strong> Siempre toma y rara vez da o apoya.</li>
+        </ul>
+        <p><strong>💡 Recuerda:</strong> Mereces amistades que te hagan sentir bien, no amistades que te drenen.</p>`
+    }
+];
+
+weeklyArticles[9] = [ // Semana 10: Futuro y Carrera
+    {
+        id: 1,
+        category: "💼 Futuro",
+        title: "Cómo descubrir tu vocación y propósito",
+        icon: "🌟",
+        excerpt: "Tu propósito no es algo que encuentras, es algo que construyes con tus pasiones y talentos.",
+        content: `<h4>📖 Preguntas para descubrir tu vocación</h4>
+        <ul>
+            <li><strong>¿Qué actividades te hacen perder la noción del tiempo?</strong></li>
+            <li><strong>¿Qué problemas te gustaría resolver en el mundo?</strong></li>
+            <li><strong>¿Qué habilidades te elogian los demás?</strong></li>
+            <li><strong>¿Qué te gustaba hacer cuando eras más pequeña?</strong></li>
+            <li><strong>¿Qué harías si supieras que no puedes fracasar?</strong></li>
+        </ul>
+        <p><strong>🎯 Ejercicio:</strong> Escribe un párrafo sobre tu "trabajo soñado" en inglés o francés.</p>`
+    },
+    {
+        id: 2,
+        category: "💼 Futuro",
+        title: "Mujeres inspiradoras que cambiaron el mundo",
+        icon: "👩‍💼",
+        excerpt: "Estas mujeres siguieron sus sueños y dejaron huella. Tú también puedes.",
+        content: `<h4>🌟 5 referentes femeninas</h4>
+        <ul>
+            <li><strong>Marie Curie:</strong> Científica, dos Premios Nobel. Rompió barreras en la ciencia.</li>
+            <li><strong>Frida Kahlo:</strong> Artista que transformó su dolor en arte universal.</li>
+            <li><strong>Malala Yousafzai:</strong> Activista por la educación de las niñas. La persona más joven en recibir el Nobel de la Paz.</li>
+            <li><strong>Michelle Obama:</strong> Abogada, escritora y defensora de la educación y la salud.</li>
+            <li><strong>Greta Thunberg:</strong> Activista climática que movilizó a millones de jóvenes.</li>
+        </ul>
+        <p><strong>💭 Reflexiona:</strong> ¿Qué mujer te inspira a ti? ¿Por qué?</p>`
+    },
+    {
+        id: 3,
+        category: "💼 Futuro",
+        title: "Habilidades para el futuro: lo que necesitas saber",
+        icon: "🧠",
+        excerpt: "El mundo cambia rápido. Estas habilidades te prepararán para cualquier carrera.",
+        content: `<h4>📖 6 habilidades clave para el futuro</h4>
+        <ul>
+            <li><strong>Pensamiento crítico:</strong> Analizar información y tomar decisiones informadas.</li>
+            <li><strong>Creatividad:</strong> Encontrar soluciones innovadoras.</li>
+            <li><strong>Colaboración:</strong> Trabajar en equipo y comunicarse efectivamente.</li>
+            <li><strong>Inteligencia emocional:</strong> Entender y manejar tus emociones y las de los demás.</li>
+            <li><strong>Adaptabilidad:</strong> Aprender y adaptarte a los cambios.</li>
+            <li><strong>Competencia digital:</strong> Manejar herramientas tecnológicas con confianza.</li>
+        </ul>
+        <p><strong>💡 Tip:</strong> Empieza a desarrollar estas habilidades desde ahora. ¡Cada día cuenta!</p>`
+    }
+];
+
+weeklyArticles[10] = [ // Semana 11: Salud Mental
+    {
+        id: 1,
+        category: "🧠 Salud Mental",
+        title: "7 hábitos para cuidar tu salud mental",
+        icon: "🌱",
+        excerpt: "Tu mente merece el mismo cuidado que tu cuerpo. Aquí tienes 7 hábitos para empezar.",
+        content: `<h4>📖 7 hábitos diarios</h4>
+        <ol>
+            <li><strong>Duerme bien:</strong> 7-8 horas de sueño restauran tu mente.</li>
+            <li><strong>Aliméntate equilibradamente:</strong> Una buena nutrición afecta tu estado de ánimo.</li>
+            <li><strong>Muévete:</strong> El ejercicio libera endorfinas, las hormonas de la felicidad.</li>
+            <li><strong>Desconecta:</strong> Reduce el tiempo en pantallas, especialmente antes de dormir.</li>
+            <li><strong>Conecta:</strong> Habla con personas que te hacen sentir bien.</li>
+            <li><strong>Practica gratitud:</strong> Escribe 3 cosas por las que agradeces cada día.</li>
+            <li><strong>Respira:</strong> Dedica 5 minutos al día a respirar profundamente.</li>
+        </ol>
+        <p><strong>🎯 Compromiso:</strong> Elige 3 hábitos y practícalos esta semana.</p>`
+    },
+    {
+        id: 2,
+        category: "🧠 Salud Mental",
+        title: "Cómo manejar la ansiedad y el estrés en la adolescencia",
+        icon: "😌",
+        excerpt: "La ansiedad es una respuesta natural, pero puedes aprender a gestionarla.",
+        content: `<h4>📖 Técnicas para reducir la ansiedad</h4>
+        <ul>
+            <li><strong>Respiración 4-7-8:</strong> Inhala 4 segundos, mantén 7, exhala 8. Repite 5 veces.</li>
+            <li><strong>Ancla mental:</strong> Elige un objeto o sonido que te relaje y concéntrate en él.</li>
+            <li><strong>Escribe tus preocupaciones:</strong> Ponerlas en papel las hace más manejables.</li>
+            <li><strong>Muévete:</strong> Caminar o hacer ejercicio libera tensión.</li>
+            <li><strong>Habla con alguien:</strong> Compartir lo que sientes alivia la carga.</li>
+        </ul>
+        <p><strong>💬 Recuerda:</strong> No estás sola. Pedir ayuda es un acto de valentía.</p>`
+    },
+    {
+        id: 3,
+        category: "🧠 Salud Mental",
+        title: "El poder de la autoestima: cómo construir una relación sana contigo misma",
+        icon: "🪞",
+        excerpt: "Tu relación contigo misma es la más importante de tu vida. Aprende a quererte.",
+        content: `<h4>📖 5 pasos para fortalecer tu autoestima</h4>
+        <ol>
+            <li><strong>Deja de compararte:</strong> Tu camino es único. Compararte con otros te roba la alegría.</li>
+            <li><strong>Habla bien de ti:</strong> Cambia el diálogo interno. En lugar de "no puedo", di "estoy aprendiendo".</li>
+            <li><strong>Celebra tus logros:</strong> No importa cuán pequeños sean. Cada paso cuenta.</li>
+            <li><strong>Rodeate de personas que te sumen:</strong> Las personas que te valoran te ayudan a valorarte.</li>
+            <li><strong>Acepta tus imperfecciones:</strong> Nadie es perfecto. Tus imperfecciones te hacen humana y única.</li>
+        </ol>
+        <p><strong>🪞 Ejercicio del espejo:</strong> Frente al espejo, di en voz alta: "Soy suficiente, soy valiosa y merezco ser feliz."</p>`
+    }
+];
+
+weeklyArticles[11] = [ // Semana 12: Cultura y Ciudadanía
+    {
+        id: 1,
+        category: "🌎 Cultura",
+        title: "Viajar sin moverse: cómo explorar otras culturas desde casa",
+        icon: "🏠",
+        excerpt: "No necesitas un billete de avión para conocer el mundo. La cultura está al alcance de tu mano.",
+        content: `<h4>📖 5 formas de viajar sin moverte</h4>
+        <ul>
+            <li><strong>Gastronomía:</strong> Cocina una receta típica de otro país.</li>
+            <li><strong>Cine:</strong> Ve películas internacionales (con subtítulos, si es necesario).</li>
+            <li><strong>Música:</strong> Escucha artistas de diferentes culturas.</li>
+            <li><strong>Literatura:</strong> Lee libros de autores de todo el mundo.</li>
+            <li><strong>Idiomas:</strong> Aprende frases básicas en un idioma que te intrigue.</li>
+        </ul>
+        <p><strong>🎯 Desafío:</strong> Esta semana, elige una cultura que te interese y aprende 3 cosas nuevas sobre ella.</p>`
+    },
+    {
+        id: 2,
+        category: "🌎 Cultura",
+        title: "Ciudadanía global: pequeñas acciones, gran impacto",
+        icon: "🌍",
+        excerpt: "Ser ciudadana global significa entender que tus acciones afectan al mundo entero.",
+        content: `<h4>📖 5 acciones para ser una mejor ciudadana global</h4>
+        <ul>
+            <li><strong>Recicla y reduce residuos:</strong> Cada pequeño gesto ayuda al planeta.</li>
+            <li><strong>Compra local y sostenible:</strong> Apoya a tu comunidad y al medio ambiente.</li>
+            <li><strong>Respeta la diversidad:</strong> Celebra las diferencias culturales y étnicas.</li>
+            <li><strong>Infórmate:</strong> Lee noticias de diferentes fuentes para tener una visión global.</li>
+            <li><strong>Actúa localmente:</strong> Participa en proyectos comunitarios.</li>
+        </ul>
+        <p><strong>🌱 Recuerda:</strong> No necesitas cambiar el mundo mañana. Pequeñas acciones sostenidas crean grandes cambios.</p>`
+    },
+    {
+        id: 3,
+        category: "🌎 Cultura",
+        title: "Tradiciones del mundo que te sorprenderán",
+        icon: "🎉",
+        excerpt: "Cada cultura tiene tradiciones únicas que la hacen especial. Conoce algunas.",
+        content: `<h4>📖 5 tradiciones fascinantes</h4>
+        <ul>
+            <li><strong>🇯🇵 Japón - Hanami:</strong> Celebrar la floración de los cerezos con picnics bajo los árboles.</li>
+            <li><strong>🇮🇳 India - Holi:</strong> El festival de los colores, donde la gente se lanza polvos de colores.</li>
+            <li><strong>🇲🇽 México - Día de Muertos:</strong> Celebrar a los difuntos con altares y ofrendas llenas de color.</li>
+            <li><strong>🇪🇸 España - La Tomatina:</strong> Una batalla de tomates en Buñol. ¡Más de 100 toneladas!</li>
+            <li><strong>🇧🇷 Brasil - Carnaval:</strong> Desfiles llenos de música, baile y color antes de la Cuaresma.</li>
+        </ul>
+        <p><strong>💭 Para reflexionar:</strong> ¿Qué tradición de otro país te gustaría experimentar?</p>`
+    }
+];
+
+// ==================== ACTIVIDADES CON MAMÁ SEMANAS 9-12 ====================
+weeklyMomActivities[8] = [ // Semana 9: Amistad
+    {
+        id: "m9",
+        title: "💌 Carta a una amiga",
+        type: "escritura",
+        description: "Escribe una carta sincera a tu mejor amiga expresando todo lo que valoras de ella.",
+        steps: "1. Elige a una amiga especial.\n2. Escribe una carta a mano o digital.\n3. Incluye 3 cosas que admires de ella.\n4. Entrega la carta o envíala por mensaje.",
+        talkQuestions: "¿Cómo te sentiste al expresar tu aprecio? ¿Qué respondió tu amiga?"
+    }
+];
+
+weeklyMomActivities[9] = [ // Semana 10: Futuro
+    {
+        id: "m10",
+        title: "🗺️ Mapa de sueños",
+        type: "manualidad",
+        description: "Crea un mapa visual de tus metas y sueños para los próximos 5 años.",
+        steps: "1. Papel o cartulina grande.\n2. Recorta imágenes o dibuja.\n3. Divide en áreas: estudio, trabajo, viajes, personal.\n4. Pega todo y decóralo.",
+        talkQuestions: "¿Qué sueño te emociona más? ¿Qué pasos necesitas para cumplirlo?"
+    }
+];
+
+weeklyMomActivities[10] = [ // Semana 11: Salud Mental
+    {
+        id: "m11",
+        title: "🧘 Ritual de autocuidado",
+        type: "taller",
+        description: "Crea un ritual semanal de autocuidado que incluya desconexión y bienestar.",
+        steps: "1. Elige un día y una hora fija.\n2. Apaga todas las pantallas.\n3. Realiza 3 actividades: meditación, lectura, baño relajante, etc.\n4. Repite cada semana.",
+        talkQuestions: "¿Cómo te sientes después de tu ritual de autocuidado? ¿Qué actividad te relaja más?"
+    }
+];
+
+weeklyMomActivities[11] = [ // Semana 12: Cultura
+    {
+        id: "m12",
+        title: "🌍 Noche cultural internacional",
+        type: "taller",
+        description: "Organiza una noche temática de un país diferente para conocer su cultura.",
+        steps: "1. Elijan un país.\n2. Cocinen un plato típico.\n3. Escuchen música de ese país.\n4. Vean una película o documental.\n5. Investiguen y compartan datos curiosos.",
+        talkQuestions: "¿Qué país te gustaría conocer? ¿Qué fue lo que más te sorprendió?"
+    }
+];
+
+// ==================== GRAMÁTICA SEMANAS 9-12 ====================
+weeklyGrammar[8] = { // Semana 9: Amistad
+    en: {
+        title: "Phrasal Verbs about relationships",
+        explanation: "Los phrasal verbs son verbos + preposición que cambian el significado del verbo original. Son muy comunes en inglés informal y en conversaciones sobre relaciones.",
+        examples: [
+            { text: "I get along with my friends", translation: "Me llevo bien con mis amigas" },
+            { text: "We fell out over a misunderstanding", translation: "Tuvimos una pelea por un malentendido" },
+            { text: "She's going through a difficult time", translation: "Ella está pasando por un momento difícil" },
+            { text: "I'll stick with you no matter what", translation: "Me quedaré contigo pase lo que pase" }
+        ],
+        exercises: [
+            { prompt: "I get ___ with my friends (well)", answer: "along" },
+            { prompt: "We fell ___ over a misunderstanding", answer: "out" },
+            { prompt: "She's going ___ a difficult time", answer: "through" },
+            { prompt: "I'll stick ___ you no matter what", answer: "with" },
+            { prompt: "She always ___ up for her friends (stand)", answer: "stands" }
+        ]
+    },
+    fr: {
+        title: "Expressions de l'amitié",
+        explanation: "En français, on utilise des expressions idiomatiques pour parler des relations. Ces expressions ne se traduisent pas littéralement et enrichissent le discours.",
+        examples: [
+            { text: "Je m'entends bien avec elle", translation: "Me llevo bien con ella" },
+            { text: "On a eu une dispute", translation: "Tuvimos una pelea" },
+            { text: "Elle traverse une période difficile", translation: "Está pasando por un momento difícil" },
+            { text: "Je te soutiendrai toujours", translation: "Siempre te apoyaré" }
+        ],
+        exercises: [
+            { prompt: "Je m'___ bien avec elle (entendre)", answer: "entends" },
+            { prompt: "On a eu une ___ (dispute)", answer: "dispute" },
+            { prompt: "Elle ___ une période difficile (traverser)", answer: "traverse" },
+            { prompt: "Je te ___ toujours (soutenir)", answer: "soutiendrai" },
+            { prompt: "Nous ___ de bonnes amies (être)", answer: "sommes" }
+        ]
+    }
+};
+
+weeklyGrammar[9] = { // Semana 10: Futuro
+    en: {
+        title: "Future tenses for planning",
+        explanation: "Para hablar del futuro, usamos 'will' para decisiones espontáneas y predicciones, y 'going to' para planes hechos. También podemos usar el Present Continuous para planes concretos.",
+        examples: [
+            { text: "I'm going to study medicine (plan)", translation: "Voy a estudiar medicina" },
+            { text: "I think I'll travel after university (decisión espontánea)", translation: "Creo que viajaré después de la universidad" },
+            { text: "I'm meeting my advisor tomorrow (plan concreto)", translation: "Me veo con mi orientadora mañana" }
+        ],
+        exercises: [
+            { prompt: "I'm ___ to study medicine (go)", answer: "going" },
+            { prompt: "I think I'll ___ after university (travel)", answer: "travel" },
+            { prompt: "I'm ___ my advisor tomorrow (meet)", answer: "meeting" },
+            { prompt: "She ___ to apply for a scholarship (go)", answer: "is going" },
+            { prompt: "We ___ start a new project next year (will)", answer: "will" }
+        ]
+    },
+    fr: {
+        title: "Exprimer ses projets d'avenir",
+        explanation: "En français, on utilise 'aller + infinitif' pour le futur proche (actions proches) et le futur simple pour des actions plus lointaines ou des hypothèses.",
+        examples: [
+            { text: "Je vais étudier la médecine (futur proche)", translation: "Voy a estudiar medicina" },
+            { text: "Je voyagerai après l'université (futur simple)", translation: "Viajaré después de la universidad" },
+            { text: "Je rencontre ma conseillère demain (présent pour futur proche)", translation: "Me veo con mi orientadora mañana" }
+        ],
+        exercises: [
+            { prompt: "Je ___ étudier la médecine (aller)", answer: "vais" },
+            { prompt: "Je ___ après l'université (voyager)", answer: "voyagerai" },
+            { prompt: "Je ___ ma conseillère demain (rencontrer)", answer: "rencontre" },
+            { prompt: "Elle ___ postuler pour une bourse (aller)", answer: "va" },
+            { prompt: "Nous ___ un nouveau projet l'année prochaine (commencer)", answer: "commencerons" }
+        ]
+    }
+};
+
+weeklyGrammar[10] = { // Semana 11: Salud Mental
+    en: {
+        title: "Modal verbs for advice and suggestions",
+        explanation: "Usamos 'should', 'could', y 'ought to' para dar consejos y sugerencias sobre salud y bienestar.",
+        examples: [
+            { text: "You should talk to someone about your feelings", translation: "Deberías hablar con alguien sobre tus sentimientos" },
+            { text: "You could try journaling every day", translation: "Podrías intentar escribir un diario cada día" },
+            { text: "You ought to take breaks when you're stressed", translation: "Deberías tomar descansos cuando estás estresada" }
+        ],
+        exercises: [
+            { prompt: "You ___ talk to someone (should)", answer: "should" },
+            { prompt: "You ___ try journaling (could)", answer: "could" },
+            { prompt: "You ___ to take breaks (ought)", answer: "ought" },
+            { prompt: "You ___ prioritize your mental health (should)", answer: "should" },
+            { prompt: "We ___ practice mindfulness (could)", answer: "could" }
+        ]
+    },
+    fr: {
+        title: "Donner des conseils sur la santé mentale",
+        explanation: "Pour donner des conseils en français, on utilise 'devoir' (conditionnel pour conseil), 'pouvoir' pour suggestions, et 'il faudrait' pour des recommandations.",
+        examples: [
+            { text: "Tu devrais parler à quelqu'un", translation: "Deberías hablar con alguien" },
+            { text: "Tu pourrais écrire un journal", translation: "Podrías escribir un diario" },
+            { text: "Il faudrait prendre des pauses", translation: "Habría que tomar descansos" }
+        ],
+        exercises: [
+            { prompt: "Tu ___ parler à quelqu'un (devoir - cond)", answer: "devrais" },
+            { prompt: "Tu ___ écrire un journal (pouvoir)", answer: "pourrais" },
+            { prompt: "Il ___ prendre des pauses (faudrait)", answer: "faudrait" },
+            { prompt: "Vous ___ vous reposer (devoir)", answer: "devriez" },
+            { prompt: "Nous ___ méditer (pouvoir)", answer: "pourrions" }
+        ]
+    }
+};
+
+weeklyGrammar[11] = { // Semana 12: Cultura
+    en: {
+        title: "Passive voice for cultural topics",
+        explanation: "La voz pasiva se usa frecuentemente en contextos culturales para enfatizar la acción y no el sujeto. Se forma con 'to be' + participio pasado.",
+        examples: [
+            { text: "Traditions are passed down through generations", translation: "Las tradiciones se transmiten de generación en generación" },
+            { text: "Cultural heritage is preserved in museums", translation: "El patrimonio cultural se preserva en museos" },
+            { text: "Different languages are spoken around the world", translation: "Se hablan diferentes idiomas alrededor del mundo" }
+        ],
+        exercises: [
+            { prompt: "Traditions are ___ down (pass)", answer: "passed" },
+            { prompt: "Cultural heritage is ___ in museums (preserve)", answer: "preserved" },
+            { prompt: "Different languages are ___ around the world (speak)", answer: "spoken" },
+            { prompt: "Diversity is ___ (celebrate)", answer: "celebrated" },
+            { prompt: "Customs are ___ from generation to generation (transmit)", answer: "transmitted" }
+        ]
+    },
+    fr: {
+        title: "Voix passive pour sujets culturels",
+        explanation: "La voix passive en français met l'accent sur l'action. Elle est fréquente dans les textes culturels. Se forme avec 'être' + participe passé.",
+        examples: [
+            { text: "Les traditions sont transmises de génération en génération", translation: "Las tradiciones se transmiten de generación en generación" },
+            { text: "Le patrimoine culturel est préservé dans les musées", translation: "El patrimonio cultural se preserva en museos" },
+            { text: "Différentes langues sont parlées dans le monde", translation: "Se hablan diferentes idiomas en el mundo" }
+        ],
+        exercises: [
+            { prompt: "Les traditions sont ___ (transmettre)", answer: "transmises" },
+            { prompt: "Le patrimoine culturel est ___ (préserver)", answer: "préservé" },
+            { prompt: "Différentes langues sont ___ (parler)", answer: "parlées" },
+            { prompt: "La diversité est ___ (célébrer)", answer: "célébrée" },
+            { prompt: "Les coutumes sont ___ de génération en génération (transmettre)", answer: "transmises" }
+        ]
+    }
+};
+
+// Actualizar el total de lecciones disponibles
+const TOTAL_LESSONS = 24; // Antes era 16, ahora 8 + 4*2 = 16, pero en realidad 8 semanas * 2 lecciones = 16 + 4*2 = 24
 
 const weeklyVocab = {
     0: { en: [{en:"happy",es:"feliz"},{en:"sad",es:"triste"},{en:"angry",es:"enfadado/a"},{en:"excited",es:"emocionado/a"},{en:"calm",es:"tranquilo/a"},{en:"proud",es:"orgulloso/a"},{en:"nervous",es:"nervioso/a"},{en:"brave",es:"valiente"}], fr: [{fr:"heureux",es:"feliz"},{fr:"triste",es:"triste"},{fr:"fâché",es:"enfadado/a"},{fr:"excité",es:"emocionado/a"},{fr:"calme",es:"tranquilo/a"},{fr:"fier",es:"orgulloso/a"},{fr:"nerveux",es:"nervioso/a"},{fr:"courageux",es:"valiente"}] },
